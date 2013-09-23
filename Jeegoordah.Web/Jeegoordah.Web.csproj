@@ -124,6 +124,8 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Content Include="Scripts\Bootstrap\bootstrap-datepicker.js" />
+    <Content Include="Scripts\Bootstrap\bootstrap-datepicker.css" />
     <Content Include="Scripts\Jeegoordah\app.js" />
   </ItemGroup>
   <ItemGroup>

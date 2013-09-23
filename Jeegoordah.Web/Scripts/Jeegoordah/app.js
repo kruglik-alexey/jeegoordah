@@ -14,7 +14,7 @@
     });
     
     require(['$'], function () {                
-        require(['../bootstrap/bootstrap.min', '../jquery.validate.min', '../jquery.jqote2.min'], function () {
+        require(['../bootstrap/bootstrap.min', '../bootstrap/bootstrap-datepicker', '../jquery.validate.min', '../jquery.jqote2.min'], function () {
             require(['modules/total', 'modules/events', 'nav'], function (total, events, nav) {
                 nav.init();
                 total.init();
