@@ -22,7 +22,7 @@
             var navLi = $('#nav-' + hash);            
             navLi.addClass('active');
             
-            var moduleName = navLi.find('a')[0].innerText;
+            var moduleName = navLi.find('a').text();
             document.title = 'Jeegoordah | ' + moduleName;
             
             $('h1#module-name').text(moduleName);
