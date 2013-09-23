@@ -1,0 +1,35 @@
+﻿div.page-content {
+    /* To place div below the bootstrap's navbar-fixed-top */
+    padding-top: 50px;
+}
+
+div.notification {
+    position: fixed;
+    z-index: 10000;
+    left: 50%;
+    min-width: 200px;
+}
+
+th.event-name {
+    width: 250px;
+}
+
+td.auto-width {
+    width: 1px;
+    white-space: nowrap;
+    padding-right: 15px !important;
+    padding-left: 15px !important;
+}
+
+div.entity-controls-host {
+    position: relative;
+}
+
+div.entity-controls {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+}
+
+table.entity-list tr td div.entity-controls { display:none; }
+table.entity-list tr:hover td div.entity-controls { display:inline-block; }
