@@ -1,11 +1,19 @@
 ﻿define(['_', '$', 'rest', 'notification', 'helper'], function (_, $, rest, notification, helper) {
     return {
         init: function () {
-            var self = this;
-            var form = $('#createEventForm');
-            form.on('submit', function (e) {                
-                e.preventDefault();
-                self._createEvent(form);
+            var self = this;            
+            this.eventEditorDialog = $('#eventEditor').modal({ show: false });
+            this.eventEditorDialog.form = this.eventEditorDialog.find('#createEventForm');            
+            
+            $('#createEventButton').click(function () {
+                self.eventEditorDialog.find('.modal-title').text('Create Event');
+                self.eventEditorDialog.find('#saveEventButton').off('click');
+                self.eventEditorDialog.find('#saveEventButton').on('click', function () {
+                    self.eventEditorDialog.form.validate({
+                        submitHandler: _.bind(self._createEvent, self),
+                    });
+                });
+                self.eventEditorDialog.modal('show');
             });
         },
 
@@ -20,14 +28,14 @@
             });
         },
         
-        _createEvent: function (form) {
+        _createEvent: function () {
             var self = this;
-            rest.post('events/create', form.toJson()).done(function (event) {
+            rest.post('events/create', self.eventEditorDialog.form.toJson()).done(function (event) {
                 self._createEventElement(event);
-                form[0].reset();
-                form.find('[name=Name]').focus();
+                self.eventEditorDialog.modal('hide');
                 notification.success('Event created.');                                
-            });            
+            });
+            return d;
         },
         
         _createEventElement: function (event) {

@@ -46,31 +46,17 @@
                 <h1 id="module-name"></h1>
             </div>                
                  
-            <div id="modules" style="display:none">
-                <div id="module-events">                
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">Create Event</h3>
+            <div id="modules" style="display:none">                
+                <div id="module-events">
+                    <button type="button" class="btn btn-primary" id="createEventButton">Create Event</button>    
+                    <p />                
+                    <div class="panel panel-default"  style="display: none">
+                        <div class="panel-heading">                                                              
                         </div>
                         <div class="panel-body">
-                            <form role="form" id="createEventForm">
-                                <div class="form-group">
-                                    <label for="inputEventName">Name</label>
-                                    <input type="text" class="form-control" name="Name" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="inputEventStartDate">Start Date</label>
-                                    <input class="form-control" type="text" name="StartDate"
-                                        data-provide="datepicker" data-date-autoclose="true" data-date-format="dd-mm-yyyy" data-date-weekStart="1">
-                                </div>     
-                                <div class="form-group">
-                                    <label for="inputEventDescription">Description</label>
-                                    <textarea class="form-control" rows="3" name="Description"></textarea>
-                                </div>                            
-                                <button type="submit" class="btn btn-primary">Create</button>
-                            </form>                            
+                                                        
                         </div>
-                    </div>                                            
+                    </div>                          
                     <table class="table table-striped table-hover entity-list">
                         <thead>
                             <tr>
@@ -82,6 +68,38 @@
                         <tbody id="event-list">                        
                         </tbody>
                     </table>
+                    
+                    <div class="modal fade" id="eventEditor" tabindex="-1" role="dialog" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                    <h4 class="modal-title"></h4>
+                                </div>
+                                <div class="modal-body">
+                                    <form role="form" id="createEventForm">
+                                        <div class="form-group">
+                                            <label for="inputEventName">Name</label>
+                                            <input type="text" class="form-control" name="Name" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="inputEventStartDate">Start Date</label>
+                                            <input class="form-control" type="text" name="StartDate"
+                                                   data-provide="datepicker" data-date-autoclose="true" data-date-format="dd-mm-yyyy" data-date-weekStart="1">
+                                        </div>     
+                                        <div class="form-group">
+                                            <label for="inputEventDescription">Description</label>
+                                            <textarea class="form-control" rows="3" name="Description"></textarea>
+                                        </div>                            
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-primary" id="saveEventButton">Save Event</button>
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>                                    
+                                </div>
+                            </div>                            
+                        </div>                        
+                    </div>                    
                 </div>
 
                 <div id="module-total">               
