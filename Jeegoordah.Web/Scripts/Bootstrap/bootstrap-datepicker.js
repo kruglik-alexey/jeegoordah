@@ -420,6 +420,10 @@
 			var zIndex = parseInt(this.element.parents().filter(function() {
 							return $(this).css('z-index') != 'auto';
 						}).first().css('z-index'))+10;
+
+		    // JGDH - dirty hack to make calendar visible on bootstrap's modal.
+		    // At the execution time calendar has parent with zindex == 0, but after that modal receives zindex == 1040.
+		    zIndex = 2000;
 			var offset = this.component ? this.component.parent().offset() : this.element.offset();
 			var height = this.component ? this.component.outerHeight(true) : this.element.outerHeight(false);
 			var width = this.component ? this.component.outerWidth(true) : this.element.outerWidth(false);

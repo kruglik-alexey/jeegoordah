@@ -1,7 +1,7 @@
 ﻿define(['_', '$', 'rest', 'notification', 'helper'], function (_, $, rest, notification, helper) {
     return {
         init: function () {
-            var self = this;            
+            var self = this;
             this.eventEditorDialog = $('#eventEditor').modal({ show: false });
             this.eventEditorDialog.form = this.eventEditorDialog.find('#createEventForm');            
             
@@ -13,7 +13,10 @@
                         submitHandler: _.bind(self._createEvent, self),
                     });
                 });
-                self.eventEditorDialog.modal('show');
+                self.eventEditorDialog.on('hidden.bs.modal', function () {
+                    self.eventEditorDialog.form[0].reset();
+                });
+                self.eventEditorDialog.modal('show');                
             });
         },
 
