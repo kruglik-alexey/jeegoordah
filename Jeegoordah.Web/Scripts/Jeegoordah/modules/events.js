@@ -3,20 +3,22 @@
         init: function () {
             var self = this;
             this.eventEditorDialog = $('#eventEditor').modal({ show: false });
-            this.eventEditorDialog.form = this.eventEditorDialog.find('#createEventForm');            
+            this.eventEditorDialog.form = this.eventEditorDialog.find('#createEventForm');
+            this.eventEditorDialog.find('#saveEventButton').on('click', function () {
+                self.eventEditorDialog.form.submit();
+            });
+            this.eventEditorDialog.form.validator = this.eventEditorDialog.form.validate({
+                submitHandler: function() {
+                    self._createEvent();
+                }
+            });
+            this.eventEditorDialog.on('hidden.bs.modal', function () {
+                self.eventEditorDialog.form.validator.resetForm();
+            });
             
             $('#createEventButton').click(function () {
-                self.eventEditorDialog.find('.modal-title').text('Create Event');
-                self.eventEditorDialog.find('#saveEventButton').off('click');
-                self.eventEditorDialog.find('#saveEventButton').on('click', function () {
-                    self.eventEditorDialog.form.validate({
-                        submitHandler: _.bind(self._createEvent, self),
-                    });
-                });
-                self.eventEditorDialog.on('hidden.bs.modal', function () {
-                    self.eventEditorDialog.form[0].reset();
-                });
-                self.eventEditorDialog.modal('show');                
+                self.eventEditorDialog.find('.modal-title').text('Create Event');                
+                self.eventEditorDialog.modal('show');
             });
         },
 
