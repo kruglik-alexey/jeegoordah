@@ -15,5 +15,23 @@
         return o;
     };
 
+    $.fn.populateForm = function (json) {
+        var $form = this;
+        $.each(json, function (name, val) {
+            var $el = $form.find('[name="' + name + '"]');
+            var type = $el.attr('type');
+            switch (type) {
+                case 'checkbox':
+                    $el.attr('checked', 'checked');
+                    break;
+                case 'radio':
+                    $el.filter('[value="' + val + '"]').attr('checked', 'checked');
+                    break;
+                default:
+                    $el.val(val);
+            }
+        });
+    };
+
     return $.noConflict();
 });

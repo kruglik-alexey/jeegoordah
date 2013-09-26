@@ -9,7 +9,7 @@
             });
             this.eventEditorDialog.form.validator = this.eventEditorDialog.form.validate({
                 submitHandler: function() {
-                    self._createEvent();
+                    self.eventEditorDialog.save();
                 }
             });
             this.eventEditorDialog.on('hidden.bs.modal', function () {
@@ -17,7 +17,8 @@
             });
             
             $('#createEventButton').click(function () {
-                self.eventEditorDialog.find('.modal-title').text('Create Event');                
+                self.eventEditorDialog.find('.modal-title').text('Create Event');
+                self.eventEditorDialog.save = _.bind(self._createEvent, self);
                 self.eventEditorDialog.modal('show');
             });
         },
@@ -39,11 +40,11 @@
                 self._createEventElement(event);
                 self.eventEditorDialog.modal('hide');
                 notification.success('Event created.');                                
-            });
-            return d;
+            });            
         },
         
         _createEventElement: function (event) {
+            var self = this;
             if (event.StartDate) {
                 event.StartDate = helper.fixJsonDate(event.StartDate);
             } else {
@@ -51,10 +52,20 @@
             }            
             event.Description = helper.textToHtml(event.Description || '');
             var $event = $($.jqote(this.eventTemplate, event));            
-            $('#event-list').append($event);
+            var eventList = $('#event-list');
+            eventList.append($event);
 
             $event.find('button[data-action=edit]').click(function() {
-                console.log('edit ' + event.Id);
+                self.eventEditorDialog.find('.modal-title').text('Edit Event');
+                self.eventEditorDialog.form.populateForm(event);
+                self.eventEditorDialog.save = function() {
+                    rest.post('events/update/' + event.id, self.eventEditorDialog.form.toJson()).done(function (updatedEvent) {
+                        eventList.find('#event' + event.Id).replaceWith(self._createEventElement(updatedEvent));
+                        self.eventEditorDialog.modal('hide');
+                        notification.success('Event updated.');
+                    });
+                };
+                self.eventEditorDialog.modal('show');
             });
             
             $event.find('button[data-action=delete]').click(function () {
@@ -80,9 +91,9 @@
                 $(popoverTarget).popover('show');
             });
         },
-        
+               
         eventTemplate: 
-            '<tr>' +
+            '<tr id="event<%= this.Id %>">' +
                 '<td><%= this.Name %></td>' +
                 '<td class="auto-width"><%= this.StartDate %></td>' +
                 '<td><div class="entity-controls-host">' +
