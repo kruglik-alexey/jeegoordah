@@ -58,7 +58,9 @@
             var $event = $($.jqote(this.eventTemplate, uiEvent));
             var eventList = $('#event-list');
             if (appendToList) {
+                $event.hide();
                 eventList.append($event);
+                $event.fadeIn(consts.fadeDuration);
             }            
 
             $event.find('button[data-action=edit]').click(function() {
