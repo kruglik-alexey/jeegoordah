@@ -4,16 +4,24 @@
             var self = this;
             this.eventEditorDialog = $('#eventEditor').modal({ show: false });
             this.eventEditorDialog.form = this.eventEditorDialog.find('#createEventForm');
-            this.eventEditorDialog.find('#saveEventButton').on('click', function () {
+            this.eventEditorDialog.find('#saveEventButton').click(function () {
                 self.eventEditorDialog.form.submit();
             });
-            this.eventEditorDialog.form.validator = this.eventEditorDialog.form.validate({
-                submitHandler: function() {
-                    self.eventEditorDialog.save();
+            this.eventEditorDialog.form.keypress(function (e) {
+                if (e.which == 13) {
+                    self.eventEditorDialog.form.submit();
                 }
             });
-            this.eventEditorDialog.on('hidden.bs.modal', function () {
+            this.eventEditorDialog.form.submit(function (e) {
+                if (self.eventEditorDialog.form.valid()) {
+                    self.eventEditorDialog.save();
+                }
+                e.preventDefault();
+            });
+            this.eventEditorDialog.form.validator = this.eventEditorDialog.form.validate();
+            this.eventEditorDialog.on('hidden.bs.modal', function () {                
                 self.eventEditorDialog.form.validator.resetForm();
+                self.eventEditorDialog.form[0].reset();
             });
             
             $('#createEventButton').click(function () {
