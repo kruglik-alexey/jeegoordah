@@ -1,4 +1,4 @@
-﻿define('jeegoordah-jquery', ['jquery'], function ($) {    
+﻿define(['jquery'], function ($) {    
     $.fn.toJson = function() {
         var o = {};
         var a = this.serializeArray();

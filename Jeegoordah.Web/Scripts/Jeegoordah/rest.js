@@ -1,4 +1,4 @@
-﻿define('rest', ['$', 'notification'], function ($, notification) {
+﻿define(['$', 'notification'], function ($, notification) {
     var baseUrl = location.origin + '/';
     var rest = {        
         get: function (resource) {

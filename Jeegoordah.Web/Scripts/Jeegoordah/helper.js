@@ -1,4 +1,4 @@
-﻿define('helper', function() {
+﻿define(function() {
     return {        
         fixJsonDate: function(date) {
             var d = new Date(parseInt(date.substr(6)));

@@ -1,4 +1,4 @@
-﻿define('notification', function () {
+﻿define(function () {
     return {        
         success: function(content) {
             this._notification('success', content);

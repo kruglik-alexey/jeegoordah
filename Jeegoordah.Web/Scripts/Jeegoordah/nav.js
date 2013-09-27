@@ -1,4 +1,4 @@
-﻿define('nav', ['$', 'modules/total', 'modules/people', 'modules/events'], function ($, total, people, events) {
+﻿define(['$', 'modules/total', 'modules/people', 'modules/events'], function ($, total, people, events) {
     var routes = {        
         total: total,
         people: people,
