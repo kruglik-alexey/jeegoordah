@@ -14,6 +14,11 @@ namespace Jeegoordah.Web
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
             routes.MapRoute(
+                name: "UpdateEvent",
+                url: "events/update",
+                defaults: new { controller = "General", action = "UpdateEvent" }
+            );
+            routes.MapRoute(
                 name: "DeleteEvent",
                 url: "events/delete/{id}",
                 defaults: new { controller = "General", action = "DeleteEvent" }

@@ -141,8 +141,10 @@
     <Content Include="Scripts\Bootstrap\bootstrap.min.css" />
     <Content Include="Scripts\Bootstrap\fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Scripts\Bootstrap\bootstrap.min.js" />
+    <Content Include="Scripts\Jeegoordah\consts.js" />
     <Content Include="Scripts\Jeegoordah\helper.js" />
     <Content Include="Scripts\Jeegoordah\jeegoordah-jquery.js" />
+    <Content Include="Scripts\Jeegoordah\jeegoordah-noty.js" />
     <Content Include="Scripts\Jeegoordah\jeegoordah.css" />
     <Content Include="Scripts\Jeegoordah\modules\events.js" />
     <Content Include="Scripts\Jeegoordah\modules\people.js" />
@@ -156,6 +158,9 @@
     <Content Include="Scripts\jquery.jqote2.min.js" />
     <Content Include="Scripts\jquery.validate.js" />
     <Content Include="Scripts\jquery.validate.min.js" />
+    <Content Include="Scripts\Noty\default.js" />
+    <Content Include="Scripts\Noty\jquery.noty.js" />
+    <Content Include="Scripts\Noty\topCenter.js" />
     <Content Include="Scripts\r.js" />
     <Content Include="Scripts\require.js" />
     <Content Include="Scripts\underscore-min.js" />

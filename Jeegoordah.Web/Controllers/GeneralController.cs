@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Net.Mime;
 using System.Web.Mvc;
 using Jeegoordah.Core;
 using Jeegoordah.Core.DL;
@@ -40,6 +38,26 @@ namespace Jeegoordah.Web.Controllers
                 }
                 @event.CreatedAt = DateTime.UtcNow;
                 db.Events.Add(@event);
+                db.SaveChanges();
+            }
+            return Json(@event);
+        }
+
+        [HttpPost]
+        public ActionResult UpdateEvent(Event @event)
+        {
+            // TODO what if id invalid?
+            using (var db = new JeegoordahDb())
+            {
+                if (db.Events.Any(e => e.Name.Equals(@event.Name, StringComparison.CurrentCultureIgnoreCase) && e.Id != @event.Id))
+                {
+                    // TODO or should it be still 200?
+                    Response.StatusCode = 400;
+                    return Json(new {Field = "Name", Message = "Event with name {0} already exists.".F(@event.Name)});
+                }
+                @event.CreatedAt = db.Events.Where(e => e.Id == @event.Id).Select(e => e.CreatedAt).First();
+                db.Events.Attach(@event);
+                db.Entry(@event).State = EntityState.Modified;
                 db.SaveChanges();
             }
             return Json(@event);

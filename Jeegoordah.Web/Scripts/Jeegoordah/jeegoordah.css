@@ -33,3 +33,8 @@ div.entity-controls {
 
 table.entity-list tr td div.entity-controls { display:none; }
 table.entity-list tr:hover td div.entity-controls { display:inline-block; }
+
+.hiddenSubmit {
+    position: absolute;
+    visibility: hidden;
+}

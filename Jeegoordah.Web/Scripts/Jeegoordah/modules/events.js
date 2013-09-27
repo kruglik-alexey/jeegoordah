@@ -1,4 +1,4 @@
-﻿define(['_', '$', 'rest', 'notification', 'helper'], function (_, $, rest, notification, helper) {
+﻿define(['_', '$', 'rest', 'notification', 'helper', 'consts'], function (_, $, rest, notification, helper, consts) {
     return {
         init: function () {
             var self = this;
@@ -6,12 +6,7 @@
             this.eventEditorDialog.form = this.eventEditorDialog.find('#createEventForm');
             this.eventEditorDialog.find('#saveEventButton').click(function () {
                 self.eventEditorDialog.form.submit();
-            });
-            this.eventEditorDialog.form.keypress(function (e) {
-                if (e.which == 13) {
-                    self.eventEditorDialog.form.submit();
-                }
-            });
+            });           
             this.eventEditorDialog.form.submit(function (e) {
                 if (self.eventEditorDialog.form.valid()) {
                     self.eventEditorDialog.save();
@@ -36,8 +31,9 @@
             $('#event-list>tr').remove();
             rest.get('events').done(function (events) {
                 // TODO add spinner while loading
-                _.each(events, function(e) {
-                    self._createEventElement(e);
+                _.each(events, function (event) {
+                    self._fixStartDateFormat(event);
+                    self._createEventElement(event);
                 });
             });
         },
@@ -45,32 +41,42 @@
         _createEvent: function () {
             var self = this;
             rest.post('events/create', self.eventEditorDialog.form.toJson()).done(function (event) {
+                self._fixStartDateFormat(event);
                 self._createEventElement(event);
                 self.eventEditorDialog.modal('hide');
                 notification.success('Event created.');                                
             });            
         },
         
-        _createEventElement: function (event) {
+        _createEventElement: function (event, appendToList) {
             var self = this;
-            if (event.StartDate) {
-                event.StartDate = helper.fixJsonDate(event.StartDate);
-            } else {
-                event.StartDate = '';
-            }            
-            event.Description = helper.textToHtml(event.Description || '');
-            var $event = $($.jqote(this.eventTemplate, event));            
+            if (_.isUndefined(appendToList)) {
+                appendToList = true;
+            }
+            var uiEvent = _.clone(event);
+            uiEvent.Description = helper.textToHtml(uiEvent.Description || '');
+            var $event = $($.jqote(this.eventTemplate, uiEvent));
             var eventList = $('#event-list');
-            eventList.append($event);
+            if (appendToList) {
+                eventList.append($event);
+            }            
 
             $event.find('button[data-action=edit]').click(function() {
                 self.eventEditorDialog.find('.modal-title').text('Edit Event');
                 self.eventEditorDialog.form.populateForm(event);
-                self.eventEditorDialog.save = function() {
-                    rest.post('events/update/' + event.id, self.eventEditorDialog.form.toJson()).done(function (updatedEvent) {
-                        eventList.find('#event' + event.Id).replaceWith(self._createEventElement(updatedEvent));
+                self.eventEditorDialog.save = function () {
+                    var updatedEvent = _.extend({Id: event.Id}, self.eventEditorDialog.form.toJson());
+                    rest.post('events/update', updatedEvent).done(function () {
                         self.eventEditorDialog.modal('hide');
                         notification.success('Event updated.');
+                        
+                        var oldElement = eventList.find('#event' + event.Id);
+                        var newElement = self._createEventElement(updatedEvent, false);
+                        oldElement.fadeOut(consts.fadeDuration, function() {
+                            newElement.insertAfter(oldElement).hide();
+                            oldElement.remove();
+                            newElement.fadeIn(consts.fadeDuration);
+                        });                                                
                     });
                 };
                 self.eventEditorDialog.modal('show');
@@ -82,7 +88,7 @@
                                  '<button type="button" class="btn btn-default" data-action="No">No</button></div>');
                 $content.find('[data-action=Yes]').click(function() {
                     rest.post('events/delete/' + event.Id).done(function () {                        
-                        $event.fadeOut(200, function() {
+                        $event.fadeOut(consts.fadeDuration, function() {
                             $event.remove();
                         });
                     });
@@ -98,6 +104,16 @@
                 });
                 $(popoverTarget).popover('show');
             });
+
+            return $event;
+        },
+        
+        _fixStartDateFormat: function(event) {
+            if (event.StartDate) {
+                event.StartDate = helper.fixJsonDate(event.StartDate);
+            } else {
+                event.StartDate = '';
+            }                           
         },
                
         eventTemplate: 
