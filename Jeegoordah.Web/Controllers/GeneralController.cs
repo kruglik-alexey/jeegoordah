@@ -10,10 +10,35 @@ namespace Jeegoordah.Web.Controllers
 {
     public class GeneralController : Controller
     {
+        public class CacheBuster
+        {
+            private readonly string _cacheBuster;
+
+            public CacheBuster()
+            {
+#if DEBUG
+                _cacheBuster = (new Random()).Next().ToString();
+#else
+                _cacheBuster = "2.0.0";
+#endif
+            }
+
+            public string RenderCssLink(string cssPath)
+            {
+                return @"<link href=""{0}?{1}"" type=""text/css"" rel=""stylesheet""/>".F(cssPath, _cacheBuster);
+            }
+
+            public string RenderRequireJsCacheBuster(string requireJsPath, string mainScriptPath)
+            {
+                return @"<script type=""text/javascript"">window.jgdhCacheBuster = '{0}'</script>
+                     <script data-main=""{1}?{0}"" src=""{2}?{0}"" type=""text/javascript""></script>".F(_cacheBuster, mainScriptPath, requireJsPath);
+            }
+        }
+
         [HttpGet]
         public ActionResult Index()
-        {     
-            return View();
+        {
+            return View(new CacheBuster());
         }
 
         [HttpGet]

@@ -11,7 +11,8 @@
                 '$': 'jeegoordah-jquery',
                 '_': 'underscore'
             }
-        }
+        },
+        urlArgs: window.jgdhCacheBuster
     });
     
     // First load jquery. Second load all libraries (see about noty below). Third load and initialize jeegoordah stuff.
