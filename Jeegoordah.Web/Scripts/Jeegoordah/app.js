@@ -3,7 +3,8 @@
         baseUri: "jeegoordah",       
         paths: {
             jquery: '../jquery-2.0.3.min',
-            underscore: '../underscore-min'
+            underscore: '../underscore-min',
+            text: '../text'
         },
         map: {
             '*': {

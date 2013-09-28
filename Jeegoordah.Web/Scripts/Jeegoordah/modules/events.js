@@ -1,10 +1,13 @@
-﻿define(['_', '$', 'rest', 'notification', 'helper', 'consts'], function (_, $, rest, notification, helper, consts) {
+﻿define(['_', '$', 'rest', 'notification', 'helper', 'consts', 'text!templates/events/row.html', 'text!templates/events/editor.html', 'text!templates/events/module.html'],
+    function (_, $, rest, notification, helper, consts, rowTemplate, editorTemplate, moduleTemplate) {
+        
     return {
         init: function () {
-            var self = this;
-            this.eventEditorDialog = $('#eventEditor').modal({ show: false });
+            var self = this;            
+            this.eventEditorDialog = $('#entityEditor').modal({ show: false });
+            this.eventEditorDialog.find('.modal-body').empty().append($(editorTemplate));
             this.eventEditorDialog.form = this.eventEditorDialog.find('#createEventForm');
-            this.eventEditorDialog.find('#saveEventButton').click(function () {
+            this.eventEditorDialog.find('#saveEntityButton').click(function () {
                 self.eventEditorDialog.form.submit();
             });           
             this.eventEditorDialog.form.submit(function (e) {
@@ -28,6 +31,7 @@
 
         activate: function () {
             var self = this;
+            $('#modules').empty().append($(moduleTemplate));
             $('#event-list>tr').remove();
             rest.get('events').done(function (events) {
                 // TODO add spinner while loading
@@ -55,7 +59,7 @@
             }
             var uiEvent = _.clone(event);
             uiEvent.Description = helper.textToHtml(uiEvent.Description || '');
-            var $event = $($.jqote(this.eventTemplate, uiEvent));
+            var $event = $($.jqote(rowTemplate, uiEvent));
             var eventList = $('#event-list');
             if (appendToList) {
                 $event.hide();
@@ -86,8 +90,8 @@
             
             $event.find('button[data-action=delete]').click(function () {
                 var popoverTarget = this;
-                var $content = $('<div style="width=100%"><button type="button" class="btn btn-danger" data-action="Yes">Yes</button>' +
-                                 '<button type="button" class="btn btn-default" data-action="No">No</button></div>');
+                var $content = $('<div style="min-width: 100px"><div class="btn btn-danger" data-action="Yes">Yes</div>' +
+                                 '<div class="btn btn-default" data-action="No">No</div></div>');
                 $content.find('[data-action=Yes]').click(function() {
                     rest.post('events/delete/' + event.Id).done(function () {                        
                         $event.fadeOut(consts.fadeDuration, function() {
@@ -116,19 +120,6 @@
             } else {
                 event.StartDate = '';
             }                           
-        },
-               
-        eventTemplate: 
-            '<tr id="event<%= this.Id %>">' +
-                '<td><%= this.Name %></td>' +
-                '<td class="auto-width"><%= this.StartDate %></td>' +
-                '<td><div class="entity-controls-host">' +
-                    '<%= this.Description %>' +
-                    '<div class="entity-controls btn-group btn-group-xs">' +
-                        '<button type="button" class="btn btn-default" data-action="edit">Edit</button>' +
-                        '<button type="button" class="btn btn-danger" data-action="delete">Delete</button>' +
-                    '</div>' +                    
-                '</div></td>' +
-            '</tr>'        
+        }                          
     };
 });

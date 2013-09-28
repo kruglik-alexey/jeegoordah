@@ -152,6 +152,9 @@
     <Content Include="Scripts\Jeegoordah\nav.js" />
     <Content Include="Scripts\Jeegoordah\notification.js" />
     <Content Include="Scripts\Jeegoordah\rest.js" />
+    <Content Include="Scripts\Jeegoordah\templates\events\editor.html" />
+    <Content Include="Scripts\Jeegoordah\templates\events\module.html" />
+    <Content Include="Scripts\Jeegoordah\templates\events\row.html" />
     <Content Include="Scripts\jquery-2.0.3.js" />
     <Content Include="Scripts\jquery-2.0.3.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
@@ -163,6 +166,7 @@
     <Content Include="Scripts\Noty\topCenter.js" />
     <Content Include="Scripts\r.js" />
     <Content Include="Scripts\require.js" />
+    <Content Include="Scripts\text.js" />
     <Content Include="Scripts\underscore-min.js" />
     <Content Include="Web.config" />
     <Content Include="Views\Web.config" />
