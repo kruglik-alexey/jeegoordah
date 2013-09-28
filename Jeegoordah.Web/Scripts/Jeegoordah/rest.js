@@ -1,9 +1,8 @@
 ﻿define(['$', 'notification'], function ($, notification) {
-    var baseUrl = location.origin + '/';
     var rest = {        
         get: function (resource) {
             var ajax = $.ajax({
-                url: baseUrl + resource,
+                url: resource,
                 type: "GET",
             });
             ajax.fail(function (response) {                
@@ -14,7 +13,7 @@
         
         post: function(resource, data) {
             var ajax = $.ajax({
-                url: baseUrl + resource,
+                url: resource,
                 type: "POST",
                 contentType: "application/json; charset=utf-8",
                 data: JSON.stringify(data)
