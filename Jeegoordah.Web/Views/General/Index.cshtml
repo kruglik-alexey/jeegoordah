@@ -1,9 +1,5 @@
 ﻿@model Jeegoordah.Web.Controllers.GeneralController.CacheBuster
 
-@{
-    Layout = null;    
-}
-
 <!DOCTYPE html>
 
 <html>
@@ -15,35 +11,14 @@
         @Html.Raw(@Model.RenderCssLink("/scripts/jeegoordah/jeegoordah.css"));
     </head>
     <body>
-        <nav class="navbar navbar-default navbar-inverse navbar-fixed-top" role="navigation">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <span class="navbar-brand">Jeegoordah</span>
-            </div>
-
-            <div class="collapse navbar-collapse navbar-ex1-collapse">
-                @* Navigation is hiden at page load. It become visible after right navigation element is activated according to current hash. See nav.js *@
-                <ul class="nav navbar-nav" style="display:none !important">
-                    <li id="nav-total"><a href="#total">Total</a></li>
-                    <li id="nav-people"><a href="#people">People</a></li>
-                    <li id="nav-events"><a href="#events">Events</a></li>
-                    <li id="nav-spendings"><a href="#spendings">Spendings</a></li>
-                    <li id="nav-directs"><a href="#directs">Directs</a></li>              
-                </ul>                        
-            </div>
-        </nav>            
+        <div id="nav-container"></div>
         
         <div class="page-content container">
             <div class="page-header">
                 <h1 id="module-name"></h1>
             </div>                
                  
-            <div id="modules" style="display:none">                                                
+            <div id="modules">                                                
             </div>            
         </div>   
         

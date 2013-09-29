@@ -1,0 +1,28 @@
+﻿<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Jeegoordah Tests</title>
+        <link rel="stylesheet" href="/scripts/qunit/qunit.css">
+        <script src="/scripts/qunit/qunit.js"></script>
+        <script data-main="/scripts/jeegoordah/app.js" src="/scripts/require.js"></script>
+    </head>
+    <body>
+        <script>
+            window.location.hash = '';
+            require(['app'], function (app) {
+                // Wait for app to fully initialize before tests run
+                app.done(function() {
+                    require(['../tests/nav-tests']);
+                });
+            });
+        </script>
+        <div id="qunit"></div>
+        <div id="qunit-fixture"></div>
+        
+        <div style="position: absolute; left: -9999px">
+            <div id="nav-container"></div>
+            <h1 id="module-name"></h1>
+            <div id="modules"></div>
+        </div>        
+    </body>
+</html>

@@ -1,4 +1,4 @@
-﻿define(['$', 'modules/total', 'modules/people', 'modules/events'], function ($, total, people, events) {
+﻿define(['$', 'modules/total', 'modules/people', 'modules/events', 'text!templates/nav.html'], function ($, total, people, events, template) {
     var routes = {        
         total: total,
         people: people,
@@ -7,13 +7,10 @@
     };
 
     return {        
-        init: function() {
+        init: function () {
+            $('#nav-container').append($(template));            
             window.onhashchange = this._processRoute;            
-            this._processRoute();
-            
-            // Navigation and modules container are hidden in markup. Showing them after navigation and module are initialized.
-            $('ul.nav').show();
-            $('#modules').show();                        
+            this._processRoute();                       
         },
         
         _processRoute: function() {
