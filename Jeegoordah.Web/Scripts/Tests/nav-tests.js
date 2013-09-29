@@ -25,6 +25,7 @@
             ok($selector.length === 1, 'Module was rendered');
             equal(document.title, 'Jeegoordah | Events', 'Title was changed');
             equal($("#module-name").text(), 'Events', 'Module header was changed');
+            ok($('li#nav-events').hasClass('active'), 'Module nav element was activated');
             start();
         });
     });
