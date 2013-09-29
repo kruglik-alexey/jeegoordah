@@ -40,7 +40,7 @@
         }
                 
         var $selector = $(this.selector);
-        if ($selector.length > 0 || new Date() - start > 200) {
+        if ($selector.length > 0 || new Date() - start > 500) {            
             $.proxy(callback, $selector)($selector);
             return;
         }

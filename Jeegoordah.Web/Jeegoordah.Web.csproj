@@ -170,6 +170,7 @@
     <Content Include="Scripts\r.js" />
     <Content Include="Scripts\require.js" />
     <Content Include="Scripts\sinon.js" />
+    <Content Include="Scripts\Tests\events-tests.js" />
     <Content Include="Scripts\Tests\index.html" />
     <Content Include="Scripts\Tests\nav-tests.js" />
     <Content Include="Scripts\text.js" />

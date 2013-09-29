@@ -8,11 +8,16 @@
     </head>
     <body>
         <script>
+            // Fixes problem with setup/teardown called in messed up order.
+            QUnit.config.autostart = false;
             window.location.hash = '';
             require(['app'], function (app) {
                 // Wait for app to fully initialize before tests run
                 app.done(function() {
-                    require(['../tests/nav-tests']);
+                    require([
+                            '../tests/nav-tests'
+                            , '../tests/events-tests'
+                        ], function() { QUnit.start(); });
                 });
             });
         </script>
