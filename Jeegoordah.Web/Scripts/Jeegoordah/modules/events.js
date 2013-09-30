@@ -33,10 +33,10 @@
             var self = this;
             $('#modules').empty().append($(moduleTemplate));
             $('#event-list>tr').remove();
-            rest.get('events').done(function (events) {
+            rest.get('events').done(function (events) {                
                 // TODO add spinner while loading
-                _.each(events, function (event) {
-                    self._fixStartDateFormat(event);
+                _.each(events, function (event) {                    
+                    event = self._fixStartDateFormat(event);
                     self._createEventElement(event);
                 });
             });
@@ -45,7 +45,7 @@
         _createEvent: function () {
             var self = this;
             rest.post('events/create', self.eventEditorDialog.form.toJson()).done(function (event) {
-                self._fixStartDateFormat(event);
+                event = self._fixStartDateFormat(event);
                 self._createEventElement(event);
                 self.eventEditorDialog.modal('hide');
                 notification.success('Event created.');                                
@@ -112,12 +112,15 @@
             return $event;
         },
         
-        _fixStartDateFormat: function(event) {
-            if (event.StartDate) {
-                event.StartDate = helper.fixJsonDate(event.StartDate);
+        _fixStartDateFormat: function (event) {
+            // This method called on deferred result. We can't change event object because deferred may have several subscribers.
+            var e = _.clone(event);
+            if (e.StartDate) {
+                e.StartDate = helper.fixJsonDate(e.StartDate);
             } else {
-                event.StartDate = '';
-            }                           
+                e.StartDate = '';
+            }
+            return e;
         }                          
     };
 });
