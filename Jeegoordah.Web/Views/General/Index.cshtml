@@ -5,10 +5,10 @@
 <html>
     <head>
         <title>Jeegoordah</title>
-        @Html.Raw(@Model.RenderRequireJsCacheBuster("/scripts/require.js", "/scripts/jeegoordah/app.js"));
-        @Html.Raw(@Model.RenderCssLink("/scripts/bootstrap/bootstrap.min.css"));
-        @Html.Raw(@Model.RenderCssLink("/scripts/bootstrap/bootstrap-datepicker.css"));
-        @Html.Raw(@Model.RenderCssLink("/scripts/jeegoordah/jeegoordah.css"));
+        @Html.Raw(@Model.RenderRequireJsCacheBuster("/scripts/require.js", "/scripts/jeegoordah/app.js"))
+        @Html.Raw(@Model.RenderCssLink("/scripts/bootstrap/bootstrap.min.css"))
+        @Html.Raw(@Model.RenderCssLink("/scripts/bootstrap/bootstrap-datepicker.css"))
+        @Html.Raw(@Model.RenderCssLink("/scripts/jeegoordah/jeegoordah.css"))
     </head>
     <body>
         <div id="nav-container"></div>
