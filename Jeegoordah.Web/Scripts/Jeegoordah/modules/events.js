@@ -27,7 +27,7 @@
             rest.post('events/create', event).done(function () {
                 event = self._fixStartDateFormat(event);
                 self._createEventElement(event);
-                editor.hide();
+                editor.close();
                 notification.success('Event created.');                                
             });            
         },
@@ -49,7 +49,7 @@
                 editor.show($(editorTemplate), event, 'Edit Event', function(updatedEvent) {
                     updatedEvent = _.extend({ Id: event.Id }, updatedEvent);
                     rest.post('events/update', updatedEvent).done(function () {
-                        editor.hide();
+                        editor.close();
                         notification.success('Event updated.');
 
                         var oldElement = eventList.find('#event' + event.Id);

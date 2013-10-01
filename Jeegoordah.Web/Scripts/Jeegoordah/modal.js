@@ -17,8 +17,8 @@
                 $modal.find('#modalCancelButton').off('click');
                 $modal.off('hidden.bs.modal');
             });
-            
-            $modal.find('#modalOkButton').click(callbacks.okCallback || $.noop);                
+
+            $modal.find('#modalOkButton').click(callbacks.okCallback || $.noop);
             $modal.find('#modalCancelButton').click(callbacks.cancelCallback || $.noop);                
             $modal.modal('show');                                                  
         },

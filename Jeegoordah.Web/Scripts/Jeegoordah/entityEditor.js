@@ -7,17 +7,21 @@
             $editor.submit(function (e) {
                 e.preventDefault();
                 if ($editor.valid()) {
+                    console.log('saveCallback');
                     saveCallback($editor.toJson());
                 }
             });
             $editor.populateForm(entity);
             modal.show($editor, title, {
-                okCallback: $editor.submit()                
+                // TODO for some reason can't write it as _.bind($editor.submit, $editor). WTF?
+                okCallback: function() {
+                    $editor.submit();
+                }
             });
             return $editor;
         },
-        hide: function() {
-            modal.hide();
+        close: function() {
+            modal.close();
         }
     };
 })
