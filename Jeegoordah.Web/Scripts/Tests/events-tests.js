@@ -39,12 +39,12 @@
         });  
     });
 
-    asyncTest('Should create event', function () {
-        this.sinon.stub(rest, 'get').withArgs('events').returns($.Deferred().resolve([]));
-        $('#module-events').wait(function ($module) {
-            $module.find('#createEventButton').click();
-            ok();
-            start();
-        });
-    });
+//    asyncTest('Should create event', function () {
+//        this.sinon.stub(rest, 'get').withArgs('events').returns($.Deferred().resolve([]));
+//        $('#module-events').wait(function ($module) {
+//            $module.find('#createEventButton').click();
+//            ok();
+//            start();
+//        });
+//    });
 })

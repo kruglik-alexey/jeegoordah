@@ -9,17 +9,18 @@
             callbacks = callbacks || {};
             $modal.find('.modal-title').text(title);
             $modal.find('.modal-body').empty().append($content);
-            $modal.on('hidden.bs.modal', function () {
-                if (callbacks && callbacks.hiddenCallback) {
-                    callbacks.hiddenCallback();
-                }
-                $modal.find('#modalOkButton').off('click');
-                $modal.find('#modalCancelButton').off('click');
-                $modal.off('hidden.bs.modal');
+            
+            $modal.find('#modalOkButton').off('click');
+            $modal.find('#modalCancelButton').off('click');
+            $modal.off('hidden.bs.modal');
+            $modal.on('hidden.bs.modal', function () {                
+                if (callbacks && callbacks.hidden) {
+                    callbacks.hidden();
+                }                
             });
 
-            $modal.find('#modalOkButton').click(callbacks.okCallback || $.noop);
-            $modal.find('#modalCancelButton').click(callbacks.cancelCallback || $.noop);                
+            $modal.find('#modalOkButton').click(callbacks.ok || $.noop);
+            $modal.find('#modalCancelButton').click(callbacks.cancel || $.noop);                
             $modal.modal('show');                                                  
         },
         close: function() {
