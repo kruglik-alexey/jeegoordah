@@ -24,6 +24,7 @@
         
         _createEvent: function (event) {
             var self = this;
+            // TODO should use event returned from create request as it has Id
             rest.post('events/create', event).done(function () {
                 event = self._fixStartDateFormat(event);
                 self._createEventElement(event);
