@@ -119,6 +119,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\ControllerFactory.cs" />
+    <Compile Include="Controllers\DbController.cs" />
     <Compile Include="Controllers\GeneralController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -174,8 +176,10 @@
     <Content Include="Scripts\r.js" />
     <Content Include="Scripts\require.js" />
     <Content Include="Scripts\sinon.js" />
+    <Content Include="Scripts\Tests\entityEditor-tests.js" />
     <Content Include="Scripts\Tests\events-tests.js" />
     <Content Include="Scripts\Tests\index.html" />
+    <Content Include="Scripts\Tests\modal-tests.js" />
     <Content Include="Scripts\Tests\nav-tests.js" />
     <Content Include="Scripts\text.js" />
     <Content Include="Scripts\underscore-min.js" />

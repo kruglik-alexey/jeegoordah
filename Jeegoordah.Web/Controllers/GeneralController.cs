@@ -8,7 +8,7 @@ using Jeegoordah.Core.DL;
 
 namespace Jeegoordah.Web.Controllers
 {
-    public class GeneralController : Controller
+    public class GeneralController : DbController
     {
         public class CacheBuster
         {
@@ -44,7 +44,7 @@ namespace Jeegoordah.Web.Controllers
         [HttpGet]
         public ActionResult Events()
         {
-            using (var db = new JeegoordahDb())
+            using (var db = DbFactory.CreateDb())
             {
                 return Json(db.Events.ToList(), JsonRequestBehavior.AllowGet);
             }
@@ -53,7 +53,7 @@ namespace Jeegoordah.Web.Controllers
         [HttpPost]
         public ActionResult CreateEvent(Event @event)
         {
-            using (var db = new JeegoordahDb())
+            using (var db = DbFactory.CreateDb())
             {
                 if (db.Events.Any(e => e.Name.Equals(@event.Name, StringComparison.CurrentCultureIgnoreCase)))
                 {
@@ -72,7 +72,7 @@ namespace Jeegoordah.Web.Controllers
         public ActionResult UpdateEvent(Event @event)
         {
             // TODO what if id invalid?
-            using (var db = new JeegoordahDb())
+            using (var db = DbFactory.CreateDb())
             {
                 if (db.Events.Any(e => e.Name.Equals(@event.Name, StringComparison.CurrentCultureIgnoreCase) && e.Id != @event.Id))
                 {
@@ -92,7 +92,7 @@ namespace Jeegoordah.Web.Controllers
         public ActionResult DeleteEvent(int id)
         {
             // TODO what if id invalid?
-            using (var db = new JeegoordahDb())
+            using (var db = DbFactory.CreateDb())
             {
                 var e = new Event {Id = id};
                 db.Events.Attach(e);
