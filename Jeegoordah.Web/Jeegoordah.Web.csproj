@@ -126,6 +126,8 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Content Include="Scripts\Tests\entityEditor-tests.js" />
+    <Content Include="Scripts\Tests\modal-tests.js" />
     <Content Include="Scripts\Bootstrap\bootstrap-datepicker.js" />
     <Content Include="Scripts\Bootstrap\bootstrap-datepicker.css" />
     <Content Include="Scripts\Jeegoordah\app.js" />
