@@ -32,7 +32,17 @@ namespace Jeegoordah.Web
                 name: "Events",
                 url: "events",
                 defaults: new { controller = "General", action = "Events" }
+            );
+
+
+#if DEBUG
+            routes.MapRoute(
+                name: "ClearDatabase",
+                url: "test/cleardatabase",
+                defaults: new { controller = "Test", action = "ClearDatabase" }
             );  
+#endif
+
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",

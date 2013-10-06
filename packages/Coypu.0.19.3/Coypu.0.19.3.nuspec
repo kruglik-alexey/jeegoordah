@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Coypu</id>
+    <version>0.19.3</version>
+    <title>Coypu</title>
+    <authors>AdrianLongley</authors>
+    <owners>AdrianLongley</owners>
+    <licenseUrl>http://opensource.org/licenses/mit-license.php</licenseUrl>
+    <projectUrl>https://github.com/featurist/coypu</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Intuitive, robust browser automation for .Net</description>
+    <releaseNotes />
+    <copyright />
+    <language />
+    <dependencies>
+      <dependency id="Selenium.WebDriver" version="[2.35.0]" />
+      <dependency id="Selenium.Support" version="[2.35.0]" />
+    </dependencies>
+  </metadata>
+</package>
