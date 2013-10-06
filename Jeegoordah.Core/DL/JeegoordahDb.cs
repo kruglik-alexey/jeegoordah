@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Jeegoordah.Core.DL.Entity;
 
 namespace Jeegoordah.Core.DL
 {
@@ -11,12 +12,14 @@ namespace Jeegoordah.Core.DL
     {
         static JeegoordahDb()
         {
-            Database.SetInitializer(new DropCreateDatabaseIfModelChanges<JeegoordahDb>());
+            Database.SetInitializer(new JeegoordahDbInitializer<JeegoordahRealDb>());
+            Database.SetInitializer(new JeegoordahDbInitializer<JeegoordahTestDb>());
         }
 
         public JeegoordahDb(string connectionStringName) : base(connectionStringName) { }
 
         public DbSet<Event> Events { get; set; }
+        public DbSet<Bro> Bros { get; set; }
     }
 
     public class JeegoordahRealDb : JeegoordahDb

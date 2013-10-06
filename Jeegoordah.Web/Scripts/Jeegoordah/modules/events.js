@@ -1,22 +1,19 @@
 ﻿define(['_', '$', 'rest', 'notification', 'helper', 'consts', 'entityEditor', 'text!templates/events/row.html', 'text!templates/events/editor.html', 'text!templates/events/module.html'],
     function (_, $, rest, notification, helper, consts, editor, rowTemplate, editorTemplate, moduleTemplate) {
-        
-    return {
+
+    var self = {
         init: function () {
             // TODO remove?
         },
 
         activate: function () {
-            var self = this;
+            this._bros = rest.get('bros');
             $('#modules').empty().append($(moduleTemplate));
-            $('#createEventButton').click(function () {
-                editor.show($(editorTemplate), {}, 'Create Event', _.bind(self._createEvent, self));
-            });            
-            this._loadEvents();            
+            this._loadEvents();
+            $('#createEventButton').click(_.bind(this._createEvent, this));
         },
         
         _loadEvents: function () {
-            var self = this;
             $('#event-list>tr').remove();
             rest.get('events').done(function (events) {
                 // TODO add spinner while loading
@@ -27,15 +24,22 @@
             });
         },
         
-        _createEvent: function (event) {
-            var self = this;
-            // TODO should use event returned from create request as it has Id
-            rest.post('events/create', event).done(function (createdEvent) {
-                createdEvent = self._fixStartDateFormat(createdEvent);
-                self._createEventElement(createdEvent);
-                editor.close();
-                notification.success('Event created.');                                
-            });            
+        _createEvent: function () {
+            this._bros.done(function (bros) {
+                var rendered = $.jqote(editorTemplate, { bros: bros });
+                editor.show($(rendered), {}, 'Create Event', {
+                    ok: function (event) {
+                        rest.post('events/create', event).done(function (createdEvent) {
+                            createdEvent = self._fixStartDateFormat(createdEvent);
+                            self._createEventElement(createdEvent);
+                            editor.close();
+                            notification.success('Event created.');
+                        });
+                    },
+                    toForm: _.bind(self._eventToForm, self),
+                    fromForm: _.bind(self._eventFromForm, self),
+                });
+            });                                
         },
         
         _createEventElement: function (event, appendToList) {
@@ -55,22 +59,31 @@
             return $event;
         },
         
-        _editEvent: function (event) {
-            var self = this;
-            editor.show($(editorTemplate), event, 'Edit Event', function (updatedEvent) {
-                updatedEvent = _.extend({ Id: event.Id }, updatedEvent);
-                rest.post('events/update', updatedEvent).done(function () {
-                    editor.close();
-                    notification.success('Event updated.');
-
-                    var oldElement = $('#event-list').find('#event' + event.Id);
-                    var newElement = self._createEventElement(updatedEvent, false);
-                    oldElement.fadeOut(consts.fadeDuration, function () {
-                        newElement.insertAfter(oldElement).hide();
-                        oldElement.remove();
-                        newElement.fadeIn(consts.fadeDuration);
-                    });
+        _editEvent: function (event) {            
+            this._bros.done(function (bros) {
+                var rendered = $.jqote(editorTemplate, { bros: bros });
+                editor.show($(rendered), event, 'Edit Event', {
+                    ok: function(updatedEvent) {
+                        updatedEvent = _.extend({ Id: event.Id }, updatedEvent);
+                        rest.post('events/update', updatedEvent).done(function() {
+                            editor.close();
+                            notification.success('Event updated.');
+                            self._updateEventElement(updatedEvent);
+                        });
+                    },
+                    toForm: _.bind(self._eventToForm, self),
+                    fromForm: _.bind(self._eventFromForm, self),
                 });
+            });            
+        },
+        
+        _updateEventElement: function (event) {
+            var oldElement = $('#event-list').find('#event' + event.Id);
+            var newElement = self._createEventElement(event, false);
+            oldElement.fadeOut(consts.fadeDuration, function () {
+                newElement.insertAfter(oldElement).hide();
+                oldElement.remove();
+                newElement.fadeIn(consts.fadeDuration);
             });
         },
         
@@ -110,6 +123,31 @@
                 e.StartDate = '';
             }
             return e;
-        }                          
+        },
+        
+        _eventToForm: function (event) {
+            var r = _.clone(event);
+            var eventBros = r.Bros;
+            delete r.Bros;
+            _.each(eventBros, function (id) {
+                r["bro" + id] = true;
+            });
+            return r;
+        },
+        
+        _eventFromForm: function (event) {
+            var r = { Bros: [] };
+            _.each(event, function (val, key) {
+                if (key.substring(0, 3) == 'bro') {
+                    var broId = parseInt(key.substring(3, key.length));
+                    r.Bros.push(broId);
+                } else {
+                    r[key] = val;
+                }
+            });
+            return r;
+        }
     };
+        
+    return self;
 });

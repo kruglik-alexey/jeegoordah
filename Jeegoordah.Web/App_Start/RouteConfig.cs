@@ -13,41 +13,51 @@ namespace Jeegoordah.Web
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
+            #region Events
+
             routes.MapRoute(
                 name: "UpdateEvent",
                 url: "events/update",
-                defaults: new { controller = "General", action = "UpdateEvent" }
+                defaults: new { controller = "Events", action = "Update" }
             );
             routes.MapRoute(
                 name: "DeleteEvent",
                 url: "events/delete/{id}",
-                defaults: new { controller = "General", action = "DeleteEvent" }
+                defaults: new { controller = "Events", action = "Delete" }
             );
             routes.MapRoute(
                 name: "CreateEvent",
                 url: "events/create",
-                defaults: new { controller = "General", action = "CreateEvent" }
+                defaults: new { controller = "Events", action = "Create" }
             );
             routes.MapRoute(
-                name: "Events",
+                name: "ListEvents",
                 url: "events",
-                defaults: new { controller = "General", action = "Events" }
+                defaults: new { controller = "Events", action = "List" }
             );
 
+            #endregion
+
+
+            routes.MapRoute(
+                name: "ListBros",
+                url: "bros",
+                defaults: new { controller = "Bros", action = "List" }
+            );
+
+            routes.MapRoute(
+                name: "Default",
+                url: "",
+                defaults: new { controller = "General", action = "Index" }
+            );
 
 #if DEBUG
             routes.MapRoute(
                 name: "ClearDatabase",
                 url: "test/cleardatabase",
                 defaults: new { controller = "Test", action = "ClearDatabase" }
-            );  
+            );
 #endif
-
-            routes.MapRoute(
-                name: "Default",
-                url: "{controller}/{action}/{id}",
-                defaults: new { controller = "General", action = "Index", id = UrlParameter.Optional }
-            );            
         }
     }
 }

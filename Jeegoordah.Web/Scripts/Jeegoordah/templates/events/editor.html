@@ -10,4 +10,14 @@
 <div class="form-group">
     <label for="inputEventDescription">Description</label>
     <textarea class="form-control" rows="3" name="Description"></textarea>
+</div>   
+<div class="form-group">    
+    <% for(var i = 0; i < this.bros.length; i++) { %>
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" value="" name="bro<%= this.bros[i].Id %>">
+                <%= this.bros[i].Name %>
+            </label>
+        </div>
+    <% } %>    
 </div>        

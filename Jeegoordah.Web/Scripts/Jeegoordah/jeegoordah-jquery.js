@@ -1,5 +1,5 @@
 ﻿define(['jquery'], function ($) {    
-    $.fn.toJson = function() {
+    $.fn.toJson = function () {
         var o = {};
         var a = this.serializeArray();
         $.each(a, function() {

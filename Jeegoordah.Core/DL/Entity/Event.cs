@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Jeegoordah.Core.DL
+namespace Jeegoordah.Core.DL.Entity
 {
-    [Serializable]
     public class Event
     {
+        public Event()
+        {
+            Bros = new List<Bro>();
+        }
+
         [Key] 
         public int Id { get; set; }
         [Required]
@@ -19,5 +19,7 @@ namespace Jeegoordah.Core.DL
         public DateTime? StartDate { get; set; }
         [Required]
         public DateTime CreatedAt { get; set; }
+         
+        public List<Bro> Bros { get; set; }
     }
 }
