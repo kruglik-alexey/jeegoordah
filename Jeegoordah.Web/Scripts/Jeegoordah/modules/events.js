@@ -9,9 +9,9 @@
         activate: function () {            
             // TODO add spinner while loading
             $.when(rest.get('bros'), rest.get('events')).done(function (bros, events) {
-                self.bros = bros[0];
+                self.bros = bros[0];                
+                $('#modules').empty().append($(moduleTemplate));
                 $('#createEventButton').click(self._createEvent);
-                $('#modules').empty().append($(moduleTemplate));                
                 self._loadEvents(events[0]);                                
             });                        
         },
@@ -45,9 +45,9 @@
             }
             var uiEvent = _.clone(event);
             uiEvent.Description = helper.textToHtml(uiEvent.Description || '');
-            uiEvent.Bros = _.map(uiEvent.Bros, function(broId) {
-                return _.find(self.bros, function(bro) { return bro.Id === broId; }).Name;
-            });
+            uiEvent.Bros = _.chain(uiEvent.Bros).map(function(broId) {
+                return _.find(self.bros, function(bro) { return bro.Id === broId; });
+            }).sortBy('Name').value();
             var $event = $($.jqote(rowTemplate, uiEvent));
             var eventList = $('#event-list');
             if (appendToList) {
