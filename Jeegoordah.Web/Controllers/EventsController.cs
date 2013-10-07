@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Jeegoordah.Core;
+using Jeegoordah.Core.DL;
 using Jeegoordah.Core.DL.Entity;
 using Jeegoordah.Web.Models;
 
@@ -26,12 +27,11 @@ namespace Jeegoordah.Web.Controllers
         {            
             using (var db = DbFactory.CreateDb())
             {
-                if (db.Events.Any(e => e.Name.Equals(@event.Name, StringComparison.CurrentCultureIgnoreCase)))
+                JsonResult nameAssertResult;
+                if (!AssertNameUnique(@event, db, out nameAssertResult))
                 {
-                    // TODO or should it be still 200?
-                    Response.StatusCode = 400;
-                    return Json(new {Field = "Name", Message = "Event with name {0} already exists.".F(@event.Name)});
-                }
+                    return nameAssertResult;
+                }   
 
                 var dlEvent = new Event {CreatedAt = DateTime.UtcNow};
                 @event.ToDataObject(dlEvent);
@@ -48,24 +48,27 @@ namespace Jeegoordah.Web.Controllers
             // TODO what if id invalid?
             using (var db = DbFactory.CreateDb())
             {
-                if (db.Events.Any(e => e.Name.Equals(@event.Name, StringComparison.CurrentCultureIgnoreCase) && e.Id != @event.Id))
+                if (!@event.Id.HasValue)
                 {
-                    // TODO or should it be still 200?
                     Response.StatusCode = 400;
-                    return Json(new {Field = "Name", Message = "Event with name {0} already exists.".F(@event.Name)});
+                    return Json(new {Field = "Id", Message = "Missing Id"});
                 }
+                JsonResult nameAssertResult;
+                if (!AssertNameUnique(@event, db, out nameAssertResult))
+                {
+                    return nameAssertResult;
+                }                
 
                 List<int> oldBros = db.Bros.Where(b => b.Events.Any(e => e.Id == @event.Id)).Select(b => b.Id).ToList();
                 var dlEvent = new Event
                 {
-                    Id = @event.Id,
+                    Id = @event.Id.Value,
                     CreatedAt = db.Events.Where(e => e.Id == @event.Id).Select(e => e.CreatedAt).First(),
                     Bros = oldBros.Select(b => new Bro {Id = b}).ToList()
-                };
-                dlEvent.Bros.ForEach(b => db.Bros.Attach(b));
+                };                
                 db.Events.Attach(dlEvent);                
                 @event.ToDataObject(dlEvent);
-                dlEvent.Bros.Where(b => !oldBros.Contains(b.Id)).ToList().ForEach(b => db.Bros.Attach(b));
+                dlEvent.Bros.ForEach(b => db.Bros.Attach(b));
                 db.SaveChanges();
                 return Json(new EventRest(dlEvent));
             }            
@@ -77,13 +80,32 @@ namespace Jeegoordah.Web.Controllers
             // TODO what if id invalid?
             using (var db = DbFactory.CreateDb())
             {
-                var e = new Event { Id = id };
+                var e = new Event {Id = id};
                 db.Events.Attach(e);
                 db.Events.Remove(e);
                 db.SaveChanges();
             }
             // TODO respond just with header if OK
             return Json(new { });
+        }
+
+        private bool AssertNameUnique(EventRest @event, JeegoordahDb db, out JsonResult result)
+        {
+            bool conflict;
+            if (@event.Id.HasValue)
+            {
+                conflict = db.Events.Any(e => e.Id != @event.Id.Value && e.Name.Equals(@event.Name, StringComparison.CurrentCultureIgnoreCase));
+            }
+            else
+            {
+                conflict = db.Events.Any(e => e.Name.Equals(@event.Name, StringComparison.CurrentCultureIgnoreCase));
+            }
+            result = null;
+            if (!conflict) return true;
+
+            result = Json(new {Field = "Name", Message = "Event with name {0} already exists.".F(@event.Name)});
+            Response.StatusCode = 400;
+            return false;
         }
     }
 }

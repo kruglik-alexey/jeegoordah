@@ -6,40 +6,37 @@
             // TODO remove?
         },
 
-        activate: function () {
-            this._bros = rest.get('bros');
-            $('#modules').empty().append($(moduleTemplate));
-            this._loadEvents();
-            $('#createEventButton').click(_.bind(this._createEvent, this));
+        activate: function () {            
+            // TODO add spinner while loading
+            $.when(rest.get('bros'), rest.get('events')).done(function (bros, events) {
+                self.bros = bros[0];
+                $('#createEventButton').click(self._createEvent);
+                $('#modules').empty().append($(moduleTemplate));                
+                self._loadEvents(events[0]);                                
+            });                        
         },
         
-        _loadEvents: function () {
-            $('#event-list>tr').remove();
-            rest.get('events').done(function (events) {
-                // TODO add spinner while loading
-                _.each(events, function (event) {
-                    event = self._fixStartDateFormat(event);
-                    self._createEventElement(event);
-                });
-            });
+        _loadEvents: function (events) {                                    
+            _.each(events, function (event) {
+                event = self._fixStartDateFormat(event);
+                self._createEventElement(event);
+            });            
         },
         
         _createEvent: function () {
-            this._bros.done(function (bros) {
-                var rendered = $.jqote(editorTemplate, { bros: bros });
-                editor.show($(rendered), {}, 'Create Event', {
-                    ok: function (event) {
-                        rest.post('events/create', event).done(function (createdEvent) {
-                            createdEvent = self._fixStartDateFormat(createdEvent);
-                            self._createEventElement(createdEvent);
-                            editor.close();
-                            notification.success('Event created.');
-                        });
-                    },
-                    toForm: _.bind(self._eventToForm, self),
-                    fromForm: _.bind(self._eventFromForm, self),
-                });
-            });                                
+            var rendered = $.jqote(editorTemplate, { bros: self.bros });
+            editor.show($(rendered), {}, 'Create Event', {
+                ok: function (event) {
+                    rest.post('events/create', event).done(function (createdEvent) {
+                        createdEvent = self._fixStartDateFormat(createdEvent);
+                        self._createEventElement(createdEvent);
+                        editor.close();
+                        notification.success('Event created.');
+                    });
+                },
+                toForm: _.bind(self._eventToForm, self),
+                fromForm: _.bind(self._eventFromForm, self),
+            });                                          
         },
         
         _createEventElement: function (event, appendToList) {
@@ -48,33 +45,34 @@
             }
             var uiEvent = _.clone(event);
             uiEvent.Description = helper.textToHtml(uiEvent.Description || '');
+            uiEvent.Bros = _.map(uiEvent.Bros, function(broId) {
+                return _.find(self.bros, function(bro) { return bro.Id === broId; }).Name;
+            });
             var $event = $($.jqote(rowTemplate, uiEvent));
             var eventList = $('#event-list');
             if (appendToList) {
                 eventList.append($event);
             }            
 
-            $event.find('button[data-action=edit]').click(_.bind(this._editEvent, this, event));
-            $event.find('button[data-action=delete]').click(_.bind(this._deleteEvent, this, event));
+            $event.find('button[data-action=edit]').click(_.partial(self._editEvent, event));
+            $event.find('button[data-action=delete]').click(_.partial(self._deleteEvent, event));
             return $event;
         },
         
-        _editEvent: function (event) {            
-            this._bros.done(function (bros) {
-                var rendered = $.jqote(editorTemplate, { bros: bros });
-                editor.show($(rendered), event, 'Edit Event', {
-                    ok: function(updatedEvent) {
-                        updatedEvent = _.extend({ Id: event.Id }, updatedEvent);
-                        rest.post('events/update', updatedEvent).done(function() {
-                            editor.close();
-                            notification.success('Event updated.');
-                            self._updateEventElement(updatedEvent);
-                        });
-                    },
-                    toForm: _.bind(self._eventToForm, self),
-                    fromForm: _.bind(self._eventFromForm, self),
-                });
-            });            
+        _editEvent: function (event) {                      
+            var rendered = $.jqote(editorTemplate, { bros: self.bros });
+            editor.show($(rendered), event, 'Edit Event', {
+                ok: function(updatedEvent) {
+                    updatedEvent = _.extend({ Id: event.Id }, updatedEvent);
+                    rest.post('events/update', updatedEvent).done(function() {
+                        editor.close();
+                        notification.success('Event updated.');
+                        self._updateEventElement(updatedEvent);
+                    });
+                },
+                toForm: _.bind(self._eventToForm, self),
+                fromForm: _.bind(self._eventFromForm, self),
+            });               
         },
         
         _updateEventElement: function (event) {

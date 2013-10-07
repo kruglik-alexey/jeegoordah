@@ -22,7 +22,7 @@ namespace Jeegoordah.Web.Models
             Bros = source.Bros.Select(b => b.Id).ToList();
         }
 
-        public int Id { get; set; }
+        public int? Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public DateTime? StartDate { get; set; }
@@ -30,12 +30,18 @@ namespace Jeegoordah.Web.Models
 
         public void ToDataObject(Event target)
         {
-            target.Id = Id;
+            if (Id.HasValue)
+            {
+                target.Id = Id.Value;
+            }
             target.Name = Name;
             target.StartDate = StartDate;
             target.Description = Description;
-            target.Bros.AddRange(Bros.Select(b => new Bro {Id = b}));
-            target.Bros.RemoveAll(b => !Bros.Contains(b.Id));
+            var oldBros = target.Bros.Select(b => b.Id).ToList();
+            var addedBros = Bros.Except(oldBros).ToList();
+            var removedBros = oldBros.Except(Bros).ToList();
+            target.Bros.AddRange(addedBros.Select(b => new Bro { Id = b }));
+            target.Bros.RemoveAll(b => removedBros.Contains(b.Id));
         }
     }
 }
