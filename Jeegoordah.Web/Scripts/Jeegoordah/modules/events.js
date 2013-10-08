@@ -49,9 +49,8 @@
                 return _.find(self.bros, function(bro) { return bro.Id === broId; });
             }).sortBy('Name').value();
             var $event = $($.jqote(rowTemplate, uiEvent));
-            var eventList = $('#event-list');
             if (appendToList) {
-                eventList.append($event);
+                self._getEventList(event).append($event);
             }            
 
             $event.find('button[data-action=edit]').click(_.partial(self._editEvent, event));
@@ -76,18 +75,19 @@
         },
         
         _updateEventElement: function (event) {
-            var oldElement = $('#event-list').find('#event' + event.Id);
+            var oldElement = $('#event' + event.Id);
             var newElement = self._createEventElement(event, false);
             newElement.find('#collapse' + event.Id).addClass('in');
-            oldElement.fadeOut(consts.fadeDuration, function () {
-                newElement.insertAfter(oldElement).hide();
+            newElement.hide();
+            oldElement.fadeOut(consts.fadeDuration, function () {                
+                self._getEventList(event).append(newElement);
                 oldElement.remove();
                 newElement.fadeIn(consts.fadeDuration);
             });
         },
         
         _deleteEvent: function(event) {
-            var $event = $('#event-list>#event' + event.Id);
+            var $event = $('#event' + event.Id);
             var $popoverTarget = $event.find('button[data-action=delete]');
             var $content = $('<div style="min-width: 100px"><div class="btn btn-danger" data-action="Yes">Yes</div>' +
                              '<div class="btn btn-default" data-action="No">No</div></div>');
@@ -133,10 +133,18 @@
         
         _eventFromForm: function (event, $editor) {
             event.Bros = [];
-            $editor.find('.bro-checkbox.active').each(function(tmp, el) {
+            $editor.find('.bro-checkbox.active').each(function (tmp, el) {
                 event.Bros.push(parseInt($(el).attr('data-id')));
             });
             return event;
+        },
+        
+        _getEventList: function (event) {
+            if (helper.parseDate(event.StartDate) >= new Date()) {
+                return $('#event-list-pending');
+            } else {
+                return $('#event-list-past');
+            }            
         }
     };
         

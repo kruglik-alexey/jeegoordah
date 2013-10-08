@@ -16,6 +16,7 @@ namespace Jeegoordah.Core.DL.Entity
         [Required]
         public string Name { get; set; }
         public string Description { get; set; }
+        [Required]
         public DateTime? StartDate { get; set; }
         [Required]
         public DateTime CreatedAt { get; set; }
