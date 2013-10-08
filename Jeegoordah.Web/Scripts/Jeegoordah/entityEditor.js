@@ -11,7 +11,7 @@
 
             var formEntity = entity;
             if (callbacks.toForm) {
-                formEntity = callbacks.toForm(formEntity);
+                formEntity = callbacks.toForm(formEntity, $editor);
             }
             $editor.populateForm(formEntity);
             
@@ -32,7 +32,7 @@
             if ($editor.valid()) {
                 var r = $editor.toJson();
                 if (callbacks.fromForm) {
-                    r = callbacks.fromForm(r);
+                    r = callbacks.fromForm(r, $editor);
                 }
                 callbacks.ok(r);
             }

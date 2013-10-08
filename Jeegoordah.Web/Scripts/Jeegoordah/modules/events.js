@@ -124,27 +124,19 @@
             return e;
         },
         
-        _eventToForm: function (event) {
-            var r = _.clone(event);
-            var eventBros = r.Bros;
-            delete r.Bros;
-            _.each(eventBros, function (id) {
-                r["bro" + id] = true;
+        _eventToForm: function (event, $editor) {
+            _.each(event.Bros, function (broId) {
+                $editor.find('.bro-checkbox[data-id=' + broId + ']').addClass('active');
             });
-            return r;
+            return event;
         },
         
-        _eventFromForm: function (event) {
-            var r = { Bros: [] };
-            _.each(event, function (val, key) {
-                if (key.substring(0, 3) == 'bro') {
-                    var broId = parseInt(key.substring(3, key.length));
-                    r.Bros.push(broId);
-                } else {
-                    r[key] = val;
-                }
+        _eventFromForm: function (event, $editor) {
+            event.Bros = [];
+            $editor.find('.bro-checkbox.active').each(function(tmp, el) {
+                event.Bros.push(parseInt($(el).attr('data-id')));
             });
-            return r;
+            return event;
         }
     };
         
