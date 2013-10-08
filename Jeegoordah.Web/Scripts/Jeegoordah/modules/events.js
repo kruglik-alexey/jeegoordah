@@ -78,6 +78,7 @@
         _updateEventElement: function (event) {
             var oldElement = $('#event-list').find('#event' + event.Id);
             var newElement = self._createEventElement(event, false);
+            newElement.find('#collapse' + event.Id).addClass('in');
             oldElement.fadeOut(consts.fadeDuration, function () {
                 newElement.insertAfter(oldElement).hide();
                 oldElement.remove();

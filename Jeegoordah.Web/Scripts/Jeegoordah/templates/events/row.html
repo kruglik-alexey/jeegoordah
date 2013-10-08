@@ -1,35 +1,31 @@
-﻿<tr id="event<%= this.Id %>">
-    <td><%= this.Name %></td>
-    <td class="auto-width"><%= this.StartDate %></td>
-    <td class="auto-width">
-        <table>
-            <tbody>
-                <tr>
-                    <td>
-                        <ul class="list-group">
-                            <% for(var i = 0; i < this.Bros.length / 2; i++) { %>
-                            <li class="list-group-item"><%= this.Bros[i].Name %></li>
-                            <% } %>
-                        </ul>        
-                    </td>
-                    <td>
-                        <ul class="list-group">
-                            <% for(var i = Math.floor(this.Bros.length / 2) + 1; i < this.Bros.length; i++) { %>
-                            <li class="list-group-item"><%= this.Bros[i].Name %></li>
-                            <% } %>
-                        </ul>     
-                    </td>
-                </tr>
-            </tbody>
-        </table>        
-    </td>
-    <td>
-        <div class="entity-controls-host">
-            <span><%= this.Description %></span>
-            <div class="entity-controls btn-group btn-group-xs">
-                <button type="button" class="btn btn-default" data-action="edit">Edit</button>
-                <button type="button" class="btn btn-danger" data-action="delete">Delete</button>
-            </div>
+﻿<div class="panel panel-default" id="event<%= this.Id %>">
+    <div class="panel-heading">
+        <h4 class="panel-title">
+            <a class="accordion-toggle align-justify" data-toggle="collapse" data-parent="#event-list" href="#collapse<%= this.Id %>">
+                <%= this.Name %> <span class="badge"><%= this.Bros.length %></span>
+            </a>
+        </h4>
+    </div>
+    <div id="collapse<%= this.Id %>" class="panel-collapse collapse">
+        <div class="panel-body">
+            <h3>
+                <%= this.Name %>
+                <span class="entity-controls btn-group btn-group-xs">
+                    <button type="button" class="btn btn-default" data-action="edit">Edit</button>
+                    <button type="button" class="btn btn-danger" data-action="delete">Delete</button>
+                </span>
+            </h3>
+            <p><%= this.StartDate %></p>
+            <ul class="list-inline list-group">
+                <% for(var i = 0; i < this.Bros.length; i++) { %>
+                <li class="list-group-item"><%= this.Bros[i].Name %></li>
+                <% } %>
+            </ul>
+            <% if (this.Description !== "") { %>
+                <div class="top-border">
+                    <%= this.Description %>
+                </div>
+            <% } %>
         </div>
-    </td>    
-</tr>
+    </div>
+</div>     
