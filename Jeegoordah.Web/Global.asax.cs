@@ -22,6 +22,7 @@ namespace Jeegoordah.Web
             RouteConfig.RegisterRoutes(RouteTable.Routes);
 
             ControllerBuilder.Current.SetControllerFactory(new ControllerFactory());
+            GlobalConfiguration.Configuration.BindParameter(typeof(DateTime), new DateTimeModelBinder());
         }
     }
 }
