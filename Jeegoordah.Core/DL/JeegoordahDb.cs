@@ -13,7 +13,9 @@ namespace Jeegoordah.Core.DL
         static JeegoordahDb()
         {
             Database.SetInitializer(new JeegoordahDbInitializer<JeegoordahRealDb>());
+#if DEBUG
             Database.SetInitializer(new JeegoordahDbInitializer<JeegoordahTestDb>());
+#endif
         }
 
         public JeegoordahDb(string connectionStringName) : base(connectionStringName) { }
