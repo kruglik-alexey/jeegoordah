@@ -79,8 +79,15 @@
             var newElement = self._createEventElement(event, false);
             newElement.find('#collapse' + event.Id).addClass('in');
             newElement.hide();
-            oldElement.fadeOut(consts.fadeDuration, function () {                
-                self._getEventList(event).append(newElement);
+            oldElement.fadeOut(consts.fadeDuration, function () {
+                var newList = self._getEventList(event);
+                var oldList = oldElement.parent();
+                if (newList.is(oldList)) {
+                    newElement.insertAfter(oldElement);
+                } else {
+                    newList.append(newElement);
+                }
+                
                 oldElement.remove();
                 newElement.fadeIn(consts.fadeDuration);
             });
