@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using Coypu;
+using Jeegoordah.Core;
 using NUnit.Framework;
 
 namespace Jeegoordah.Tests.Integration
@@ -11,112 +12,198 @@ namespace Jeegoordah.Tests.Integration
     [TestFixture]
     public class EventsModuleTests : IntegrationTest
     {
-        private void CreateEvent(string name, string startDate, string description, IEnumerable<string> bros = null)
+        class TestEvent
+        {
+            public TestEvent()
+            {
+                Name = "";
+                Description = "";
+                StartDate = "";
+                Bros = new List<string>();
+            }
+
+            public string Name { get; set; }
+            public string StartDate { get; set; }
+            public string Description { get; set; }
+            public List<string> Bros { get; set; }
+        }
+
+        private TestEvent CreateEvent(TestEvent e)
         {
             Browser.ClickButton("createEventButton");
-            Browser.FillIn("Name").With(name);
-            Browser.FillIn("StartDate").With(startDate);
-            Browser.FillIn("Description").With(description);
-            bros = bros ?? new string[0];
-            foreach (string bro in bros)
+            FillEditor(e);
+            Browser.ClickButton("modalOkButton");
+            return e;
+        }
+
+        private void FillEditor(TestEvent e)
+        {
+            Browser.FillIn("Name").With(e.Name);
+            Browser.FillIn("StartDate").With(e.StartDate);
+            Browser.FillIn("Description").With(e.Description);
+            foreach (var checkbox in Browser.FindAllCss("label.bro-checkbox.active"))
             {
-                Browser.Check(bro);
+                checkbox.Click();
             }
-            Browser.ClickButton("modalOkButton");            
+            foreach (string bro in e.Bros)
+            {
+                Browser.ClickButton(bro);
+            }
+        }
+
+        private void AssertEvent(ElementScope row, TestEvent e)
+        {
+            // Name + badge
+            Assert.AreEqual("{0} {1}".F(e.Name, e.Bros.Count), row.FindCss("a.accordion-toggle").Text);
+            row.FindCss("a.accordion-toggle").Click();
+            Assert.AreEqual(e.Name, row.FindCss("h3>span").Text);
+            Assert.AreEqual(e.StartDate, row.FindCss("p").Text);
+
+            List<SnapshotElementScope> bros = row.FindAllCss("li").ToList();
+            Assert.True(e.Bros.SequenceEqual(bros.Select(b => b.Text)));
+
+            if (!string.IsNullOrEmpty(e.Description))
+            {
+                ElementScope description = row.FindCss("div.panel-body>div");
+                Assert.AreEqual(e.Description, description.Text);
+            }
+            else
+            {
+                Assert.False(row.FindCss("div.panel-body>div").Exists());
+            }
         }
 
         [Test]
         public void ShouldCreateEvent()
         {            
             Visit("#events");
-            CreateEvent("Event Name", "01-09-2013", "Event Description\r\nhttp://foo.com", new[] {"Шылдон"});
+            var e1 = CreateEvent(new TestEvent
+            {
+                Name = "Event Name",
+                StartDate = "01-09-2013",
+                Description = "Event Description\r\nhttp://foo.com",
+                Bros = {"Шылдон"}
+            });
+            var e2 = CreateEvent(new TestEvent
+            {
+                Name = "Event Name2",
+                StartDate = "01-09-2113",
+                Description = "Description",
+                Bros = {}
+            });
 
-            List<SnapshotElementScope> rows = Browser.FindAllCss("tbody#event-list>tr", r => r.Count() == 1).ToList();
+            List<SnapshotElementScope> rows = Browser.FindAllCss("#event-list-past>div", r => r.Count() == 1).ToList();
             Assert.AreEqual(1, rows.Count);
-            SnapshotElementScope row = rows[0];
-            Assert.AreEqual("Event Name", row.FindCss("td:nth-child(1)").Text);
-            Assert.AreEqual("01-09-2013", row.FindCss("td:nth-child(2)").Text);
-            Assert.AreEqual("Шылдон", row.FindCss("td:nth-child(3)").Text);
-            ElementScope description = row.FindCss("td:nth-child(4)");
-            Assert.AreEqual("Event Description\r\nhttp://foo.com", description.FindCss("div>span").Text);
+            AssertEvent(rows[0], e1);
+
+            rows = Browser.FindAllCss("#event-list-pending>div", r => r.Count() == 1).ToList();
+            Assert.AreEqual(1, rows.Count);
+            AssertEvent(rows[0], e2);
         }
 
         [Test]
         public void ShouldDeleteEvent()
         {
             Visit("#events");
-            CreateEvent("Event Name", "01-09-2013", "Event Description");
-            CreateEvent("Event Name2", "01-09-2013", "Event Description");
-            ElementScope row = Browser.FindCss("tbody#event-list>tr");
-            row.Hover();
-            row.ClickButton("Delete");
+            var e1 = CreateEvent(new TestEvent {Name = "Event Name", StartDate = "01-09-2013"});
+            var e2 = CreateEvent(new TestEvent {Name = "Event Name2", StartDate = "01-09-2013"});
+            List<SnapshotElementScope> rows = Browser.FindAllCss("#event-list-past>div", r => r.Count() == 2).ToList();
+            rows[0].FindCss("a").Click();
+            rows[0].ClickButton("Delete");
             Browser.ClickButton("Yes");
-            Visit("#events");
-            List<SnapshotElementScope> rows = Browser.FindAllCss("tbody#event-list>tr", r => r.Count() == 1).ToList();
+
+            rows = Browser.FindAllCss("#event-list-past>div", r => r.Count() == 1).ToList();
             Assert.AreEqual(1, rows.Count);
-            row = rows[0];
-            Assert.AreEqual("Event Name2", row.FindCss("td:nth-child(1)").Text);
+            AssertEvent(rows[0], e2);
+
+            Visit("#events");
+
+            rows = Browser.FindAllCss("#event-list-past>div", r => r.Count() == 1).ToList();
+            Assert.AreEqual(1, rows.Count);
+            AssertEvent(rows[0], e2);            
         }
 
         [Test]
         public void ShouldUpdateEvent()
         {
             Visit("#events");
-            CreateEvent("Event Name", "01-09-2013", "Event Description", new[] {"Шылдон", "Моер"});
-            ElementScope row = Browser.FindCss("tbody#event-list>tr");
-            row.Hover();
-            row.ClickButton("Edit");
-            Assert.AreEqual("Event Name", Browser.FindField("Name").Value);
-            Assert.AreEqual("01-09-2013", Browser.FindField("StartDate").Value);
-            Assert.AreEqual("Event Description", Browser.FindField("Description").Value);
-            Assert.True(Browser.FindField("Шылдон").Selected);
-            Assert.True(Browser.FindField("Моер").Selected);
+            var e = CreateEvent(new TestEvent
+            {
+                Name = "Event Name",
+                StartDate = "01-09-2013",
+                Description = "Event Description",
+                Bros = {"Шылдон", "Моер"}
+            });
 
-            Browser.FillIn("Name").With("Updated Event");
-            Browser.FillIn("StartDate").With("02-09-2013");
-            Browser.FillIn("Description").With("Updated Description");
-            Browser.FindField("Шылдон").Uncheck();
-            Browser.Check("Копыч");
+            var ue = CreateEvent(new TestEvent
+            {
+                Name = "Updated Name",
+                StartDate = "01-09-2113",
+                Description = "Update Description",
+                Bros = {"Моер", "Копыч"}
+            });
+
+            ElementScope row = Browser.FindCss("#event-list-past>div");
+            row.FindCss("a").Click();
+            row.ClickButton("Edit");
+            Assert.AreEqual(e.Name, Browser.FindField("Name").Value);
+            Assert.AreEqual(e.StartDate, Browser.FindField("StartDate").Value);
+            Assert.AreEqual(e.Description, Browser.FindField("Description").Value);
+            foreach (var bro in e.Bros)
+            {
+                Assert.True(Browser.FindAllCss("label.bro-checkbox.active").Any(i => i.Text == bro));    
+            }
+
+            FillEditor(ue);
             Browser.ClickButton("modalOkButton");
+            Assert.False(Browser.FindCss("#event-list-past>div").Exists());
+
+            row = Browser.FindCss("#event-list-pending>div");
+            AssertEvent(row, ue);
+
             Visit("#events");
-            row = Browser.FindCss("tbody#event-list>tr");
-            Assert.AreEqual("Updated Event", row.FindCss("td:nth-child(1)").Text);
-            Assert.AreEqual("02-09-2013", row.FindCss("td:nth-child(2)").Text);
-            Assert.AreEqual("Моер\r\nКопыч", row.FindCss("td:nth-child(3)").Text);
-            Assert.AreEqual("Updated Description", row.FindCss("td:nth-child(4)>div>span").Text);
+
+            row = Browser.FindCss("#event-list-pending>div");
+            AssertEvent(row, ue);
         }
 
         [Test]
         public void ShouldLoadEvents()
         {
             Visit("#events");
-            CreateEvent("Event Name", "01-09-2013", "Event Description\r\nhttp://foo.com", new[] {"Шылдон"});
-            CreateEvent("Event Name 2", "02-09-2013", "");             
+            var e1 = CreateEvent(new TestEvent
+            {
+                Name = "Event Name",
+                StartDate = "01-09-2013",
+                Description = "Event Description\r\nhttp://foo.com",
+                Bros = { "Шылдон" }
+            });
+            var e2 = CreateEvent(new TestEvent
+            {
+                Name = "Event Name2",
+                StartDate = "01-09-2113",
+                Description = "Description",
+                Bros = { }
+            });
 
             Visit("#events");
-            List<SnapshotElementScope> rows = Browser.FindAllCss("tbody#event-list>tr", r => r.Count() == 2).ToList();
-            Assert.AreEqual(2, rows.Count);
-            SnapshotElementScope row = rows[0];
-            Assert.AreEqual("Event Name", row.FindCss("td:nth-child(1)").Text);
-            Assert.AreEqual("01-09-2013", row.FindCss("td:nth-child(2)").Text);
-            Assert.AreEqual("Шылдон", row.FindCss("td:nth-child(3)").Text);
-            var description = row.FindCss("td:nth-child(4)");
-            Assert.AreEqual("Event Description\r\nhttp://foo.com", description.FindCss("div>span").Text);
 
-            row = rows[1];
-            Assert.AreEqual("Event Name 2", row.FindCss("td:nth-child(1)").Text);
-            Assert.AreEqual("02-09-2013", row.FindCss("td:nth-child(2)").Text);
-            Assert.IsEmpty(row.FindCss("td:nth-child(3)").Text);
-            description = row.FindCss("td:nth-child(4)>div>span", new Options {ConsiderInvisibleElements = true});
-            Assert.IsEmpty(description.Text);
+            List<SnapshotElementScope> rows = Browser.FindAllCss("#event-list-past>div", r => r.Count() == 1).ToList();
+            Assert.AreEqual(1, rows.Count);
+            AssertEvent(rows[0], e1);
+
+            rows = Browser.FindAllCss("#event-list-pending>div", r => r.Count() == 1).ToList();
+            Assert.AreEqual(1, rows.Count);
+            AssertEvent(rows[0], e2);
         }
 
         [Test]
         public void ShouldNotCreateEventWithDuplicatedName()
         {
             Visit("#events");
-            CreateEvent("Event Name", "01-09-2013", "Event Description\r\nhttp://foo.com");
-            CreateEvent("Event Name", "02-09-2013", "");
+            CreateEvent(new TestEvent {Name = "Event Name", StartDate = "01-09-2013"});
+            CreateEvent(new TestEvent {Name = "Event Name", StartDate = "01-09-2113"});
+
             Assert.NotNull(Browser.FindCss("#entityEditor"));
             Browser.ClickButton("Cancel");
             List<SnapshotElementScope> rows = Browser.FindAllCss("tbody#event-list>tr", r => r.Count() == 1).ToList();
@@ -127,19 +214,19 @@ namespace Jeegoordah.Tests.Integration
         public void ShouldNotUpdateEventWithDuplicatedName()
         {
             Visit("#events");
-            CreateEvent("Event Name", "01-09-2013", "Event Description\r\nhttp://foo.com");
-            CreateEvent("Event Name2", "02-09-2013", "");
+            var e1 = CreateEvent(new TestEvent { Name = "Event Name", StartDate = "01-09-2013" });
+            var e2 = CreateEvent(new TestEvent {Name = "Event Name2", StartDate = "01-09-2113"});
 
-            ElementScope row = Browser.FindCss("tbody#event-list>tr");
-            row.Hover();
+            ElementScope row = Browser.FindCss("#event-list-past>div");
             row.ClickButton("Edit");
             Browser.FillIn("Name").With("Event Name2");
             Browser.ClickButton("Save");
             Assert.NotNull(Browser.FindCss("#entityEditor"));
             Browser.ClickButton("Cancel");
-            List<SnapshotElementScope> rows = Browser.FindAllCss("tbody#event-list>tr", r => r.Count() == 2).ToList();
-            Assert.AreEqual("Event Name", rows[0].FindCss("td:nth-child(1)").Text);
-            Assert.AreEqual("Event Name2", rows[1].FindCss("td:nth-child(1)").Text);
+
+            List<SnapshotElementScope> rows = Browser.FindAllCss("#event-list-past>div", r => r.Count() == 2).ToList();
+            AssertEvent(rows[0], e1);
+            AssertEvent(rows[1], e2);
         }
     }
 }
