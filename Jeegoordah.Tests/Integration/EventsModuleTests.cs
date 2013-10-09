@@ -55,12 +55,15 @@ namespace Jeegoordah.Tests.Integration
         {
             // Name + badge
             Assert.AreEqual("{0} {1}".F(e.Name, e.Bros.Count), row.FindCss("a.accordion-toggle").Text);
-            row.FindCss("a.accordion-toggle").Click();
+            if (!row.FindCss(".panel-collapse.in").Exists())
+            {
+                row.FindCss("a.accordion-toggle").Click();
+            }            
             Assert.AreEqual(e.Name, row.FindCss("h3>span").Text);
             Assert.AreEqual(e.StartDate, row.FindCss("p").Text);
 
             List<SnapshotElementScope> bros = row.FindAllCss("li").ToList();
-            Assert.True(e.Bros.SequenceEqual(bros.Select(b => b.Text)));
+            Assert.True(e.Bros.OrderBy(b => b).SequenceEqual(bros.Select(b => b.Text).OrderBy(b => b)));
 
             if (!string.IsNullOrEmpty(e.Description))
             {
@@ -135,13 +138,13 @@ namespace Jeegoordah.Tests.Integration
                 Bros = {"Шылдон", "Моер"}
             });
 
-            var ue = CreateEvent(new TestEvent
+            var ue = new TestEvent
             {
                 Name = "Updated Name",
                 StartDate = "01-09-2113",
                 Description = "Update Description",
                 Bros = {"Моер", "Копыч"}
-            });
+            };
 
             ElementScope row = Browser.FindCss("#event-list-past>div");
             row.FindCss("a").Click();
@@ -156,7 +159,7 @@ namespace Jeegoordah.Tests.Integration
 
             FillEditor(ue);
             Browser.ClickButton("modalOkButton");
-            Assert.False(Browser.FindCss("#event-list-past>div").Exists());
+            Assert.IsEmpty(Browser.FindAllCss("#event-list-past>div", r => !r.Any()));
 
             row = Browser.FindCss("#event-list-pending>div");
             AssertEvent(row, ue);
@@ -206,7 +209,7 @@ namespace Jeegoordah.Tests.Integration
 
             Assert.NotNull(Browser.FindCss("#entityEditor"));
             Browser.ClickButton("Cancel");
-            List<SnapshotElementScope> rows = Browser.FindAllCss("tbody#event-list>tr", r => r.Count() == 1).ToList();
+            List<SnapshotElementScope> rows = Browser.FindAllCss("#event-list-past>div", r => r.Count() == 1).ToList();
             Assert.AreEqual(1, rows.Count);
         }
 
@@ -214,10 +217,11 @@ namespace Jeegoordah.Tests.Integration
         public void ShouldNotUpdateEventWithDuplicatedName()
         {
             Visit("#events");
-            var e1 = CreateEvent(new TestEvent { Name = "Event Name", StartDate = "01-09-2013" });
-            var e2 = CreateEvent(new TestEvent {Name = "Event Name2", StartDate = "01-09-2113"});
+            var e1 = CreateEvent(new TestEvent {Name = "Event Name", StartDate = "01-09-2013"});
+            var e2 = CreateEvent(new TestEvent {Name = "Event Name2", StartDate = "01-09-2013"});
 
             ElementScope row = Browser.FindCss("#event-list-past>div");
+            row.FindCss("a").Click();
             row.ClickButton("Edit");
             Browser.FillIn("Name").With("Event Name2");
             Browser.ClickButton("Save");
