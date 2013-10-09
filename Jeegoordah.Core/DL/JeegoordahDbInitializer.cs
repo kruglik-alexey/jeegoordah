@@ -18,6 +18,9 @@ namespace Jeegoordah.Core.DL
             context.Bros.Add(new Bro {Name = "Сильвер"});
             context.Bros.Add(new Bro {Name = "Винни"});
             context.Bros.Add(new Bro {Name = "Лена"});
+
+            context.Currencies.Add(new Currency {Name = "BYR"});
+            context.Currencies.Add(new Currency {Name = "USD"});
         }
     }
 }

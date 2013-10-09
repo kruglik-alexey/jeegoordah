@@ -133,6 +133,8 @@
     <Compile Include="Models\BroRest.cs" />
     <Compile Include="Models\EventRest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Content Include="Scripts\Jeegoordah\modules\event-details.js" />
+    <Content Include="Scripts\Jeegoordah\templates\event-details\module.html" />
     <Content Include="Scripts\Tests\entityEditor-tests.js" />
     <Content Include="Scripts\Tests\modal-tests.js" />
     <Content Include="Scripts\Bootstrap\bootstrap-datepicker.js" />
@@ -144,13 +146,13 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Content Include="Global.asax" />
-    <Content Include="Scripts\Bootstrap\fonts\glyphicons-halflings-regular.eot" />
-    <Content Include="Scripts\Bootstrap\fonts\glyphicons-halflings-regular.ttf" />
-    <Content Include="Scripts\Bootstrap\fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="Scripts\Fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="Scripts\Fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="Scripts\Fonts\glyphicons-halflings-regular.woff" />
     <None Include="Scripts\jquery-2.0.3.intellisense.js" />
     <Content Include="Scripts\Bootstrap\bootstrap-theme.min.css" />
     <Content Include="Scripts\Bootstrap\bootstrap.min.css" />
-    <Content Include="Scripts\Bootstrap\fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Scripts\Fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Scripts\Bootstrap\bootstrap.min.js" />
     <Content Include="Scripts\Jeegoordah\consts.js" />
     <Content Include="Scripts\Jeegoordah\entityEditor.js" />
