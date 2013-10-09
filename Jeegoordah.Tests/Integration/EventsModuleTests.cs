@@ -53,8 +53,7 @@ namespace Jeegoordah.Tests.Integration
 
         private void AssertEvent(ElementScope row, TestEvent e)
         {
-            // Name + badge
-            Assert.AreEqual("{0} {1}".F(e.Name, e.Bros.Count), row.FindCss("a.accordion-toggle").Text);
+            Assert.AreEqual(e.Name, row.FindCss("a.accordion-toggle").Text);
             if (!row.FindCss(".panel-collapse.in").Exists())
             {
                 row.FindCss("a.accordion-toggle").Click();
