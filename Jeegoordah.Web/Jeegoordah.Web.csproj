@@ -120,21 +120,29 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CacheBuster.cs" />
-    <Compile Include="Controllers\BrosController.cs" />
     <Compile Include="Controllers\ControllerFactory.cs" />
     <Compile Include="Controllers\DbController.cs" />
     <Compile Include="Controllers\EventsController.cs" />
     <Compile Include="Controllers\GeneralController.cs" />
     <Compile Include="Controllers\TestController.cs" />
+    <Compile Include="Controllers\TransactionsController.cs" />
     <Compile Include="DateTimeModelBinder.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="JsonDate.cs" />
     <Compile Include="Models\BroRest.cs" />
     <Compile Include="Models\EventRest.cs" />
+    <Compile Include="Models\TransactionRest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Content Include="Scripts\Crossroads\crossroads.min.js" />
+    <Content Include="Scripts\Crossroads\signals.min.js" />
+    <Content Include="Scripts\Jeegoordah\broSelector.js" />
     <Content Include="Scripts\Jeegoordah\modules\event-details.js" />
+    <Content Include="Scripts\Jeegoordah\templates\broSelector.html" />
     <Content Include="Scripts\Jeegoordah\templates\event-details\module.html" />
+    <Content Include="Scripts\Jeegoordah\templates\event-details\transactionEditor.html" />
+    <Content Include="Scripts\jquery.number.min.js" />
     <Content Include="Scripts\Tests\entityEditor-tests.js" />
     <Content Include="Scripts\Tests\modal-tests.js" />
     <Content Include="Scripts\Bootstrap\bootstrap-datepicker.js" />

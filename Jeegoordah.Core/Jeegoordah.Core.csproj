@@ -49,7 +49,6 @@
     <Compile Include="DL\Entity\Transaction.cs" />
     <Compile Include="DL\Entity\Currency.cs" />
     <Compile Include="DL\Entity\Event.cs" />
-    <Compile Include="DL\Entity\TransactionCategory.cs" />
     <Compile Include="DL\JeegoordahDb.cs" />
     <Compile Include="DL\JeegoordahDbInitializer.cs" />
     <Compile Include="Helper.cs" />

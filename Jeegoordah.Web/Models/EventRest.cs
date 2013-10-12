@@ -18,15 +18,18 @@ namespace Jeegoordah.Web.Models
             Id = source.Id;
             Name = source.Name;
             Description = source.Description;
-            StartDate = source.StartDate;
+            StartDate = JsonDate.ToString(source.StartDate);
             Bros = source.Bros.Select(b => b.Id).ToList();
+            Transactions = source.Transactions;
+            Transactions.ForEach(t => t.Event = null);
         }
 
         public int? Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public DateTime? StartDate { get; set; }
+        public string StartDate { get; set; }
         public List<int> Bros { get; set; }
+        public List<Transaction> Transactions { get; set; }
 
         public void ToDataObject(Event target)
         {
@@ -35,7 +38,7 @@ namespace Jeegoordah.Web.Models
                 target.Id = Id.Value;
             }
             target.Name = Name;
-            target.StartDate = StartDate;
+            target.StartDate = JsonDate.Parse(StartDate);
             target.Description = Description;
             var oldBros = target.Bros.Select(b => b.Id).ToList();
             var addedBros = Bros.Except(oldBros).ToList();

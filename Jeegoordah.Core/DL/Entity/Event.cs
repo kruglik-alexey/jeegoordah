@@ -9,13 +9,15 @@ namespace Jeegoordah.Core.DL.Entity
         public Event()
         {
             Bros = new List<Bro>();
+            Transactions = new List<Transaction>();
         }
 
         [Key] public int Id { get; set; }
         [Required] public string Name { get; set; }
-        [Required] public DateTime? StartDate { get; set; }
+        [Required] public DateTime StartDate { get; set; }
         [Required] public DateTime CreatedAt { get; set; }
         public string Description { get; set; }                 
         public List<Bro> Bros { get; set; }
+        public List<Transaction> Transactions { get; set; }
     }
 }

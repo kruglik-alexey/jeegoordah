@@ -22,6 +22,15 @@ namespace Jeegoordah.Web.Controllers
             }            
         }
 
+        [HttpGet]
+        public ActionResult Get(int id)
+        {
+            using (var db = DbFactory.CreateDb())
+            {
+                return Json(new EventRest(db.Events.Include("Bros").First(e => e.Id == id)), JsonRequestBehavior.AllowGet);
+            }
+        }
+
         [HttpPost]
         public ActionResult Create(EventRest @event)
         {            
@@ -60,11 +69,13 @@ namespace Jeegoordah.Web.Controllers
                 }                
 
                 List<int> oldBros = db.Bros.Where(b => b.Events.Any(e => e.Id == @event.Id)).Select(b => b.Id).ToList();
+                List<int> transactions = db.Transactions.Where(t => t.Event != null).Select(t => t.Id).ToList();
                 var dlEvent = new Event
                 {
                     Id = @event.Id.Value,
                     CreatedAt = db.Events.Where(e => e.Id == @event.Id).Select(e => e.CreatedAt).First(),
-                    Bros = oldBros.Select(b => new Bro {Id = b}).ToList()
+                    Bros = oldBros.Select(b => new Bro {Id = b}).ToList(),
+                    Transactions = transactions.Select(t => new Transaction {Id = t}).ToList()
                 };                
                 db.Events.Attach(dlEvent);                
                 @event.ToDataObject(dlEvent);

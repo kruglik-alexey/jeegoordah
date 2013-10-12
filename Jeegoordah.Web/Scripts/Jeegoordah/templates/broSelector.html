@@ -1,0 +1,11 @@
+﻿<div style="text-align: center" data-radio="<%= this.isRadio %>">
+    <% for(var i = 0; i < this.bros.length / 8; i++) { %>
+    <div class="btn-group" style="padding-bottom: 5px">
+        <% for(var j = 0; j < Math.min(8, this.bros.length - i * 8); j++) { %>
+        <label class="btn btn-default" data-id="<%= this.bros[i * 8 + j].Id %>">
+            <%= this.bros[i * 8 + j].Name %>
+        </label>
+        <% } %>
+    </div>
+    <% } %>
+</div>

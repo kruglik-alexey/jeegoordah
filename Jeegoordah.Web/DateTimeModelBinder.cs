@@ -18,7 +18,7 @@ namespace Jeegoordah.Web
             bindingContext.ModelState.SetModelValue(bindingContext.ModelName, bindingContext.ValueProvider.GetValue(bindingContext.ModelName));
             try
             {
-                bindingContext.Model = DateTime.ParseExact(date, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+                bindingContext.Model = JsonDate.Parse(date);
                 return true;
             }
             catch (Exception)

@@ -1,1 +1,18 @@
-﻿
+﻿<div id="module-event-details">
+    <div class="page-header">
+        <h1><%= this.Name %></h1>
+    </div>       
+    <p><%= this.StartDate %></p>
+    <ul class="list-inline list-group">
+        <% for(var i = 0; i < this.Bros.length; i++) { %>
+        <li class="list-group-item"><%= this.Bros[i].Name %></li>
+        <% } %>
+    </ul>
+    <% if (this.Description !== "") { %>
+        <div class="top-border">
+            <%= this.Description %>
+        </div>
+    <% } %>    
+    <p/>
+    <button type="button" class="btn btn-primary" id="createTransactionButton">New Transaction</button>
+</div>

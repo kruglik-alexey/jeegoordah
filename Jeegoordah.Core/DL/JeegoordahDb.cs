@@ -23,6 +23,7 @@ namespace Jeegoordah.Core.DL
         public DbSet<Event> Events { get; set; }
         public DbSet<Bro> Bros { get; set; }
         public DbSet<Currency> Currencies { get; set; }
+        public DbSet<Transaction> Transactions { get; set; }
     }
 
     public class JeegoordahRealDb : JeegoordahDb

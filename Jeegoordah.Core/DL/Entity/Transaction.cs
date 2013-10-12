@@ -18,7 +18,6 @@ namespace Jeegoordah.Core.DL.Entity
         [Required] public Bro Source { get; set; }
         public List<Bro> Targets { get; set; }
         public Event Event { get; set; }
-        public TransactionCategory Category { get; set; }
         public string Comment { get; set; }
     }
 }

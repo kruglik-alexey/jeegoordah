@@ -29,7 +29,7 @@
         },
         
         _submit: function ($editor, callbacks) {
-            if ($editor.valid()) {
+            if ($editor.valid() && (!callbacks.validate || callbacks.validate($editor))) {
                 var r = $editor.toJson();
                 if (callbacks.fromForm) {
                     r = callbacks.fromForm(r, $editor);

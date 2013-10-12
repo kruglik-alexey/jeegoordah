@@ -18,7 +18,6 @@
         
         _loadEvents: function (events) {                                    
             _.each(events, function (event) {
-                event = self._fixStartDateFormat(event);
                 self._createEventElement(event);
             });            
         },
@@ -28,7 +27,6 @@
             editor.show($(rendered), {}, 'Create Event', {
                 ok: function (event) {
                     rest.post('events/create', event).done(function (createdEvent) {
-                        createdEvent = self._fixStartDateFormat(createdEvent);
                         self._createEventElement(createdEvent);
                         editor.close();
                         notification.success('Event created.');
@@ -119,18 +117,7 @@
             });
             $popoverTarget.popover('show');
         },
-        
-        _fixStartDateFormat: function (event) {
-            // This method called on deferred result. We can't change event object because deferred may have several subscribers.
-            var e = _.clone(event);
-            if (e.StartDate) {
-                e.StartDate = helper.fixJsonDate(e.StartDate);
-            } else {
-                e.StartDate = '';
-            }
-            return e;
-        },
-        
+                
         _eventToForm: function (event, $editor) {
             _.each(event.Bros, function (broId) {
                 $editor.find('.bro-checkbox[data-id=' + broId + ']').addClass('active');

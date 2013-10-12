@@ -35,14 +35,32 @@ namespace Jeegoordah.Web
                 url: "events",
                 defaults: new { controller = "Events", action = "List" }
             );
+            routes.MapRoute(
+                name: "GetEvent",
+                url: "events/{id}",
+                defaults: new { controller = "Events", action = "Get" }
+            );
 
             #endregion
 
+            routes.MapRoute(
+                name: "CreateTransaction",
+                url: "transactions/create",
+                defaults: new { controller = "Transactions", action = "Create" }
+            );
+
+            #region General
 
             routes.MapRoute(
                 name: "ListBros",
                 url: "bros",
-                defaults: new { controller = "Bros", action = "List" }
+                defaults: new { controller = "General", action = "ListBros" }
+            );
+
+            routes.MapRoute(
+                name: "ListCurrensies",
+                url: "currencies",
+                defaults: new { controller = "General", action = "ListCurrencies" }
             );
 
             routes.MapRoute(
@@ -50,6 +68,8 @@ namespace Jeegoordah.Web
                 url: "",
                 defaults: new { controller = "General", action = "Index" }
             );
+
+            #endregion
 
 #if DEBUG
             routes.MapRoute(
