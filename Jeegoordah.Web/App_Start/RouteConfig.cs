@@ -49,11 +49,21 @@ namespace Jeegoordah.Web
 
             #endregion
 
+            #region Transactions
+
             routes.MapRoute(
                 name: "CreateTransaction",
                 url: "transactions/create",
                 defaults: new { controller = "Transactions", action = "Create" }
             );
+
+            routes.MapRoute(
+                name: "DeleteTransaction",
+                url: "transactions/delete/{id}",
+                defaults: new { controller = "Transactions", action = "Delete" }
+            );
+
+            #endregion
 
             #region General
 

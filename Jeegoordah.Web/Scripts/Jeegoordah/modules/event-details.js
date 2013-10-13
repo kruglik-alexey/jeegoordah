@@ -1,6 +1,6 @@
-﻿define(['$', '_', 'rest', 'helper', 'entityEditor', 'broSelector', 'notification', 'text!templates/event-details/module.html', 'text!templates/event-details/transactionEditor.html',
-        'text!templates/event-details/transaction.html'],
-function ($, _, rest, helper, editor, broSelector, notification, moduleTemplate, transactionEditorTemplate, transactionTemplate) {
+﻿define(['$', '_', 'rest', 'helper', 'entityEditor', 'broSelector', 'notification', 'entityControls', 'consts',
+        'text!templates/event-details/module.html', 'text!templates/event-details/transactionEditor.html', 'text!templates/event-details/transaction.html'],
+function ($, _, rest, helper, editor, broSelector, notification, entityControls, consts, moduleTemplate, transactionEditorTemplate, transactionTemplate) {
     var self = {        
         activate: function(id) {
             $.when(rest.get('events/' + id),
@@ -24,21 +24,25 @@ function ($, _, rest, helper, editor, broSelector, notification, moduleTemplate,
             });
         },
         
-        _createTransaction: function () {            
+        _createTransaction: function () {
+            self._showTransactionEditor({ Date: self.event.StartDate, Currency: self.currencies[0].Id, Targets: self.event.Bros }, 'Create Transaction', function(transaction) {
+                transaction = _.defaults(transaction, { Event: self.event.Id });
+                rest.post('transactions/create', transaction).done(function (createdTransaction) {
+                    self._createTransactionElement(createdTransaction);
+                    editor.close();
+                    notification.success('Transaction created.');
+                });
+            });            
+        },
+        
+        _showTransactionEditor: function(transaction, title, ok) {
             var rendered = $($.jqote(transactionEditorTemplate, { currencies: self.currencies }));
             rendered.find('#transactionSource').append(broSelector.render(true, self.bros));
             rendered.find('#transactionTargets').append(broSelector.render(false, self.bros));
             rendered.find('input[name=Amount]').number(true, 0, '.', ' ');
 
-            editor.show(rendered, { Date: self.event.StartDate, Currency: self.currencies[0].Id, Targets: self.event.Bros }, 'Create Transaction', {
-                ok: function (transaction) {
-                    transaction = _.defaults(transaction, {Event: self.event.Id});
-                    rest.post('transactions/create', transaction).done(function (createdTransaction) {                        
-                        self._createTransactionElement(createdTransaction);
-                        editor.close();
-                        notification.success('Transaction created.');
-                    });
-                },
+            editor.show(rendered, transaction, title, {
+                ok: ok,
                 toForm: self._bindTransaction,
                 fromForm: self._unbindTransaction,
                 validate: self._validateTransaction
@@ -46,15 +50,38 @@ function ($, _, rest, helper, editor, broSelector, notification, moduleTemplate,
         },
         
         _createTransactionElement: function (transaction) {
-            var t = _.clone(transaction);
-            t.Source = _.find(self.bros, function (bro) { return bro.Id === t.Source; });
-            t.Targets = _.chain(t.Targets).map(function (target) {
+            var ui = _.clone(transaction);
+            ui.Source = _.find(self.bros, function (bro) { return bro.Id === ui.Source; });
+            ui.Targets = _.chain(ui.Targets).map(function (target) {
                 return _.find(self.bros, function (bro) { return bro.Id === target; });
             }).sortBy('Name').value();
-            t.Amount = $.number(t.Amount, 0, '.', ' ');
-            t.Currency = _.find(self.currencies, function (currency) { return currency.Id === t.Currency; });
-            var element = $($.jqote(transactionTemplate, t));            
+            ui.Amount = $.number(ui.Amount, 0, '.', ' ');
+            ui.Currency = _.find(self.currencies, function (currency) { return currency.Id === ui.Currency; });
+            ui.targetsEqualsEvent = _.difference(transaction.Targets, self.event.Bros).length === 0;
+            
+            var element = $($.jqote(transactionTemplate, ui));
+            entityControls.render(element, _.partial(self._editTransaction, transaction), _.partial(self._deleteTransaction, transaction));
             $('#transactions').append(element);
+        },
+        
+        _editTransaction: function (transaction) {
+            self._showTransactionEditor(transaction, 'Edit Transaction', function (updatedTransaction) {
+                updatedTransaction = _.defaults(updatedTransaction, { Event: self.event.Id });
+                rest.post('transactions/update', updatedTransaction).done(function (createdTransaction) {
+                    self._updateTransactionElement(createdTransaction);
+                    editor.close();
+                    notification.success('Transaction updated.');
+                });
+            });
+        },
+        
+        _deleteTransaction: function (transaction) {
+            var $transaction = $('#transaction' + transaction.Id);
+            rest.post('transactions/delete/' + transaction.Id).done(function () {
+                $transaction.fadeOut(consts.fadeDuration, function () {
+                    $transaction.remove();
+                });
+            });
         },
         
         _bindTransaction: function (transaction, $editor) {

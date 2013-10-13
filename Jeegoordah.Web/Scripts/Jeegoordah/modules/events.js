@@ -1,5 +1,6 @@
-﻿define(['_', '$', 'rest', 'notification', 'helper', 'consts', 'entityEditor', 'text!templates/events/row.html', 'text!templates/events/editor.html', 'text!templates/events/module.html'],
-    function (_, $, rest, notification, helper, consts, editor, rowTemplate, editorTemplate, moduleTemplate) {
+﻿define(['_', '$', 'rest', 'notification', 'helper', 'consts', 'entityEditor', 'entityControls',
+        'text!templates/events/row.html', 'text!templates/events/editor.html', 'text!templates/events/module.html'],
+    function (_, $, rest, notification, helper, consts, editor, entityControls, rowTemplate, editorTemplate, moduleTemplate) {
 
     var self = {
         init: function () {
@@ -11,7 +12,7 @@
             $.when(rest.get('bros'), rest.get('events')).done(function (bros, events) {
                 self.bros = bros[0];                
                 $('#modules').empty().append($(moduleTemplate));
-                $('#createEventButton').click(self._createEvent);
+                $('#createEventButton').click(self._showCreateEvent);
                 self._loadEvents(events[0]);                                
             });                        
         },
@@ -22,19 +23,14 @@
             });            
         },
         
-        _createEvent: function () {
-            var rendered = $.jqote(editorTemplate, { bros: self.bros });
-            editor.show($(rendered), {}, 'Create Event', {
-                ok: function (event) {
-                    rest.post('events/create', event).done(function (createdEvent) {
-                        self._createEventElement(createdEvent);
-                        editor.close();
-                        notification.success('Event created.');
-                    });
-                },
-                toForm: _.bind(self._eventToForm, self),
-                fromForm: _.bind(self._eventFromForm, self),
-            });                                          
+        _showCreateEvent: function () {
+            self._showEventEditor({}, 'Create Event', function (event) {
+                rest.post('events/create', event).done(function (createdEvent) {
+                    self._createEventElement(createdEvent);
+                    editor.close();
+                    notification.success('Event created.');
+                });
+            });                                                 
         },
         
         _createEventElement: function (event, appendToList) {
@@ -47,29 +43,32 @@
                 return _.find(self.bros, function(bro) { return bro.Id === broId; });
             }).sortBy('Name').value();
             var $event = $($.jqote(rowTemplate, uiEvent));
+            entityControls.render($event.find('h3'), _.partial(self._showEditEvent, event), _.partial(self._deleteEvent, event));
             if (appendToList) {
                 self._getEventList(event).append($event);
             }            
-
-            $event.find('button[data-action=edit]').click(_.partial(self._editEvent, event));
-            $event.find('button[data-action=delete]').click(_.partial(self._deleteEvent, event));
+            
             return $event;
         },
         
-        _editEvent: function (event) {                      
+        _showEventEditor: function(event, title, ok) {
             var rendered = $.jqote(editorTemplate, { bros: self.bros });
-            editor.show($(rendered), event, 'Edit Event', {
-                ok: function(updatedEvent) {
-                    updatedEvent = _.extend({ Id: event.Id }, updatedEvent);
-                    rest.post('events/update', updatedEvent).done(function() {
-                        editor.close();
-                        notification.success('Event updated.');
-                        self._updateEventElement(updatedEvent);
-                    });
-                },
+            editor.show($(rendered), event, title, {
+                ok: ok,
                 toForm: _.bind(self._eventToForm, self),
                 fromForm: _.bind(self._eventFromForm, self),
-            });               
+            });
+        },
+        
+        _showEditEvent: function (event) {
+            self._showEventEditor(event, 'Edit Event', function (updatedEvent) {
+                updatedEvent = _.extend({ Id: event.Id }, updatedEvent);
+                rest.post('events/update', updatedEvent).done(function () {
+                    editor.close();
+                    notification.success('Event updated.');
+                    self._updateEventElement(updatedEvent);
+                });
+            });                    
         },
         
         _updateEventElement: function (event) {
@@ -93,29 +92,11 @@
         
         _deleteEvent: function(event) {
             var $event = $('#event' + event.Id);
-            var $popoverTarget = $event.find('button[data-action=delete]');
-            var $content = $('<div style="min-width: 100px"><div class="btn btn-danger" data-action="Yes">Yes</div>' +
-                             '<div class="btn btn-default" data-action="No">No</div></div>');
-            
-            $content.find('[data-action=Yes]').click(function () {
-                rest.post('events/delete/' + event.Id).done(function () {
-                    $event.fadeOut(consts.fadeDuration, function () {
-                        $event.remove();
-                    });
+            rest.post('events/delete/' + event.Id).done(function () {
+                $event.fadeOut(consts.fadeDuration, function () {
+                    $event.remove();
                 });
-                $popoverTarget.popover('destroy');
-            });
-            
-            $content.find('[data-action=No]').click(function () {
-                $popoverTarget.popover('destroy');
-            });
-            
-            $popoverTarget.popover({
-                title: 'Are you sure?',
-                content: $content,
-                html: true
-            });
-            $popoverTarget.popover('show');
+            });                       
         },
                 
         _eventToForm: function (event, $editor) {

@@ -9,6 +9,7 @@ namespace Jeegoordah.Core.DL.Entity
         public Bro()
         {
             Events = new List<Event>();
+            Transactions = new List<Transaction>();
         }
 
         [Key] public int Id { get; set; }

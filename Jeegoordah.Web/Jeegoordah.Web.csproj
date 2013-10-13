@@ -138,8 +138,10 @@
     <Content Include="Scripts\Crossroads\crossroads.min.js" />
     <Content Include="Scripts\Crossroads\signals.min.js" />
     <Content Include="Scripts\Jeegoordah\broSelector.js" />
+    <Content Include="Scripts\Jeegoordah\entityControls.js" />
     <Content Include="Scripts\Jeegoordah\modules\event-details.js" />
     <Content Include="Scripts\Jeegoordah\templates\broSelector.html" />
+    <Content Include="Scripts\Jeegoordah\templates\entityControls.html" />
     <Content Include="Scripts\Jeegoordah\templates\event-details\module.html" />
     <Content Include="Scripts\Jeegoordah\templates\event-details\transaction.html" />
     <Content Include="Scripts\Jeegoordah\templates\event-details\transactionEditor.html" />

@@ -1,12 +1,13 @@
 ﻿<div data-id="<%= this.Id %>">
     <span><%= this.Date %></span>
-    <span><%= this.Source.Name %></span>
+    <span><%= this.Source.Name %></span> 
+    <span class="glyphicon glyphicon-arrow-right"></span>
+    <% if (this.targetsEqualsEvent) { %>
+        <span>All</span>
+    <% } else { %>
+        <% for(var i = 0; i < this.Targets.length; i++) { %>
+            <span><%= this.Targets[i].Name %></span>
+        <% } %>    
+    <% } %>    
     <span><%= this.Amount %><%= this.Currency.Name %></span>
-    <% for(var i = 0; i < this.Targets.length; i++) { %>
-        <span><%= this.Targets[i].Name %></span>
-    <% } %>
-    <span class="entity-controls btn-group btn-group-xs">        
-        <button type="button" class="btn btn-default" data-action="edit">Edit</button>
-        <button type="button" class="btn btn-danger" data-action="delete">Delete</button>
-    </span>
 </div>

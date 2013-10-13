@@ -30,5 +30,17 @@ namespace Jeegoordah.Web.Controllers
                 return Json(new TransactionRest(dlTransaction));
             }        
         }
+
+        [HttpPost]
+        public ActionResult Delete(int id)
+        {
+            using (var db = DbFactory.CreateDb())
+            {
+                var t = db.Transactions.Find(id);
+                db.Transactions.Remove(t);
+                db.SaveChanges();
+            }
+            return Json(new { });
+        }
     }
 }
