@@ -42,13 +42,6 @@ namespace Jeegoordah.Web.Models
             }
             target.Date = JsonDate.Parse(Date);
             target.Amount = Amount;
-            target.Currency = new Currency {Id = Currency};
-            target.Source = new Bro {Id = Source};
-            target.Targets = Targets.Select(t => new Bro {Id = t}).ToList();
-            if (Event.HasValue)
-            {
-                target.Event = new Event {Id = Event.Value};
-            }
             target.Comment = Comment;
         }
     }

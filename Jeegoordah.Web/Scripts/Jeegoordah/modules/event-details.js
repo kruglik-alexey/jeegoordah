@@ -1,14 +1,26 @@
-﻿define(['$', '_', 'rest', 'helper', 'entityEditor', 'broSelector', 'notification', 'text!templates/event-details/module.html', 'text!templates/event-details/transactionEditor.html'],
-function ($, _, rest, helper, editor, broSelector, notification, moduleTemplate, transactionEditorTemplate) {
+﻿define(['$', '_', 'rest', 'helper', 'entityEditor', 'broSelector', 'notification', 'text!templates/event-details/module.html', 'text!templates/event-details/transactionEditor.html',
+        'text!templates/event-details/transaction.html'],
+function ($, _, rest, helper, editor, broSelector, notification, moduleTemplate, transactionEditorTemplate, transactionTemplate) {
     var self = {        
         activate: function(id) {
-            $.when(rest.get('events/' + id), rest.get('bros'), rest.get('currencies')).done(function (event, bros, currencies) {
+            $.when(rest.get('events/' + id),
+                   rest.get('events/' + id + '/transactions'),
+                   rest.get('bros'),
+                   rest.get('currencies'))
+            .done(function (event, transactions, bros, currencies) {
                 self.bros = bros[0];
-                self.event = self._getUiEvent(event[0]);
+                self.event = event[0];
                 self.currencies = currencies[0];
 
-                $('#modules').empty().append($($.jqote(moduleTemplate, self.event)));
+                $('#modules').empty().append($($.jqote(moduleTemplate, self._getUiEvent(self.event))));
                 $('#createTransactionButton').click(self._createTransaction);
+                self._renderTransactions(transactions[0]);
+            });
+        },
+        
+        _renderTransactions: function (transactions) {
+            _.each(transactions, function(t) {
+                self._createTransactionElement(t);
             });
         },
         
@@ -18,13 +30,11 @@ function ($, _, rest, helper, editor, broSelector, notification, moduleTemplate,
             rendered.find('#transactionTargets').append(broSelector.render(false, self.bros));
             rendered.find('input[name=Amount]').number(true, 0, '.', ' ');
 
-            editor.show(rendered, { Date: self.event.StartDate, Currency: self.currencies[0].Id }, 'Create Transaction', {
+            editor.show(rendered, { Date: self.event.StartDate, Currency: self.currencies[0].Id, Targets: self.event.Bros }, 'Create Transaction', {
                 ok: function (transaction) {
                     transaction = _.defaults(transaction, {Event: self.event.Id});
-                    rest.post('transactions/create', transaction).done(function (createdTransaction) {
-                        debugger;
-//                        createdEvent = self._fixStartDateFormat(createdEvent);
-//                        self._createEventElement(createdEvent);
+                    rest.post('transactions/create', transaction).done(function (createdTransaction) {                        
+                        self._createTransactionElement(createdTransaction);
                         editor.close();
                         notification.success('Transaction created.');
                     });
@@ -33,6 +43,18 @@ function ($, _, rest, helper, editor, broSelector, notification, moduleTemplate,
                 fromForm: self._unbindTransaction,
                 validate: self._validateTransaction
             });
+        },
+        
+        _createTransactionElement: function (transaction) {
+            var t = _.clone(transaction);
+            t.Source = _.find(self.bros, function (bro) { return bro.Id === t.Source; });
+            t.Targets = _.chain(t.Targets).map(function (target) {
+                return _.find(self.bros, function (bro) { return bro.Id === target; });
+            }).sortBy('Name').value();
+            t.Amount = $.number(t.Amount, 0, '.', ' ');
+            t.Currency = _.find(self.currencies, function (currency) { return currency.Id === t.Currency; });
+            var element = $($.jqote(transactionTemplate, t));            
+            $('#transactions').append(element);
         },
         
         _bindTransaction: function (transaction, $editor) {

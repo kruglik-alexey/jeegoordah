@@ -41,6 +41,12 @@ namespace Jeegoordah.Web
                 defaults: new { controller = "Events", action = "Get" }
             );
 
+            routes.MapRoute(
+                name: "GetEventTransactions",
+                url: "events/{id}/transactions",
+                defaults: new { controller = "Events", action = "GetTransactions" }
+            );
+
             #endregion
 
             routes.MapRoute(

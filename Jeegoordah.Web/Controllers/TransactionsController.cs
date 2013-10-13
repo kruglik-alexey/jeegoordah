@@ -18,23 +18,15 @@ namespace Jeegoordah.Web.Controllers
             {
                 var dlTransaction = new Transaction {CreatedAt = DateTime.UtcNow};
                 transaction.ToDataObject(dlTransaction);
-                db.Bros.Attach(dlTransaction.Source);
-                dlTransaction.Targets.Where(t => t.Id != dlTransaction.Source.Id).ForEach(b => db.Bros.Attach(b));
-                if (dlTransaction.Event != null)
+                dlTransaction.Source = db.Bros.Find(transaction.Source);
+                dlTransaction.Targets = transaction.Targets.Select(t => db.Bros.Find(t)).ToList();
+                if (transaction.Event.HasValue)
                 {
-                    db.Events.Attach(dlTransaction.Event);
+                    dlTransaction.Event = db.Events.Find(transaction.Event.Value);
                 }
-                db.Currencies.Attach(dlTransaction.Currency);
+                dlTransaction.Currency = db.Currencies.Find(transaction.Currency);
                 db.Transactions.Add(dlTransaction);
-                try
-                {
-                    db.SaveChanges();
-                }
-                catch (Exception e )
-                {
-                    
-                    throw;
-                }           
+                db.SaveChanges();                       
                 return Json(new TransactionRest(dlTransaction));
             }        
         }

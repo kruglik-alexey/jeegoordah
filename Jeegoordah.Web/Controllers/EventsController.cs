@@ -31,6 +31,17 @@ namespace Jeegoordah.Web.Controllers
             }
         }
 
+        [HttpGet]
+        public ActionResult GetTransactions(int id)
+        {
+            using (var db = DbFactory.CreateDb())
+            {
+                return Json(db.Transactions.Include("Targets").Include("Source").Include("Currency").Include("Event")
+                    .Where(t => t.Event.Id == id).OrderBy(t => t.Date).ThenBy(t => t.Id).ToList()
+                    .Select(t => new TransactionRest(t)), JsonRequestBehavior.AllowGet);
+            }
+        }
+
         [HttpPost]
         public ActionResult Create(EventRest @event)
         {            

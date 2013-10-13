@@ -25,7 +25,7 @@
                 bros = [bros];
             }
             _.each(bros, function (bro) {
-                $element.find('[data-id=]' + bro.Id).addClass('active');
+                $element.find('[data-id=' + bro + ']').addClass('active');
             });
         },
 
