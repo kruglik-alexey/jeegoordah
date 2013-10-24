@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+using FluentNHibernate.Mapping;
 
 namespace Jeegoordah.Core.DL.Entity
 {
@@ -12,10 +12,21 @@ namespace Jeegoordah.Core.DL.Entity
             Transactions = new List<Transaction>();
         }
 
-        [Key] public int Id { get; set; }
-        [Required] public string Name { get; set; }
+        public virtual int Id { get; set; }
+        public virtual string Name { get; set; }
 
-        public List<Event> Events { get; set; }
-        public List<Transaction> Transactions { get; set; }
+        public virtual List<Event> Events { get; set; }
+        public virtual List<Transaction> Transactions { get; set; }
+    }
+
+    class BroMap : ClassMap<Bro>
+    {
+        public BroMap()
+        {
+            Id(x => x.Id);
+            Map(x => x.Name).Unique();
+            HasManyToMany(x => x.Events);
+            HasManyToMany(x => x.Transactions);
+        }
     }
 }

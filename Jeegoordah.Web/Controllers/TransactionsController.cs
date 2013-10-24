@@ -9,38 +9,38 @@ using Jeegoordah.Web.Models;
 
 namespace Jeegoordah.Web.Controllers
 {
-    public class TransactionsController : DbController
-    {
-        [HttpPost]
-        public ActionResult Create(TransactionRest transaction)
-        {
-            using (var db = DbFactory.CreateDb())
-            {
-                var dlTransaction = new Transaction {CreatedAt = DateTime.UtcNow};
-                transaction.ToDataObject(dlTransaction);
-                dlTransaction.Source = db.Bros.Find(transaction.Source);
-                dlTransaction.Targets = transaction.Targets.Select(t => db.Bros.Find(t)).ToList();
-                if (transaction.Event.HasValue)
-                {
-                    dlTransaction.Event = db.Events.Find(transaction.Event.Value);
-                }
-                dlTransaction.Currency = db.Currencies.Find(transaction.Currency);
-                db.Transactions.Add(dlTransaction);
-                db.SaveChanges();                       
-                return Json(new TransactionRest(dlTransaction));
-            }        
-        }
-
-        [HttpPost]
-        public ActionResult Delete(int id)
-        {
-            using (var db = DbFactory.CreateDb())
-            {
-                var t = db.Transactions.Find(id);
-                db.Transactions.Remove(t);
-                db.SaveChanges();
-            }
-            return Json(new { });
-        }
-    }
+//    public class TransactionsController : DbController
+//    {
+//        [HttpPost]
+//        public ActionResult Create(TransactionRest transaction)
+//        {
+//            using (var db = DbFactory.CreateDb())
+//            {
+//                var dlTransaction = new Transaction {CreatedAt = DateTime.UtcNow};
+//                transaction.ToDataObject(dlTransaction);
+//                dlTransaction.Source = db.Bros.Find(transaction.Source);
+//                dlTransaction.Targets = transaction.Targets.Select(t => db.Bros.Find(t)).ToList();
+//                if (transaction.Event.HasValue)
+//                {
+//                    dlTransaction.Event = db.Events.Find(transaction.Event.Value);
+//                }
+//                dlTransaction.Currency = db.Currencies.Find(transaction.Currency);
+//                db.Transactions.Add(dlTransaction);
+//                db.SaveChanges();                       
+//                return Json(new TransactionRest(dlTransaction));
+//            }        
+//        }
+//
+//        [HttpPost]
+//        public ActionResult Delete(int id)
+//        {
+//            using (var db = DbFactory.CreateDb())
+//            {
+//                var t = db.Transactions.Find(id);
+//                db.Transactions.Remove(t);
+//                db.SaveChanges();
+//            }
+//            return Json(new { });
+//        }
+//    }
 }

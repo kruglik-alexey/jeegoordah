@@ -15,17 +15,17 @@ namespace Jeegoordah.Web.Controllers
         {
             var controller = Activator.CreateInstance(controllerType);
 
-            if (_dbControllerType.IsAssignableFrom(controllerType))
-            {
-#if DEBUG
-                var dbFactory = requestContext.HttpContext.Request.Params["test"] == null
-                   ? new DbFactory(typeof(JeegoordahRealDb))
-                   : new DbFactory(typeof(JeegoordahTestDb));
-                ((DbController)controller).SetDbFactory(dbFactory);   
-#else
-                ((DbController)controller).SetDbFactory(new DbFactory(typeof(JeegoordahRealDb))); 
-#endif
-            }            
+//            if (_dbControllerType.IsAssignableFrom(controllerType))
+//            {
+//#if DEBUG
+//                var dbFactory = requestContext.HttpContext.Request.Params["test"] == null
+//                   ? new DbFactory(typeof(JeegoordahRealDb))
+//                   : new DbFactory(typeof(JeegoordahTestDb));
+//                ((DbController)controller).SetDbFactory(dbFactory);   
+//#else
+//                ((DbController)controller).SetDbFactory(new DbFactory(typeof(JeegoordahRealDb))); 
+//#endif
+//            }            
 
             return (IController)controller;
         }
