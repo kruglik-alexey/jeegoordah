@@ -1,6 +1,0 @@
-CREATE TABLE "Bro" (Id  integer primary key autoincrement, Name TEXT unique, Transaction_id INT, constraint FK957405CDC830FD9A foreign key (Transaction_id) references "Transaction");
-CREATE TABLE BrosToEvents (Bro_id INT not null, Event_id INT not null, constraint FKAA5848E9CB247D0A foreign key (Event_id) references "Event", constraint FKAA5848E9A87EB1B8 foreign key (Bro_id) references "Bro");
-CREATE TABLE "Currency" (Id  integer primary key autoincrement, Name TEXT unique);
-CREATE TABLE "Event" (Id  integer primary key autoincrement, Name TEXT unique, StartDate DATETIME, CreatedAt DATETIME, Description TEXT);
-CREATE TABLE "Transaction" (Id  integer primary key autoincrement, Date DATETIME, CreatedAt DATETIME, Amount NUMERIC, Comment TEXT, Currency_id INT, Source_id INT, Event_id INT, constraint FKC2DE128BC4476EF2 foreign key (Currency_id) references "Currency", constraint FKC2DE128B5E700B27 foreign key (Source_id) references "Bro", constraint FKC2DE128BCB247D0A foreign key (Event_id) references "Event");
-CREATE TABLE TransactionToBro (Bro_id INT not null, Transaction_id INT not null, constraint FK1DF29A98C830FD9A foreign key (Transaction_id) references "Transaction", constraint FK1DF29A98A87EB1B8 foreign key (Bro_id) references "Bro");

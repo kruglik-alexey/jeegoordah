@@ -9,14 +9,12 @@ namespace Jeegoordah.Core.DL.Entity
         public Bro()
         {
             Events = new List<Event>();
-            Transactions = new List<Transaction>();
         }
 
         public virtual int Id { get; set; }
         public virtual string Name { get; set; }
 
-        public virtual List<Event> Events { get; set; }
-        public virtual List<Transaction> Transactions { get; set; }
+        public virtual IList<Event> Events { get; set; }
     }
 
     class BroMap : ClassMap<Bro>
@@ -25,8 +23,7 @@ namespace Jeegoordah.Core.DL.Entity
         {
             Id(x => x.Id);
             Map(x => x.Name).Unique();
-            HasManyToMany(x => x.Events);
-            HasManyToMany(x => x.Transactions);
+            HasManyToMany(x => x.Events).Table("BroEvents");
         }
     }
 }

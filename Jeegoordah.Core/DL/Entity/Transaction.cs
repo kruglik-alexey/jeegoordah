@@ -21,7 +21,7 @@ namespace Jeegoordah.Core.DL.Entity
         public virtual Currency Currency { get; set; }
         public virtual decimal Amount { get; set; }
         public virtual Bro Source { get; set; }
-        public virtual List<Bro> Targets { get; set; }
+        public virtual IList<Bro> Targets { get; set; }
         public virtual Event Event { get; set; }
         public virtual string Comment { get; set; }
     }
@@ -36,8 +36,8 @@ namespace Jeegoordah.Core.DL.Entity
             References(x => x.Currency);
             Map(x => x.Amount);
             References(x => x.Source);
-            HasMany(x => x.Targets);
-            References(x => x.Event);
+            HasManyToMany(x => x.Targets).Table("TransactionTargets");
+            References(x => x.Event).Nullable();
             Map(x => x.Comment);
         }
     }

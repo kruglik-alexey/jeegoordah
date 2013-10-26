@@ -17,8 +17,8 @@ namespace Jeegoordah.Core.DL.Entity
         public virtual DateTime StartDate { get; set; }
         public virtual DateTime CreatedAt { get; set; }
         public virtual string Description { get; set; }
-        public virtual List<Bro> Bros { get; set; }
-        public virtual List<Transaction> Transactions { get; set; }
+        public virtual IList<Bro> Bros { get; set; }
+        public virtual IList<Transaction> Transactions { get; set; }
     }
 
     class EventMap : ClassMap<Event>
@@ -30,7 +30,7 @@ namespace Jeegoordah.Core.DL.Entity
             Map(x => x.StartDate);
             Map(x => x.CreatedAt);
             Map(x => x.Description);
-            HasManyToMany(x => x.Bros);
+            HasManyToMany(x => x.Bros).Table("BroEvents");
             HasMany(x => x.Transactions);
         }
     }

@@ -20,7 +20,7 @@ namespace Jeegoordah.Web.Models
             Description = source.Description;
             StartDate = JsonDate.ToString(source.StartDate);
             Bros = source.Bros.Select(b => b.Id).ToList();
-            Transactions = source.Transactions;
+            Transactions = new List<Transaction>(source.Transactions);
             Transactions.ForEach(t => t.Event = null);
         }
 
@@ -43,8 +43,8 @@ namespace Jeegoordah.Web.Models
             var oldBros = target.Bros.Select(b => b.Id).ToList();
             var addedBros = Bros.Except(oldBros).ToList();
             var removedBros = oldBros.Except(Bros).ToList();
-            target.Bros.AddRange(addedBros.Select(b => new Bro { Id = b }));
-            target.Bros.RemoveAll(b => removedBros.Contains(b.Id));
+//            target.Bros.AddRange(addedBros.Select(b => new Bro { Id = b }));
+//            target.Bros.RemoveAll(b => removedBros.Contains(b.Id));
         }
     }
 }
