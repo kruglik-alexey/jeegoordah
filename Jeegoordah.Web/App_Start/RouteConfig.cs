@@ -58,6 +58,12 @@ namespace Jeegoordah.Web
             );
 
             routes.MapRoute(
+                name: "UpdateTransaction",
+                url: "transactions/update",
+                defaults: new { controller = "Transactions", action = "Update" }
+            );
+
+            routes.MapRoute(
                 name: "DeleteTransaction",
                 url: "transactions/delete/{id}",
                 defaults: new { controller = "Transactions", action = "Delete" }

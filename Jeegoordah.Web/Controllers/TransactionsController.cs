@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Jeegoordah.Core;
+using Jeegoordah.Core.DL;
 using Jeegoordah.Core.DL.Entity;
 using Jeegoordah.Web.DL;
 using Jeegoordah.Web.Models;
@@ -23,18 +24,30 @@ namespace Jeegoordah.Web.Controllers
         {
             using (var db = DbFactory.Open())
             {
-                var dlTransaction = new Transaction {CreatedAt = DateTime.UtcNow};
-                transaction.ToDataObject(dlTransaction);
-                dlTransaction.Source = transaction.Source.Load<Bro>(db);
-                dlTransaction.Targets.AddRange(transaction.Targets.Load<Bro>(db));
-                if (transaction.Event.HasValue)
-                {
-                    dlTransaction.Event = transaction.Event.Value.Load<Event>(db);
-                }
-                dlTransaction.Currency = transaction.Currency.Load<Currency>(db);
+                var dlTransaction = TransactionFromRest(transaction, db);
+                dlTransaction.CreatedAt = DateTime.UtcNow;
                 db.Session.Save(dlTransaction);
                 return Json(new TransactionRest(dlTransaction));
             }        
+        }
+
+        [HttpPost]
+        [ValidateModelState]
+        public ActionResult Update(TransactionRest transaction)
+        {
+            if (!transaction.Id.HasValue)
+            {
+                Response.StatusCode = 400;
+                return Json(new { Field = "Id", Message = "Missing Id" });
+            }
+
+            using (var db = DbFactory.Open())
+            {
+                var dlTransaction = TransactionFromRest(transaction, db);
+                dlTransaction.CreatedAt = db.Query<Transaction>().Where(t => t.Id == transaction.Id).Select(t => t.CreatedAt).First();   
+                db.Session.Update(dlTransaction);
+                return Json(new TransactionRest(dlTransaction));
+            }
         }
 
         [HttpPost]
@@ -45,6 +58,28 @@ namespace Jeegoordah.Web.Controllers
                 db.Session.Delete(db.Load<Transaction>(id));
             }
             return Json(new { });
+        }
+
+        private Transaction TransactionFromRest(TransactionRest source, Db db)
+        {
+            var target = new Transaction();
+            if (source.Id.HasValue)
+            {
+                target.Id = source.Id.Value;
+            }
+            target.Date = JsonDate.Parse(source.Date);
+            target.Amount = source.Amount.Value;
+            target.Comment = source.Comment ?? "";
+
+            target.Source = source.Source.Load<Bro>(db);
+            target.Targets.AddRange(source.Targets.Load<Bro>(db));
+            if (source.Event.HasValue)
+            {
+                target.Event = source.Event.Value.Load<Event>(db);
+            }
+            target.Currency = source.Currency.Load<Currency>(db);
+
+            return target;
         }
     }
 }

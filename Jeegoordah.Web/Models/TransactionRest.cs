@@ -33,18 +33,7 @@ namespace Jeegoordah.Web.Models
         [Required] public int? Source { get; set; }
         public List<int> Targets { get; set; }
         public int? Event { get; set; }
-        public string Comment { get; set; }
-
-        public void ToDataObject(Transaction target)
-        {
-            if (Id.HasValue)
-            {
-                target.Id = Id.Value;
-            }
-            target.Date = JsonDate.Parse(Date);
-            target.Amount = Amount.Value;
-            target.Comment = Comment ?? "";
-        }
+        public string Comment { get; set; }        
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

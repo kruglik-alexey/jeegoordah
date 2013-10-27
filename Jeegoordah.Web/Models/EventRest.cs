@@ -29,18 +29,6 @@ namespace Jeegoordah.Web.Models
         [Required] public string Name { get; set; }
         [Required] public string Description { get; set; }
         [Required] public string StartDate { get; set; }
-        public List<int> Bros { get; set; }
-
-        public void ToDataObject(Event target)
-        {
-            if (Id.HasValue)
-            {
-                target.Id = Id.Value;
-            }
-            target.Name = Name;
-            target.StartDate = JsonDate.Parse(StartDate);
-            target.Description = Description ?? "";
-            target.Bros.Clear();
-        }
+        public List<int> Bros { get; set; }       
     }
 }

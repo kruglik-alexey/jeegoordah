@@ -56,11 +56,10 @@ namespace Jeegoordah.Web.Controllers
                 if (!AssertNameUnique(@event, db, out nameAssertResult))
                 {
                     return nameAssertResult;
-                }   
+                }
 
-                var dlEvent = new Event {CreatedAt = DateTime.UtcNow};
-                @event.ToDataObject(dlEvent);  
-                dlEvent.Bros.AddRange(@event.Bros.Load<Bro>(db));
+                var dlEvent = EventFromRest(@event, db);
+                dlEvent.CreatedAt = DateTime.UtcNow;
                 db.Session.Save(dlEvent);
                 return Json(new EventRest(dlEvent));
             }            
@@ -83,12 +82,8 @@ namespace Jeegoordah.Web.Controllers
                     return nameAssertResult;
                 }
 
-                var dlEvent = new Event
-                {
-                    CreatedAt = db.Query<Event>().Where(e => e.Id == @event.Id).Select(e => e.CreatedAt).First()
-                };
-                @event.ToDataObject(dlEvent);
-                dlEvent.Bros.AddRange(@event.Bros.Load<Bro>(db));
+                var dlEvent = EventFromRest(@event, db);
+                dlEvent.CreatedAt = db.Query<Event>().Where(e => e.Id == @event.Id).Select(e => e.CreatedAt).First();                
                 db.Session.Update(dlEvent);
                 return Json(new EventRest(dlEvent));
             }            
@@ -116,6 +111,20 @@ namespace Jeegoordah.Web.Controllers
             result = Json(new {Field = "Name", Message = "Event with name {0} already exists.".F(@event.Name)});
             Response.StatusCode = 400;
             return false;
+        }
+
+        private Event EventFromRest(EventRest source, Db db)
+        {
+            var target = new Event();
+            if (source.Id.HasValue)
+            {
+                target.Id = source.Id.Value;
+            }
+            target.Name = source.Name;
+            target.StartDate = JsonDate.Parse(source.StartDate);
+            target.Description = source.Description ?? "";
+            target.Bros.AddRange(source.Bros.Load<Bro>(db));
+            return target;
         }
     }
 }

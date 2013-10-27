@@ -25,7 +25,7 @@ function ($, _, rest, helper, editor, broSelector, notification, entityControls,
         },
         
         _createTransaction: function () {
-            self._showTransactionEditor({ Date: self.event.StartDate, Currency: self.currencies[0].Id, Targets: self.event.Bros }, 'Create Transaction', function(transaction) {
+            self._showTransactionEditor({Date: self.event.StartDate, Currency: self.currencies[0].Id, Targets: self.event.Bros}, 'Create Transaction', function(transaction) {
                 transaction = _.defaults(transaction, { Event: self.event.Id });
                 rest.post('transactions/create', transaction).done(function (createdTransaction) {
                     self._createTransactionElement(createdTransaction);
@@ -49,7 +49,7 @@ function ($, _, rest, helper, editor, broSelector, notification, entityControls,
             });
         },
         
-        _createTransactionElement: function (transaction) {
+        _createTransactionElement: function (transaction, appendToList) {
             var ui = _.clone(transaction);
             ui.Source = _.find(self.bros, function (bro) { return bro.Id === ui.Source; });
             ui.Targets = _.chain(ui.Targets).map(function (target) {
@@ -61,14 +61,18 @@ function ($, _, rest, helper, editor, broSelector, notification, entityControls,
             
             var element = $($.jqote(transactionTemplate, ui));
             entityControls.render(element, _.partial(self._editTransaction, transaction), _.partial(self._deleteTransaction, transaction));
-            $('#transactions').append(element);
+            if (_.isUndefined(appendToList) || appendToList) {
+                $('#transactions').append(element);
+            }
+
+            return element;
         },
         
         _editTransaction: function (transaction) {
             self._showTransactionEditor(transaction, 'Edit Transaction', function (updatedTransaction) {
-                updatedTransaction = _.defaults(updatedTransaction, { Event: self.event.Id });
-                rest.post('transactions/update', updatedTransaction).done(function (createdTransaction) {
-                    self._updateTransactionElement(createdTransaction);
+                updatedTransaction = _.defaults(updatedTransaction, { Id: transaction.Id, Event: self.event.Id });
+                rest.post('transactions/update', updatedTransaction).done(function () {
+                    self._updateTransactionElement(updatedTransaction);
                     editor.close();
                     notification.success('Transaction updated.');
                 });
@@ -81,6 +85,17 @@ function ($, _, rest, helper, editor, broSelector, notification, entityControls,
                 $transaction.fadeOut(consts.fadeDuration, function () {
                     $transaction.remove();
                 });
+            });
+        },
+        
+        _updateTransactionElement: function(transaction) {
+            var oldElement = $('#transaction' + transaction.Id);
+            var newElement = self._createTransactionElement(transaction, false);            
+            newElement.hide();
+            oldElement.fadeOut(consts.fadeDuration, function () {                                
+                newElement.insertAfter(oldElement);                
+                oldElement.remove();
+                newElement.fadeIn(consts.fadeDuration);
             });
         },
         

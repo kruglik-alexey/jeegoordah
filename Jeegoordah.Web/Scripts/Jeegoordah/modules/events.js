@@ -12,7 +12,7 @@
             $.when(rest.get('bros'), rest.get('events')).done(function (bros, events) {
                 self.bros = bros[0];                
                 $('#modules').empty().append($(moduleTemplate));
-                $('#createEventButton').click(self._showCreateEvent);
+                $('#createEventButton').click(self._createEvent);
                 self._loadEvents(events[0]);                                
             });                        
         },
@@ -23,7 +23,7 @@
             });            
         },
         
-        _showCreateEvent: function () {
+        _createEvent: function () {
             self._showEventEditor({}, 'Create Event', function (event) {
                 rest.post('events/create', event).done(function (createdEvent) {
                     self._createEventElement(createdEvent);
@@ -34,17 +34,14 @@
         },
         
         _createEventElement: function (event, appendToList) {
-            if (_.isUndefined(appendToList)) {
-                appendToList = true;
-            }
             var uiEvent = _.clone(event);
             uiEvent.Description = helper.textToHtml(uiEvent.Description || '');
             uiEvent.Bros = _.chain(uiEvent.Bros).map(function(broId) {
                 return _.find(self.bros, function(bro) { return bro.Id === broId; });
             }).sortBy('Name').value();
             var $event = $($.jqote(rowTemplate, uiEvent));
-            entityControls.render($event.find('h3'), _.partial(self._showEditEvent, event), _.partial(self._deleteEvent, event));
-            if (appendToList) {
+            entityControls.render($event.find('h3'), _.partial(self._editEvent, event), _.partial(self._deleteEvent, event));
+            if (_.isUndefined(appendToList) || appendToList) {
                 self._getEventList(event).append($event);
             }            
             
@@ -60,7 +57,7 @@
             });
         },
         
-        _showEditEvent: function (event) {
+        _editEvent: function (event) {
             self._showEventEditor(event, 'Edit Event', function (updatedEvent) {
                 updatedEvent = _.extend({ Id: event.Id }, updatedEvent);
                 rest.post('events/update', updatedEvent).done(function () {
