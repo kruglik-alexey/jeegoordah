@@ -57,10 +57,13 @@ function ($, _, rest, helper, editor, broSelector, notification, entityControls,
             }).sortBy('Name').value();
             ui.Amount = $.number(ui.Amount, 0, '.', ' ');
             ui.Currency = _.find(self.currencies, function (currency) { return currency.Id === ui.Currency; });
-            ui.targetsEqualsEvent = _.difference(transaction.Targets, self.event.Bros).length === 0;
+            ui.targetsEqualsEvent = _.union(transaction.Targets, self.event.Bros).length === transaction.Targets.length;
             
-            var element = $($.jqote(transactionTemplate, ui));
-            entityControls.render(element, _.partial(self._editTransaction, transaction), _.partial(self._deleteTransaction, transaction));
+            var element = $($.jqote(transactionTemplate, ui));            
+            entityControls.render(element.find('.entity-controls'),
+                _.partial(self._editTransaction, transaction),
+                _.partial(self._deleteTransaction, transaction));
+            
             if (_.isUndefined(appendToList) || appendToList) {
                 $('#transactions').append(element);
             }

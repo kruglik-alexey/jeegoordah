@@ -49,3 +49,6 @@ div.entity-controls {
 a.accordion-toggle:hover {
     text-decoration: initial;
 }
+
+table.entity-list tr td div.entity-controls { display:none; }
+table.entity-list tr:hover td div.entity-controls { display:inline-block; }

@@ -1,13 +1,17 @@
-﻿<div id="transaction<%= this.Id %>">
-    <span><%= this.Date %></span>
-    <span><%= this.Source.Name %></span> 
-    <span class="glyphicon glyphicon-arrow-right"></span>
-    <% if (this.targetsEqualsEvent) { %>
-        <span>All</span>
-    <% } else { %>
-        <% for(var i = 0; i < this.Targets.length; i++) { %>
-            <span><%= this.Targets[i].Name %></span>
-        <% } %>    
-    <% } %>    
-    <span><%= this.Amount %><%= this.Currency.Name %></span>
-</div>
+﻿<tr id="transaction<%= this.Id %>">
+    <td class="auto-width"><%= this.Date %></td>
+    <td class="auto-width"><%= this.Amount %> <%= this.Currency.Name %></td>
+    <td class="auto-width"><%= this.Source.Name %></td>
+    <td>        
+        <div class="entity-controls-host">
+            <% if (this.targetsEqualsEvent) { %>
+                <span>All</span>
+            <% } else { %>
+                <% for(var i = 0; i < this.Targets.length; i++) { %>
+                    <span><%= this.Targets[i].Name %></span>
+                <% } %>    
+            <% } %>
+            <div class="entity-controls"></div>      
+        </div>
+    </td>
+</tr>
