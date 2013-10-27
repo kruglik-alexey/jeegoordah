@@ -34,20 +34,18 @@ namespace Jeegoordah.Web.Controllers
         {
             using (var db = DbFactory.Open())
             {
-                return Json(new EventRest(db.Query<Event>().Fetch(x => x.Bros).First(e => e.Id == id)), JsonRequestBehavior.AllowGet);
+                return Json(new EventRest(db.Query<Event>().First(e => e.Id == id)), JsonRequestBehavior.AllowGet);
             }
         }
 
-//        [HttpGet]
-//        public ActionResult GetTransactions(int id)
-//        {
-//            using (var db = DbFactory.OpenSession())
-//            {
-//                return Json(db.Transactions.Include("Targets").Include("Source").Include("Currency").Include("Event")
-//                    .Where(t => t.Event.Id == id).OrderBy(t => t.Date).ThenBy(t => t.Id).ToList()
-//                    .Select(t => new TransactionRest(t)), JsonRequestBehavior.AllowGet);
-//            }
-//        }
+        [HttpGet]
+        public ActionResult GetTransactions(int id)
+        {
+            using (var db = DbFactory.Open())
+            {
+                return Json(db.Query<Transaction>().Fetch(t => t.Targets).Where(t => t.Event.Id == id).ToList().Select(t => new TransactionRest(t)), JsonRequestBehavior.AllowGet);
+            }
+        }
 
         [HttpPost]
         public ActionResult Create(EventRest @event)
@@ -77,7 +75,6 @@ namespace Jeegoordah.Web.Controllers
                 return Json(new {Field = "Id", Message = "Missing Id"});
             }
 
-            // TODO what if id invalid?
             using (var db = DbFactory.Open())
             {                
                 JsonResult nameAssertResult;
@@ -100,7 +97,6 @@ namespace Jeegoordah.Web.Controllers
         [HttpPost]
         public ActionResult Delete(int id)
         {
-            // TODO what if id invalid?
             using (var db = DbFactory.Open())
             {
                 db.Session.Delete(db.Load<Event>(id));
@@ -111,16 +107,10 @@ namespace Jeegoordah.Web.Controllers
 
         private bool AssertNameUnique(EventRest @event, Db db, out JsonResult result)
         {
-            bool conflict;
             result = null;
-            if (@event.Id.HasValue)
-            {
-                conflict = db.Query<Event>().Any(e => e.Id != @event.Id.Value && e.Name == @event.Name);
-            }
-            else
-            {
-                conflict = db.Query<Event>().Any(e => e.Name == @event.Name);
-            }            
+            bool conflict = @event.Id.HasValue
+                ? db.Query<Event>().Any(e => e.Id != @event.Id.Value && e.Name == @event.Name)
+                : db.Query<Event>().Any(e => e.Name == @event.Name);
             if (!conflict) return true;
 
             result = Json(new {Field = "Name", Message = "Event with name {0} already exists.".F(@event.Name)});

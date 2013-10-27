@@ -23,8 +23,6 @@ namespace Jeegoordah.Web.Models
             Description = source.Description;
             StartDate = JsonDate.ToString(source.StartDate);
             Bros = source.Bros.Select(b => b.Id).ToList();
-            Transactions = new List<Transaction>(source.Transactions);
-            Transactions.ForEach(t => t.Event = null);
         }
 
         public int? Id { get; set; }
@@ -32,7 +30,6 @@ namespace Jeegoordah.Web.Models
         [Required] public string Description { get; set; }
         [Required] public string StartDate { get; set; }
         public List<int> Bros { get; set; }
-        public List<Transaction> Transactions { get; set; }
 
         public void ToDataObject(Event target)
         {

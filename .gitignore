@@ -3,3 +3,4 @@
 *.DotSettings.user
 obj/
 bin/
+*.sqlite
