@@ -20,7 +20,7 @@ namespace Jeegoordah.Core.DL
 
         public DbFactory(string connectionStringName)
         {
-            var sqliteConfig = SQLiteConfiguration.Standard.ConnectionString(c => c.FromConnectionStringWithKey(connectionStringName));            
+            var sqliteConfig = SQLiteConfiguration.Standard.ConnectionString(c => c.FromConnectionStringWithKey(connectionStringName)).ShowSql();            
             var db = Fluently.Configure().Database(sqliteConfig);
             db.Mappings(m => m.FluentMappings.AddFromAssembly(Assembly.GetExecutingAssembly()));
             db.ExposeConfiguration(c => new SchemaUpdate(c).Execute(false, true));
@@ -30,16 +30,16 @@ namespace Jeegoordah.Core.DL
 
         private void Seed()
         {
-            using (var session = OpenSession())
+            using (var db = Open())
             {
-                if (!session.Query<Currency>().Any())
-                    DbSeed.Seed(session);
+                if (!db.Query<Currency>().Any())
+                    DbSeed.Seed(db.Session);
             }
         }
 
-        public ISession OpenSession()
+        public Db Open()
         {
-            return sessionFactory.OpenSession();
+            return new Db(sessionFactory.OpenSession());
         }
 
         public void Dispose()

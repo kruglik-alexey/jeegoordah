@@ -31,14 +31,14 @@ namespace Jeegoordah.Core.DL.Entity
         public TransactionMap()
         {
             Id(x => x.Id);
-            Map(x => x.Date);
-            Map(x => x.CreatedAt);
-            References(x => x.Currency);
-            Map(x => x.Amount);
-            References(x => x.Source);
+            Map(x => x.Date).Not.Nullable();
+            Map(x => x.CreatedAt).Not.Nullable();
+            References(x => x.Currency).Not.Nullable();
+            Map(x => x.Amount).Not.Nullable();
+            References(x => x.Source).Not.Nullable();
             HasManyToMany(x => x.Targets).Table("TransactionTargets");
             References(x => x.Event).Nullable();
-            Map(x => x.Comment);
+            Map(x => x.Comment).Not.Nullable();
         }
     }
 }

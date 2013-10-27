@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
+using Jeegoordah.Core;
 using Jeegoordah.Core.DL.Entity;
+using NHibernate;
 
 namespace Jeegoordah.Web.Models
 {
@@ -25,9 +28,9 @@ namespace Jeegoordah.Web.Models
         }
 
         public int? Id { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public string StartDate { get; set; }
+        [Required] public string Name { get; set; }
+        [Required] public string Description { get; set; }
+        [Required] public string StartDate { get; set; }
         public List<int> Bros { get; set; }
         public List<Transaction> Transactions { get; set; }
 
@@ -39,12 +42,8 @@ namespace Jeegoordah.Web.Models
             }
             target.Name = Name;
             target.StartDate = JsonDate.Parse(StartDate);
-            target.Description = Description;
-            var oldBros = target.Bros.Select(b => b.Id).ToList();
-            var addedBros = Bros.Except(oldBros).ToList();
-            var removedBros = oldBros.Except(Bros).ToList();
-//            target.Bros.AddRange(addedBros.Select(b => new Bro { Id = b }));
-//            target.Bros.RemoveAll(b => removedBros.Contains(b.Id));
+            target.Description = Description ?? "";
+            target.Bros.Clear();
         }
     }
 }

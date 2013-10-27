@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
 using Jeegoordah.Core.DL.Entity;
 
 namespace Jeegoordah.Web.Models
 {
-    public class TransactionRest
+    public class TransactionRest : IValidatableObject
     {
         public TransactionRest()
         {
@@ -24,12 +25,12 @@ namespace Jeegoordah.Web.Models
             Event = transaction.Event != null ? transaction.Event.Id : (int?)null; 
             Comment = transaction.Comment;
         }
-
+        
         public int? Id { get; set; }
-        public string Date { get; set; }
-        public decimal Amount { get; set; }
-        public int Currency { get; set; }
-        public int Source { get; set; }
+        [Required] public string Date { get; set; }
+        [Required] public decimal? Amount { get; set; }
+        [Required] public int? Currency { get; set; }
+        [Required] public int? Source { get; set; }
         public List<int> Targets { get; set; }
         public int? Event { get; set; }
         public string Comment { get; set; }
@@ -41,8 +42,14 @@ namespace Jeegoordah.Web.Models
                 target.Id = Id.Value;
             }
             target.Date = JsonDate.Parse(Date);
-            target.Amount = Amount;
-            target.Comment = Comment;
+            target.Amount = Amount.Value;
+            target.Comment = Comment ?? "";
+        }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (!Targets.Any())
+                yield return new ValidationResult("Empty Targets", new[] {"Targets"});
         }
     }
 }

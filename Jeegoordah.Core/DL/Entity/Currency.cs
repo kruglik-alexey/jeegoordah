@@ -17,7 +17,7 @@ namespace Jeegoordah.Core.DL.Entity
         public CurrencyMap()
         {
             Id(x => x.Id);
-            Map(x => x.Name).Unique();
+            Map(x => x.Name).Not.Nullable().Unique();
         }
     }
 }

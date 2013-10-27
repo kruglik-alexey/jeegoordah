@@ -6,6 +6,8 @@ using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Routing;
 using Jeegoordah.Web.Controllers;
+using Jeegoordah.Web.Models.Validation;
+using StructureMap;
 
 namespace Jeegoordah.Web
 {
@@ -20,9 +22,10 @@ namespace Jeegoordah.Web
             WebApiConfig.Register(GlobalConfiguration.Configuration);
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
-
-            ControllerBuilder.Current.SetControllerFactory(new ControllerFactory());
-            GlobalConfiguration.Configuration.BindParameter(typeof(DateTime), new DateTimeModelBinder());
+            
+            ControllerBuilder.Current.SetControllerFactory(ObjectFactory.Container.GetInstance<ControllerFactory>());
+            GlobalConfiguration.Configuration.BindParameter(typeof(DateTime), new DateTimeModelBinder());            
+            log4net.Config.XmlConfigurator.Configure();
         }
     }
 }

@@ -20,5 +20,10 @@ namespace Jeegoordah.Core
                 action(element);
             }
         }
+
+        public static void AddRange<T>(this ICollection<T> collection, IEnumerable<T> range)
+        {
+            range.ForEach(collection.Add);
+        }
     }
 }

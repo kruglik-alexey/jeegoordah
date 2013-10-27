@@ -22,8 +22,8 @@ namespace Jeegoordah.Core.DL.Entity
         public BroMap()
         {
             Id(x => x.Id);
-            Map(x => x.Name).Unique();
-            HasManyToMany(x => x.Events).Table("BroEvents");
+            Map(x => x.Name).Not.Nullable().Unique();
+            HasManyToMany(x => x.Events).Table("BroEvents").Inverse();
         }
     }
 }

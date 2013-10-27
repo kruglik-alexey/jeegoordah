@@ -1,22 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
+using Jeegoordah.Web.DL;
 
 namespace Jeegoordah.Web.Controllers
 {
 #if DEBUG
     public class TestController : DbController
     {
+        public TestController(ContextDependentDbFactory dbFactory) : base(dbFactory)
+        {
+        }
+
         [HttpGet]
         public void ClearDatabase()
         {
-            using (var db = DbFactory.OpenSession())
+            using (var db = DbFactory.Open())
             {
-                if (!db.Connection.Database.Contains("test"))
+                if (!db.Session.Connection.Database.Contains("test"))
                 {
                     throw new InvalidOperationException("Can clear only test database");
                 }
-                db.CreateSQLQuery("DELETE FROM EVENTS").ExecuteUpdate();
+                db.Session.CreateSQLQuery("DELETE FROM EVENTS").ExecuteUpdate();
             }
         }
     }

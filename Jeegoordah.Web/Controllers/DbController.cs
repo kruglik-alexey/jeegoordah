@@ -4,16 +4,17 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Jeegoordah.Core.DL;
+using Jeegoordah.Web.DL;
 
 namespace Jeegoordah.Web.Controllers
 {
     public abstract class DbController : Controller
     {
-        protected DbFactory DbFactory;
+        protected readonly ContextDependentDbFactory DbFactory;
 
-        public void SetDbFactory(DbFactory dbFactory)
+        protected DbController(ContextDependentDbFactory dbFactory)
         {
-            DbFactory = dbFactory;
+            this.DbFactory = dbFactory;
         }
     }
 }

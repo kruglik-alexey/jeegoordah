@@ -4,32 +4,39 @@ using System.Linq;
 using System.Web.Mvc;
 using System.Web.Routing;
 using Jeegoordah.Core.DL;
+using StructureMap;
 
 namespace Jeegoordah.Web.Controllers
 {
     public class ControllerFactory : DefaultControllerFactory
     {
-        private readonly Type dbControllerType = typeof(DbController);
-        private readonly Lazy<DbFactory> realDbFactory = new Lazy<DbFactory>(() => new DbFactory("Jeegoordah"));
-        private readonly Lazy<DbFactory> testDbFactory = new Lazy<DbFactory>(() => new DbFactory("JeegoordahTest"));
+        private readonly IContainer container;
+        private readonly object nestedContainerKey = new object();
+
+        public ControllerFactory(IContainer container)
+        {
+            this.container = container;
+        }
 
         protected override IController GetControllerInstance(RequestContext requestContext, Type controllerType)
-        {
-            var controller = Activator.CreateInstance(controllerType);
+        {            
+            var nestedContainer = container.GetNestedContainer();
+            requestContext.HttpContext.Items[nestedContainerKey] = nestedContainer;
 
-            if (dbControllerType.IsAssignableFrom(controllerType))
+            nestedContainer.Configure(cfg =>
             {
-#if DEBUG
-                var dbFactory = requestContext.HttpContext.Request.Params["test"] == null
-                    ? realDbFactory.Value
-                    : testDbFactory.Value;
-                ((DbController)controller).SetDbFactory(dbFactory);   
-#else
-                ((DbController)controller).SetDbFactory(realDbFactory.Value); 
-#endif
-            }            
+                cfg.For<RequestContext>().Use(requestContext);
+            });
 
-            return (IController)controller;
+            return (IController)nestedContainer.GetInstance(controllerType);
+        }
+
+        public override void ReleaseController(IController controller)
+        {
+            var nestedContainer = (IContainer)((ControllerBase)controller).ControllerContext.HttpContext.Items[nestedContainerKey];
+            if (nestedContainer != null)
+                nestedContainer.Dispose();            
+            base.ReleaseController(controller);
         }
     }
 }

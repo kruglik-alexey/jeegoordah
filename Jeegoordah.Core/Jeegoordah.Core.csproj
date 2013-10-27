@@ -65,6 +65,7 @@
     <Compile Include="DL\Entity\Currency.cs" />
     <Compile Include="DL\Entity\Event.cs" />
     <Compile Include="DL\DbSeed.cs" />
+    <Compile Include="DL\Db.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

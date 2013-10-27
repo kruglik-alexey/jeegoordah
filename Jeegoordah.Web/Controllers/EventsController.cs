@@ -7,6 +7,7 @@ using System.Web.Mvc;
 using Jeegoordah.Core;
 using Jeegoordah.Core.DL;
 using Jeegoordah.Core.DL.Entity;
+using Jeegoordah.Web.DL;
 using Jeegoordah.Web.Models;
 using NHibernate;
 using NHibernate.Linq;
@@ -15,10 +16,14 @@ namespace Jeegoordah.Web.Controllers
 {
     public class EventsController : DbController
     {
+        public EventsController(ContextDependentDbFactory dbFactory) : base(dbFactory)
+        {
+        }
+
         [HttpGet]
         public ActionResult List()
         {
-            using (var db = DbFactory.OpenSession())
+            using (var db = DbFactory.Open())
             {
                 return Json(db.Query<Event>().Fetch(x => x.Bros).ToList().Select(e => new EventRest(e)), JsonRequestBehavior.AllowGet);
             }            
@@ -27,7 +32,7 @@ namespace Jeegoordah.Web.Controllers
         [HttpGet]
         public ActionResult Get(int id)
         {
-            using (var db = DbFactory.OpenSession())
+            using (var db = DbFactory.Open())
             {
                 return Json(new EventRest(db.Query<Event>().Fetch(x => x.Bros).First(e => e.Id == id)), JsonRequestBehavior.AllowGet);
             }
@@ -47,7 +52,7 @@ namespace Jeegoordah.Web.Controllers
         [HttpPost]
         public ActionResult Create(EventRest @event)
         {            
-            using (var db = DbFactory.OpenSession())
+            using (var db = DbFactory.Open())
             {
                 JsonResult nameAssertResult;
                 if (!AssertNameUnique(@event, db, out nameAssertResult))
@@ -56,8 +61,9 @@ namespace Jeegoordah.Web.Controllers
                 }   
 
                 var dlEvent = new Event {CreatedAt = DateTime.UtcNow};
-                @event.ToDataObject(dlEvent);
-                db.Save(dlEvent);                
+                @event.ToDataObject(dlEvent);  
+                dlEvent.Bros.AddRange(@event.Bros.Load<Bro>(db));
+                db.Session.Save(dlEvent);
                 return Json(new EventRest(dlEvent));
             }            
         }
@@ -68,11 +74,11 @@ namespace Jeegoordah.Web.Controllers
             if (!@event.Id.HasValue)
             {
                 Response.StatusCode = 400;
-                return Json(new { Field = "Id", Message = "Missing Id" });
+                return Json(new {Field = "Id", Message = "Missing Id"});
             }
 
             // TODO what if id invalid?
-            using (var db = DbFactory.OpenSession())
+            using (var db = DbFactory.Open())
             {                
                 JsonResult nameAssertResult;
                 if (!AssertNameUnique(@event, db, out nameAssertResult))
@@ -84,8 +90,9 @@ namespace Jeegoordah.Web.Controllers
                 {
                     CreatedAt = db.Query<Event>().Where(e => e.Id == @event.Id).Select(e => e.CreatedAt).First()
                 };
-                @event.ToDataObject(dlEvent);                
-                db.Update(dlEvent);
+                @event.ToDataObject(dlEvent);
+                dlEvent.Bros.AddRange(@event.Bros.Load<Bro>(db));
+                db.Session.Update(dlEvent);
                 return Json(new EventRest(dlEvent));
             }            
         }
@@ -94,25 +101,25 @@ namespace Jeegoordah.Web.Controllers
         public ActionResult Delete(int id)
         {
             // TODO what if id invalid?
-            using (var db = DbFactory.OpenSession())
+            using (var db = DbFactory.Open())
             {
-                db.Delete(db.Load<Event>(id));
+                db.Session.Delete(db.Load<Event>(id));
             }
             // TODO respond just with header if OK
             return Json(new { });
         }
 
-        private bool AssertNameUnique(EventRest @event, ISession db, out JsonResult result)
+        private bool AssertNameUnique(EventRest @event, Db db, out JsonResult result)
         {
             bool conflict;
             result = null;
             if (@event.Id.HasValue)
             {
-                conflict = db.Query<Event>().Any(e => e.Id != @event.Id.Value && e.Name.Equals(@event.Name, StringComparison.CurrentCultureIgnoreCase));
+                conflict = db.Query<Event>().Any(e => e.Id != @event.Id.Value && e.Name == @event.Name);
             }
             else
             {
-                conflict = db.Query<Event>().Any(e => e.Name.Equals(@event.Name, StringComparison.CurrentCultureIgnoreCase));
+                conflict = db.Query<Event>().Any(e => e.Name == @event.Name);
             }            
             if (!conflict) return true;
 

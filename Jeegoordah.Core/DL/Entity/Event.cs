@@ -8,7 +8,7 @@ namespace Jeegoordah.Core.DL.Entity
     {
         public Event()
         {
-            Bros = new List<Bro>();
+            Bros = new HashSet<Bro>();
             Transactions = new List<Transaction>();
         }
 
@@ -17,7 +17,7 @@ namespace Jeegoordah.Core.DL.Entity
         public virtual DateTime StartDate { get; set; }
         public virtual DateTime CreatedAt { get; set; }
         public virtual string Description { get; set; }
-        public virtual IList<Bro> Bros { get; set; }
+        public virtual ICollection<Bro> Bros { get; set; }
         public virtual IList<Transaction> Transactions { get; set; }
     }
 
@@ -26,12 +26,12 @@ namespace Jeegoordah.Core.DL.Entity
         public EventMap()
         {
             Id(x => x.Id);
-            Map(x => x.Name).Unique();
-            Map(x => x.StartDate);
-            Map(x => x.CreatedAt);
-            Map(x => x.Description);
-            HasManyToMany(x => x.Bros).Table("BroEvents");
-            HasMany(x => x.Transactions);
+            Map(x => x.Name).Not.Nullable().Unique();
+            Map(x => x.StartDate).Not.Nullable();
+            Map(x => x.CreatedAt).Not.Nullable();
+            Map(x => x.Description).Not.Nullable();
+            HasManyToMany(x => x.Bros).AsSet().Table("BroEvents");
+            HasMany(x => x.Transactions).Inverse();
         }
     }
 }
