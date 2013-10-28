@@ -1,5 +1,5 @@
-﻿define(['$', 'modules/total', 'modules/people', 'modules/events', 'modules/event-details', 'text!templates/nav.html', '../crossroads/crossroads.min'],
-    function ($, total, people, events, eventDetail, template, crossroads) {
+﻿define(['$', 'modules/total', 'modules/people', 'modules/events', 'modules/event-details', 'modules/p2p', 'text!templates/nav.html', '../crossroads/crossroads.min'],
+    function ($, total, people, events, eventDetail, p2p, template, crossroads) {
 
     var self = {        
         init: function () {
@@ -17,6 +17,10 @@
             crossroads.addRoute('events/{id}', function (id) {
                 eventDetail.activate(id);
                 self._activateNavigation('events');
+            });
+            crossroads.addRoute('p2p', function () {
+                p2p.activate();
+                self._activateNavigation('p2p');
             });
         },
         

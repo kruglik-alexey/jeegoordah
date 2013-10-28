@@ -60,6 +60,16 @@ namespace Jeegoordah.Web.Controllers
             return Json(new { });
         }
 
+        [HttpGet]
+        public ActionResult ListP2P()
+        {
+            using (var db = DbFactory.Open())
+            {
+                var list = db.Query<Transaction>().Where(t => t.Event == null).ToList().Select(t => new TransactionRest()).ToList();
+                return Json(list, JsonRequestBehavior.AllowGet);
+            }
+        }
+
         private Transaction TransactionFromRest(TransactionRest source, Db db)
         {
             var target = new Transaction();
