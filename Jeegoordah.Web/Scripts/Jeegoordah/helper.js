@@ -10,6 +10,17 @@
         parseDate: function(dateStr) {
             var parts = dateStr.split('-');
             return new Date(parts[2], parts[1] - 1, parts[0]);
+        },
+
+        // Converts date to string of format 01-10-2013
+        dateToString: function (date) {
+            var lead = function(num) {
+                if (num < 10) {
+                    num = '0' + num;
+                }
+                return num;
+            };
+            return lead(date.getDate()) + '-' + lead(date.getMonth() + 1) + '-' + date.getFullYear();
         }
     };
 });

@@ -44,11 +44,9 @@
     require(['$'], function () {        
         require(['jeegoordah-noty', '../bootstrap/bootstrap.min', '../bootstrap/bootstrap-datepicker', '../jquery.validate.min', '../jquery.jqote2.min', '../jquery.number.min'],
         function (noty) {
-            require(['modules/total', 'modules/events', 'nav'], function (total, events, nav) {
+            require(['nav'], function (nav) {
                 noty.done(function() {
-                    nav.init();
-                    total.init();
-                    events.init();
+                    nav.init();                    
                     deferred.resolve();
                 });
             });

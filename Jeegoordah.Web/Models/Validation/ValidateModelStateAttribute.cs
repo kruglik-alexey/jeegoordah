@@ -10,9 +10,10 @@ namespace Jeegoordah.Web.Models.Validation
             if (!viewData.ModelState.IsValid)
             {
                 filterContext.Result = new JsonResult
-                {
+                {       
+                    // TODO set responce code to 400
                     Data = new {Error = "Invalid data"}                                       
-                };
+                };                
             }
 
             base.OnActionExecuting(filterContext);

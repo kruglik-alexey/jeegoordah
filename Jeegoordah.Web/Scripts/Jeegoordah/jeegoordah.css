@@ -52,3 +52,23 @@ a.accordion-toggle:hover {
 
 table.entity-list tr td div.entity-controls { display:none; }
 table.entity-list tr:hover td div.entity-controls { display:inline-block; }
+
+#totalList {
+    width: 200pt;
+}
+
+.negative {
+    color: red;
+}
+
+.positive {
+    color: green;
+}
+
+.zero {
+    color: silver;
+}
+
+.total-amount {
+    width: 100%;
+}

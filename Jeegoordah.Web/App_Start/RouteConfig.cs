@@ -69,6 +69,12 @@ namespace Jeegoordah.Web
                 defaults: new { controller = "Transactions", action = "Delete" }
             );
 
+            routes.MapRoute(
+                name: "ListP2PTransactions",
+                url: "transactions/p2p",
+                defaults: new { controller = "Transactions", action = "ListP2P" }
+            );
+
             #endregion
 
             #region General
@@ -83,6 +89,12 @@ namespace Jeegoordah.Web
                 name: "ListCurrensies",
                 url: "currencies",
                 defaults: new { controller = "General", action = "ListCurrencies" }
+            );
+
+            routes.MapRoute(
+                name: "GetTotal",
+                url: "total",
+                defaults: new { controller = "General", action = "GetTotal" }
             );
 
             routes.MapRoute(
