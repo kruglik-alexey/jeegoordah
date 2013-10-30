@@ -9,7 +9,7 @@ using NHibernate;
 
 namespace Jeegoordah.Web.Models
 {
-    public class EventRest
+    public class EventRest : IValidatableObject
     {
         public EventRest()
         {
@@ -26,9 +26,15 @@ namespace Jeegoordah.Web.Models
         }
 
         public int? Id { get; set; }
-        [Required] public string Name { get; set; }
-        [Required] public string Description { get; set; }
+        [Required] public string Name { get; set; }        
         [Required] public string StartDate { get; set; }
-        public List<int> Bros { get; set; }       
+        public string Description { get; set; }
+        public List<int> Bros { get; set; }
+
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (Bros.Distinct().Count() < 2)
+                yield return new ValidationResult("Event should has at least two Bros", new[] {"Bros"});
+        }
     }
 }

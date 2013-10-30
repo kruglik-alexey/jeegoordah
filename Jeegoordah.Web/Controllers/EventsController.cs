@@ -9,6 +9,7 @@ using Jeegoordah.Core.DL;
 using Jeegoordah.Core.DL.Entity;
 using Jeegoordah.Web.DL;
 using Jeegoordah.Web.Models;
+using Jeegoordah.Web.Models.Validation;
 using NHibernate;
 using NHibernate.Linq;
 
@@ -48,6 +49,7 @@ namespace Jeegoordah.Web.Controllers
         }
 
         [HttpPost]
+        [ValidateModelState]
         public ActionResult Create(EventRest @event)
         {            
             using (var db = DbFactory.Open())
@@ -66,6 +68,7 @@ namespace Jeegoordah.Web.Controllers
         }
 
         [HttpPost]
+        [ValidateModelState]
         public ActionResult Update(EventRest @event)
         {
             if (!@event.Id.HasValue)
@@ -95,8 +98,7 @@ namespace Jeegoordah.Web.Controllers
             using (var db = DbFactory.Open())
             {
                 db.Session.Delete(db.Load<Event>(id));
-            }
-            // TODO respond just with header if OK
+            }            
             return Json(new { });
         }
 
