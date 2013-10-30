@@ -9,11 +9,9 @@ namespace Jeegoordah.Web.Models.Validation
             var viewData = filterContext.Controller.ViewData;            
             if (!viewData.ModelState.IsValid)
             {
-                filterContext.Result = new JsonResult
-                {       
-                    // TODO set responce code to 400
-                    Data = new {Error = "Invalid data"}                                       
-                };                
+                filterContext.RequestContext.HttpContext.Response.StatusCode = 400;
+                // TODO aggregate message from validation errors
+                filterContext.Result = new JsonResult {Data = new {Message = "Invalid data"}};
             }
 
             base.OnActionExecuting(filterContext);
