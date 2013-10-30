@@ -16,7 +16,7 @@
             $editor.populateForm(formEntity);
             
             modal.show($editor, title, {
-                // TODO for some reason can't write it as _.bind($editor.submit, $editor). WTF?
+                // for some reason can't write it as _.bind($editor.submit, $editor). WTF?
                 ok: function() {
                     $editor.submit();
                 }
