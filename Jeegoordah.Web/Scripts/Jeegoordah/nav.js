@@ -22,6 +22,10 @@
                 p2p.activate();
                 self._activateNavigation('p2p');
             });
+            crossroads.addRoute('total', function () {
+                total.activate();
+                self._activateNavigation('total');
+            });
         },
         
         _activateNavigation: function(navigation) {

@@ -140,6 +140,7 @@
     <Compile Include="DependencyResolution\IoC.cs" />
     <Compile Include="DependencyResolution\StructureMapDependencyResolver.cs" />
     <Compile Include="DependencyResolution\StructureMapDependencyScope.cs" />
+    <Compile Include="Models\TotalRest.cs" />
     <Compile Include="Models\Validation\ValidateModelStateAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -159,9 +160,12 @@
     <Content Include="Scripts\Jeegoordah\templates\broSelector.html" />
     <Content Include="Scripts\Jeegoordah\templates\entityControls.html" />
     <Content Include="Scripts\Jeegoordah\templates\event-details\module.html" />
-    <Content Include="Scripts\Jeegoordah\templates\event-details\transaction.html" />
-    <Content Include="Scripts\Jeegoordah\templates\event-details\transactionEditor.html" />
+    <Content Include="Scripts\Jeegoordah\templates\total\module.html" />
+    <Content Include="Scripts\Jeegoordah\templates\total\row.html" />
+    <Content Include="Scripts\Jeegoordah\templates\transactions\transaction.html" />
+    <Content Include="Scripts\Jeegoordah\templates\transactions\transactionEditor.html" />
     <Content Include="Scripts\Jeegoordah\templates\p2p\module.html" />
+    <Content Include="Scripts\Jeegoordah\transactionsList.js" />
     <Content Include="Scripts\jquery.number.min.js" />
     <Content Include="Scripts\Tests\entityEditor-tests.js" />
     <Content Include="Scripts\Tests\modal-tests.js" />

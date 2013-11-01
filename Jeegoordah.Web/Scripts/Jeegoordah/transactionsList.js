@@ -15,10 +15,13 @@ function (_, $, rest, helper, editor, broSelector, notification, entityControls,
         },
 
         createTransaction: function () {
-            var defaults = {};
+            var defaults;
             if (self.event) {
                 defaults = {Date: self.event.StartDate, Currency: self.currencies[0].Id, Targets: self.event.Bros};
+            } else {
+                defaults = {Date: helper.dateToString(new Date())};
             }
+            
             self._showTransactionEditor(defaults, 'Create Transaction', function (transaction) {
                 if (self.event) {
                     transaction = _.defaults(transaction, {Event: self.event.Id});
@@ -60,12 +63,22 @@ function (_, $, rest, helper, editor, broSelector, notification, entityControls,
         },
 
         _validateTransaction: function ($editor) {
-            if (_.isUndefined(broSelector.unbind($editor.find('#transactionSource')))) {
+            if ($editor.find('#transactionCurrencies>.active').length === 0) {
+                notification.error('Please specify transaction Currency');
+                return false;
+            }
+            var source = broSelector.unbind($editor.find('#transactionSource'));
+            if (_.isUndefined(source)) {
                 notification.error('Please specify transaction Source');
                 return false;
             }
-            if (broSelector.unbind($editor.find('#transactionTargets')).length === 0) {
+            var targets = broSelector.unbind($editor.find('#transactionTargets'));
+            if (targets.length === 0) {
                 notification.error('Please specify transaction Targets');
+                return false;
+            }
+            if (targets.length === 1 && targets[0] === source) {
+                notification.error("You can't spent money on yourself alone, fucking egoist!");
                 return false;
             }
             return true;

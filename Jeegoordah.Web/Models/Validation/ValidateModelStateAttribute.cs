@@ -1,4 +1,5 @@
-﻿using System.Web.Mvc;
+﻿using System.Linq;
+using System.Web.Mvc;
 
 namespace Jeegoordah.Web.Models.Validation
 {
@@ -9,10 +10,11 @@ namespace Jeegoordah.Web.Models.Validation
             var viewData = filterContext.Controller.ViewData;            
             if (!viewData.ModelState.IsValid)
             {
-                filterContext.Result = new JsonResult
-                {
-                    Data = new {Error = "Invalid data"}                                       
-                };
+                filterContext.RequestContext.HttpContext.Response.StatusCode = 400;
+                var m = viewData.ModelState.Values.SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .Aggregate("", (acc, e) => acc + e + "\r\n");
+                filterContext.Result = new JsonResult {Data = new {Message = m}};
             }
 
             base.OnActionExecuting(filterContext);

@@ -1,12 +1,8 @@
-﻿define(['_', '$', 'rest', 'notification', 'helper', 'consts', 'entityEditor', 'entityControls',
+﻿define(['_', '$', 'rest', 'notification', 'helper', 'consts', 'entityEditor', 'entityControls', 'broSelector',
         'text!templates/events/row.html', 'text!templates/events/editor.html', 'text!templates/events/module.html'],
-    function (_, $, rest, notification, helper, consts, editor, entityControls, rowTemplate, editorTemplate, moduleTemplate) {
+    function (_, $, rest, notification, helper, consts, editor, entityControls, broSelector, rowTemplate, editorTemplate, moduleTemplate) {
 
     var self = {
-        init: function () {
-            // TODO remove?
-        },
-
         activate: function () {            
             // TODO add spinner while loading
             $.when(rest.get('bros'), rest.get('events')).done(function (bros, events) {
@@ -49,11 +45,13 @@
         },
         
         _showEventEditor: function(event, title, ok) {
-            var rendered = $.jqote(editorTemplate, { bros: self.bros });
-            editor.show($(rendered), event, title, {
+            var rendered = $(editorTemplate);
+            rendered.find('#eventBros').append(broSelector.render(false, self.bros));
+            editor.show(rendered, event, title, {
                 ok: ok,
-                toForm: _.bind(self._eventToForm, self),
-                fromForm: _.bind(self._eventFromForm, self),
+                toForm: self._bindEvent,
+                fromForm: self._unbindEvent,
+                validate: self._validateEvent,
             });
         },
         
@@ -96,18 +94,13 @@
             });                       
         },
                 
-        _eventToForm: function (event, $editor) {
-            _.each(event.Bros, function (broId) {
-                $editor.find('.bro-checkbox[data-id=' + broId + ']').addClass('active');
-            });
+        _bindEvent: function (event, $editor) {
+            broSelector.bind($editor.find('#eventBros'), event.Bros);            
             return event;
         },
         
-        _eventFromForm: function (event, $editor) {
-            event.Bros = [];
-            $editor.find('.bro-checkbox.active').each(function (tmp, el) {
-                event.Bros.push(parseInt($(el).attr('data-id')));
-            });
+        _unbindEvent: function (event, $editor) {            
+            event.Bros = broSelector.unbind($editor.find('#eventBros'));
             return event;
         },
         
@@ -117,6 +110,15 @@
             } else {
                 return $('#event-list-past');
             }            
+        },
+        
+        _validateEvent: function ($editor) {
+            var targets = broSelector.unbind($editor.find('#eventBros'));
+            if (targets.length < 2) {
+                notification.error('Event should has at least two Bros');
+                return false;
+            }
+            return true;
         }
     };
         

@@ -13,9 +13,14 @@
 
     var test = !!getQueryVariable('test');
 
-    var showError = function(error) {
-        // TODO now only supports BL errors from controllers (400), can't handle 500, 404 etc
-        notification.error(error.Message);
+    var showError = function (error) {        
+        if (error.getAllResponseHeaders() === '') {
+            notification.error('No connection');            
+        } else if (error.status === 400) {
+            notification.error(error.responseJSON.Message);
+        } else {
+            notification.error(error.status + ' Server Error');
+        }        
     };
 
     var prepareUrl = function(url) {
@@ -32,7 +37,7 @@
                 type: "GET",
             });
             ajax.fail(function (response) {                
-                showError(response.responseJSON);
+                showError(response);
             });
             return ajax;
         },
@@ -44,8 +49,8 @@
                 contentType: "application/json; charset=utf-8",
                 data: JSON.stringify(data)
             });
-            ajax.fail(function (response) {
-                showError(response.responseJSON);
+            ajax.fail(function (response) {                
+                showError(response);
             });
             return ajax;
         }               
