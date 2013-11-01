@@ -5,6 +5,7 @@ using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Routing;
+using Jeegoordah.Core.Logging;
 using Jeegoordah.Web.Controllers;
 using Jeegoordah.Web.Models.Validation;
 using StructureMap;
@@ -17,6 +18,9 @@ namespace Jeegoordah.Web
     {
         protected void Application_Start()
         {
+			ConfigureLogger();
+			Logger.For(this).I("Start Jeegoordah for the greater good!");
+
             AreaRegistration.RegisterAllAreas();
 
             WebApiConfig.Register(GlobalConfiguration.Configuration);
@@ -24,8 +28,13 @@ namespace Jeegoordah.Web
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             
             ControllerBuilder.Current.SetControllerFactory(ObjectFactory.Container.GetInstance<ControllerFactory>());
-            GlobalConfiguration.Configuration.BindParameter(typeof(DateTime), new DateTimeModelBinder());            
-            log4net.Config.XmlConfigurator.Configure();
+            GlobalConfiguration.Configuration.BindParameter(typeof(DateTime), new DateTimeModelBinder());                        
         }
+
+	    private void ConfigureLogger()
+	    {
+			Logger.Configure(@"App_Data\log.txt");
+			log4net.Config.XmlConfigurator.Configure();
+	    }
     }
 }

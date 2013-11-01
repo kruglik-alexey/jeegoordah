@@ -21,6 +21,7 @@ namespace Jeegoordah.Web.Controllers
                 {
                     throw new InvalidOperationException("Can clear only test database");
                 }
+				Logger.I("Clear database");
                 db.Session.CreateSQLQuery("DELETE FROM EVENTS").ExecuteUpdate();
             }
         }

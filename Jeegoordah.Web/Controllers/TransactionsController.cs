@@ -27,7 +27,9 @@ namespace Jeegoordah.Web.Controllers
                 var dlTransaction = TransactionFromRest(transaction, db);
                 dlTransaction.CreatedAt = DateTime.UtcNow;
                 db.Session.Save(dlTransaction);
-                return Json(new TransactionRest(dlTransaction));
+	            var response = new TransactionRest(dlTransaction);
+				Logger.I("Created transaction {0}", response.ToJson());
+                return Json(response);
             }        
         }
 
@@ -37,6 +39,7 @@ namespace Jeegoordah.Web.Controllers
         {
             if (!transaction.Id.HasValue)
             {
+				Logger.I("Attempt to update transaction without id");
                 Response.StatusCode = 400;
                 return Json(new { Field = "Id", Message = "Missing Id" });
             }
@@ -46,7 +49,9 @@ namespace Jeegoordah.Web.Controllers
                 var dlTransaction = TransactionFromRest(transaction, db);
                 dlTransaction.CreatedAt = db.Query<Transaction>().Where(t => t.Id == transaction.Id).Select(t => t.CreatedAt).First();   
                 db.Session.Update(dlTransaction);
-                return Json(new TransactionRest(dlTransaction));
+				var response = new TransactionRest(dlTransaction);
+				Logger.I("Updated transaction {0}", response.ToJson());
+				return Json(response);
             }
         }
 
@@ -56,6 +61,7 @@ namespace Jeegoordah.Web.Controllers
             using (var db = DbFactory.Open())
             {
                 db.Session.Delete(db.Load<Transaction>(id));
+				Logger.I("Deleted transaction {0}", id);
             }
             return Json(new { });
         }

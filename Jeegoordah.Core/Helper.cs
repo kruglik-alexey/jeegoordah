@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace Jeegoordah.Core
 {
@@ -25,5 +26,10 @@ namespace Jeegoordah.Core
         {
             range.ForEach(collection.Add);
         }
+
+		public static string ToJson(this object obj)
+		{
+			return JsonConvert.SerializeObject(obj);
+		}
     }
 }

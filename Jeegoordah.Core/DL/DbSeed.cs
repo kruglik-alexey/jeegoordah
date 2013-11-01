@@ -1,5 +1,6 @@
 ﻿using System.Data.Entity;
 using Jeegoordah.Core.DL.Entity;
+using Jeegoordah.Core.Logging;
 using NHibernate;
 
 namespace Jeegoordah.Core.DL
@@ -8,6 +9,8 @@ namespace Jeegoordah.Core.DL
     {
         public static void Seed(ISession session)
         {
+			Logger.For(typeof(DbSeed)).I("Seed db");
+
             session.Save(new Currency {Name = "BYR"});
             session.Save(new Currency {Name = "USD"});
 

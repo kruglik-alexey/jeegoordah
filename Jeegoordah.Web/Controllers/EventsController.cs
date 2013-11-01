@@ -51,7 +51,7 @@ namespace Jeegoordah.Web.Controllers
         [HttpPost]
         [ValidateModelState]
         public ActionResult Create(EventRest @event)
-        {            
+        {
             using (var db = DbFactory.Open())
             {
                 JsonResult nameAssertResult;
@@ -63,7 +63,9 @@ namespace Jeegoordah.Web.Controllers
                 var dlEvent = EventFromRest(@event, db);
                 dlEvent.CreatedAt = DateTime.UtcNow;
                 db.Session.Save(dlEvent);
-                return Json(new EventRest(dlEvent));
+	            var response = new EventRest(dlEvent);
+				Logger.I("Created event {0}", response.ToJson());
+                return Json(response);
             }            
         }
 
@@ -73,6 +75,7 @@ namespace Jeegoordah.Web.Controllers
         {
             if (!@event.Id.HasValue)
             {
+				Logger.I("Attempt to update transaction without id");
                 Response.StatusCode = 400;
                 return Json(new {Field = "Id", Message = "Missing Id"});
             }
@@ -88,7 +91,9 @@ namespace Jeegoordah.Web.Controllers
                 var dlEvent = EventFromRest(@event, db);
                 dlEvent.CreatedAt = db.Query<Event>().Where(e => e.Id == @event.Id).Select(e => e.CreatedAt).First();                
                 db.Session.Update(dlEvent);
-                return Json(new EventRest(dlEvent));
+	            var response = new EventRest(dlEvent);
+				Logger.I("Updated event {0}", response.ToJson());
+                return Json(response);
             }            
         }
 
@@ -98,6 +103,7 @@ namespace Jeegoordah.Web.Controllers
             using (var db = DbFactory.Open())
             {
                 db.Session.Delete(db.Load<Event>(id));
+				Logger.I("Deleted event {0}", id);
             }            
             return Json(new { });
         }
@@ -110,6 +116,7 @@ namespace Jeegoordah.Web.Controllers
                 : db.Query<Event>().Any(e => e.Name == @event.Name);
             if (!conflict) return true;
 
+			Logger.E("Attempt to create duplicate event {0}", @event.Name);
             result = Json(new {Field = "Name", Message = "Event with name {0} already exists.".F(@event.Name)});
             Response.StatusCode = 400;
             return false;
