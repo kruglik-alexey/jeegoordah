@@ -128,6 +128,7 @@
   <ItemGroup>
     <Compile Include="App_Start\StructuremapMvc.cs" />
     <Compile Include="CacheBuster.cs" />
+    <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="DL\ContextDependentDbFactory.cs" />
     <Compile Include="Controllers\ControllerFactory.cs" />
     <Compile Include="Controllers\DbController.cs" />

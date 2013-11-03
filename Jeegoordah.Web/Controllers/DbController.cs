@@ -9,15 +9,13 @@ using Jeegoordah.Web.DL;
 
 namespace Jeegoordah.Web.Controllers
 {
-    public abstract class DbController : Controller
-    {
-	    protected readonly Logger Logger;
+	public abstract class DbController : BaseController
+    {	    
         protected readonly ContextDependentDbFactory DbFactory;
 
         protected DbController(ContextDependentDbFactory dbFactory)
         {
             DbFactory = dbFactory;
-	        Logger = Logger.For(this);
         }		
     }
 }

@@ -31,6 +31,7 @@ namespace Jeegoordah.Core.Logging
 
             var fileAppender = new RollingFileAppender
             {
+				RollingStyle = RollingFileAppender.RollingMode.Size,
                 AppendToFile = true,
                 LockingModel = new FileAppender.MinimalLock(),
                 Encoding = Encoding.UTF8,
@@ -92,7 +93,7 @@ namespace Jeegoordah.Core.Logging
 
         public void E(Exception ex)
         {
-            E("Unhandled {0}".F(ex.GetType().FullName));
+            E("Unhandled {0}".F(ex.GetType().FullName), ex);
         }
 
         private string SerializeException(Exception exception)
