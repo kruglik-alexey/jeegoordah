@@ -20,7 +20,6 @@ namespace Jeegoordah.Web.Controllers
         [HttpGet]
         public ActionResult Index()
         {
-	        throw new Exception("Foo");
             return View(new CacheBuster());
         }
 
