@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
+using Jeegoordah.Core.Logging;
 using NHibernate;
 using NHibernate.Linq;
 using NHibernate.Tool.hbm2ddl;
@@ -20,10 +21,14 @@ namespace Jeegoordah.Core.DL
 
         public DbFactory(string connectionStringName)
         {
-            var sqliteConfig = SQLiteConfiguration.Standard.ConnectionString(c => c.FromConnectionStringWithKey(connectionStringName)).ShowSql();            
+            var sqliteConfig = SQLiteConfiguration.Standard.ConnectionString(c => c.FromConnectionStringWithKey(connectionStringName)).ShowSql();			
             var db = Fluently.Configure().Database(sqliteConfig);
             db.Mappings(m => m.FluentMappings.AddFromAssembly(Assembly.GetExecutingAssembly()));
-            db.ExposeConfiguration(c => new SchemaUpdate(c).Execute(false, true));
+            db.ExposeConfiguration(c =>
+	            {
+		            new SchemaUpdate(c).Execute(false, true);
+					Logger.For(this).I("Use connection string '{0}'", c.GetProperty(NHibernate.Cfg.Environment.ConnectionString));
+	            });
             sessionFactory = db.BuildSessionFactory();
             Seed();
         }
