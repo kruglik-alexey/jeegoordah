@@ -14,8 +14,7 @@ namespace Jeegoordah.Core.DL.Entity
 
         public virtual int Id { get; set; }
         public virtual string Name { get; set; }
-        public virtual DateTime StartDate { get; set; }
-        public virtual DateTime CreatedAt { get; set; }
+        public virtual DateTime StartDate { get; set; }        
         public virtual string Description { get; set; }
         public virtual ICollection<Bro> Bros { get; set; }
         public virtual IList<Transaction> Transactions { get; set; }
@@ -27,8 +26,7 @@ namespace Jeegoordah.Core.DL.Entity
         {
             Id(x => x.Id);
             Map(x => x.Name).Not.Nullable().Unique();
-            Map(x => x.StartDate).Not.Nullable();
-            Map(x => x.CreatedAt).Not.Nullable();
+            Map(x => x.StartDate).Not.Nullable();            
             Map(x => x.Description).Not.Nullable();
             HasManyToMany(x => x.Bros).AsSet().Table("BroEvents");
             HasMany(x => x.Transactions).Inverse();

@@ -25,7 +25,6 @@ namespace Jeegoordah.Web.Controllers
             using (var db = DbFactory.Open())
             {
                 var dlTransaction = TransactionFromRest(transaction, db);
-                dlTransaction.CreatedAt = DateTime.UtcNow;
                 db.Session.Save(dlTransaction);
 	            var response = new TransactionRest(dlTransaction);
 				Logger.I("Created transaction {0}", response.ToJson());
@@ -47,7 +46,6 @@ namespace Jeegoordah.Web.Controllers
             using (var db = DbFactory.Open())
             {
                 var dlTransaction = TransactionFromRest(transaction, db);
-                dlTransaction.CreatedAt = db.Query<Transaction>().Where(t => t.Id == transaction.Id).Select(t => t.CreatedAt).First();   
                 db.Session.Update(dlTransaction);
 				var response = new TransactionRest(dlTransaction);
 				Logger.I("Updated transaction {0}", response.ToJson());

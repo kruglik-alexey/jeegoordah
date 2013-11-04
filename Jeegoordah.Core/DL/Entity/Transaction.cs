@@ -16,8 +16,7 @@ namespace Jeegoordah.Core.DL.Entity
         }
 
         public virtual int Id { get; set; }
-        public virtual DateTime Date { get; set; }
-        public virtual DateTime CreatedAt { get; set; }        
+        public virtual DateTime Date { get; set; }              
         public virtual Currency Currency { get; set; }
         public virtual decimal Amount { get; set; }
         public virtual Bro Source { get; set; }
@@ -31,8 +30,7 @@ namespace Jeegoordah.Core.DL.Entity
         public TransactionMap()
         {
             Id(x => x.Id);
-            Map(x => x.Date).Not.Nullable();
-            Map(x => x.CreatedAt).Not.Nullable();
+            Map(x => x.Date).Not.Nullable();            
             References(x => x.Currency).Not.Nullable();
             Map(x => x.Amount).Not.Nullable();
             References(x => x.Source).Not.Nullable();

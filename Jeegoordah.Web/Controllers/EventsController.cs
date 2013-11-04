@@ -61,7 +61,6 @@ namespace Jeegoordah.Web.Controllers
                 }
 
                 var dlEvent = EventFromRest(@event, db);
-                dlEvent.CreatedAt = DateTime.UtcNow;
                 db.Session.Save(dlEvent);
 	            var response = new EventRest(dlEvent);
 				Logger.I("Created event {0}", response.ToJson());
@@ -89,7 +88,6 @@ namespace Jeegoordah.Web.Controllers
                 }
 
                 var dlEvent = EventFromRest(@event, db);
-                dlEvent.CreatedAt = db.Query<Event>().Where(e => e.Id == @event.Id).Select(e => e.CreatedAt).First();                
                 db.Session.Update(dlEvent);
 	            var response = new EventRest(dlEvent);
 				Logger.I("Updated event {0}", response.ToJson());

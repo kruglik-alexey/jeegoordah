@@ -12,7 +12,6 @@ namespace Jeegoordah.Core.DL.Entity
         }
 
         public virtual string Name { get; set; }
-
         public virtual IList<Event> Events { get; set; }        
     }
 
