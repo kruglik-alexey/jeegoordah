@@ -25,18 +25,11 @@ namespace Jeegoordah.Core.BL
             foreach (Transaction t in transactions)
             {
                 decimal share = t.Amount / t.Targets.Count;
-                foreach (Bro bro in t.Targets.Where(b => !t.Source.Equals(b)))
+                foreach (Bro bro in t.Targets)
                 {
                     result[bro][t.Currency] -= share;
                 }
-                if (t.Targets.Contains(t.Source))
-                {
-                    result[t.Source][t.Currency] += t.Amount - share;
-                }
-                else
-                {
-                    result[t.Source][t.Currency] += t.Amount;
-                }
+                result[t.Source][t.Currency] += t.Amount;                
             }
 
             return result;

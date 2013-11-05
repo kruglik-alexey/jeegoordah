@@ -35,6 +35,9 @@ namespace LegacyImport
 
         private static Dictionary<int, int> eventMap = new Dictionary<int, int>();
 
+        // 2.0 stuff
+        private static Dictionary<int, List<int>> eventBroMap = new Dictionary<int, List<int>>();
+
         private static IEnumerable<string[]> events;        
         private static IEnumerable<string[]> eventsPersons;
         private static IEnumerable<string[]> transactions;
@@ -52,21 +55,95 @@ namespace LegacyImport
             using (var session = sessionFactory.OpenSession())
             {
                 ImportEvents(session);
+                ImportEventBros(session);
+                var id = ImportTransactions(session);
+                ImportDirects(session, id);
                 session.Flush();
+            }
+        }
+
+        private static void ImportDirects(ISession session, int id)
+        {
+            var q = session.CreateSQLQuery(
+                "insert into [transaction] (date, amount, comment, currency_id, source_id) values(:date, :amount, :comment, :currency, :source)");
+            var qq = session.CreateSQLQuery("insert into transactiontargets (transaction_id, bro_id) values(:transaction, :bro)");
+            q.SetParameter("currency", 1);
+            q.SetParameter("date", "2013-01-01 00:00:00");
+            foreach (string[] transaction in directs)
+            {
+                q.SetParameter("amount", transaction[3]);
+                q.SetParameter("comment", transaction[4]);
+                q.SetParameter("source", broMap[int.Parse(transaction[2])]);
+                q.ExecuteUpdate();
+
+                qq.SetParameter("transaction", id);
+                qq.SetParameter("bro", broMap[int.Parse(transaction[1])]);
+                qq.ExecuteUpdate();
+                id++;
+            }
+        }
+
+        private static int ImportTransactions(ISession session)
+        {
+            var q = session.CreateSQLQuery(
+                "insert into [transaction] (date, amount, comment, currency_id, source_id, event_id) values(:date, :amount, :comment, :currency, :source, :event)");
+            var qq = session.CreateSQLQuery("insert into transactiontargets (transaction_id, bro_id) values(:transaction, :bro)");
+            q.SetParameter("currency", 1);
+            q.SetParameter("date", "2013-01-01 00:00:00");
+            int id = 1;
+            foreach (string[] transaction in transactions)
+            {
+                var @event = eventMap[int.Parse(transaction[2])];
+                q.SetParameter("amount", transaction[3]);
+                q.SetParameter("comment", transaction[4]);
+                q.SetParameter("source", broMap[int.Parse(transaction[1])]);
+                q.SetParameter("event", @event);
+                q.ExecuteUpdate();
+
+                foreach (int bro in eventBroMap[@event])
+                {
+                    qq.SetParameter("transaction", id);
+                    qq.SetParameter("bro", bro);
+                    qq.ExecuteUpdate();
+                }
+                id++;
+            }
+            return id;
+        }
+
+        private static void ImportEventBros(ISession session)
+        {
+            var q = session.CreateSQLQuery("insert into broevents (bro_id, event_id) values(:broid, :eventid)");
+            foreach (string[] eventsPerson in eventsPersons)
+            {
+                int bro = broMap[int.Parse(eventsPerson[2])];
+                int @event = eventMap[int.Parse(eventsPerson[1])];
+                q.SetParameter("broid", bro);
+                q.SetParameter("eventid", @event);
+                q.ExecuteUpdate();
+
+                List<int> bros;
+                if (!eventBroMap.TryGetValue(@event, out bros))
+                {
+                    bros = new List<int>();
+                    eventBroMap[@event] = bros;
+                }
+                bros.Add(bro);
             }
         }
 
         private static void ImportEvents(ISession session)
         {
-            var id = session.CreateSQLQuery("select seq from sqlite_sequence where name=event");
             var q = session.CreateSQLQuery("insert into event (name, startdate, description) values(:name, :startdate, :description)");
-            q.SetParameter("startdate", "01-01-2013");
+            q.SetParameter("startdate", "2013-01-01 00:00:00");
             q.SetParameter("description", "");
+            int id = 1;
             foreach (string[] e in events)
             {
                 q.SetParameter("name", e[1]);
                 q.ExecuteUpdate();
-                eventMap[int.Parse(e[0])] = id.List().As<int>();
+                eventMap[int.Parse(e[0])] = id;
+                id++;
             }
         }
 
@@ -89,6 +166,6 @@ namespace LegacyImport
             var db = Fluently.Configure().Database(sqliteConfig);
             db.Mappings(m => m.FluentMappings.AddFromAssembly(Assembly.GetExecutingAssembly()));
             sessionFactory = db.BuildSessionFactory();
-        }
+        }        
     }
 }
