@@ -2,16 +2,19 @@
     <td class="auto-width"><%= this.Date %></td>
     <td class="auto-width text-right"><%= this.Amount %> <%= this.Currency.Name %></td>
     <td class="auto-width"><%= this.Source.Name %></td>
-    <td>        
+    <td class="auto-width">                
+        <% if (this.targetsEqualsEvent) { %>
+            <span>All</span>
+        <% } else { %>
+            <% for(var i = 0; i < this.Targets.length; i++) { %>
+                <span><%= this.Targets[i].Name %></span>
+            <% } %>    
+        <% } %>
+    </td>
+    <td>
         <div class="entity-controls-host">
-            <% if (this.targetsEqualsEvent) { %>
-                <span>All</span>
-            <% } else { %>
-                <% for(var i = 0; i < this.Targets.length; i++) { %>
-                    <span><%= this.Targets[i].Name %></span>
-                <% } %>    
-            <% } %>
-            <div class="entity-controls"></div>      
+            <%= this.Comment %>
+            <div class="entity-controls"></div>  
         </div>
     </td>
 </tr>

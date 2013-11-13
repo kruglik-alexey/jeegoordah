@@ -93,6 +93,7 @@ function (_, $, rest, helper, editor, broSelector, notification, entityControls,
             ui.Amount = $.number(ui.Amount, 0, '.', ' ');
             ui.Currency = _.find(self.currencies, function (currency) { return currency.Id === ui.Currency; });
             ui.targetsEqualsEvent = self.event && helper.equalArrays(transaction.Targets, self.event.Bros);
+            ui.Comment = helper.textToHtml(ui.Comment);
 
             var element = $($.jqote(transactionTemplate, ui));
             entityControls.render(element.find('.entity-controls'),
