@@ -10,7 +10,9 @@ function (_, $, rest, helper, editor, broSelector, notification, entityControls,
         
         renderTransactions: function (transactions) {
             _.each(transactions, function (t) {
-                self._createTransactionElement(t);
+                self._createTransactionElement(t, function(list, element) {
+                    list.append(element);
+                });
             });
         },
 
@@ -27,7 +29,9 @@ function (_, $, rest, helper, editor, broSelector, notification, entityControls,
                     transaction = _.defaults(transaction, {Event: self.event.Id});
                 }                
                 rest.post('transactions/create', transaction).done(function (createdTransaction) {
-                    self._createTransactionElement(createdTransaction);
+                    self._createTransactionElement(createdTransaction, function (list, element) {
+                        list.prepend(element);
+                    });
                     editor.close();
                     notification.success('Transaction created');
                 });
@@ -84,7 +88,7 @@ function (_, $, rest, helper, editor, broSelector, notification, entityControls,
             return true;
         },
         
-        _createTransactionElement: function (transaction, appendToList) {
+        _createTransactionElement: function (transaction, action) {
             var ui = _.clone(transaction);
             ui.Source = _.find(self.bros, function (bro) { return bro.Id === ui.Source; });
             ui.Targets = _.chain(ui.Targets).map(function (target) {
@@ -100,8 +104,8 @@ function (_, $, rest, helper, editor, broSelector, notification, entityControls,
                 _.partial(self._editTransaction, transaction),
                 _.partial(self._deleteTransaction, transaction));
 
-            if (_.isUndefined(appendToList) || appendToList) {
-                $('#transactions').append(element);
+            if (!_.isUndefined(action)) {
+                action($('#transactions'), element);                
             }
 
             return element;
@@ -109,7 +113,7 @@ function (_, $, rest, helper, editor, broSelector, notification, entityControls,
         
         _updateTransactionElement: function (transaction) {
             var oldElement = $('#transaction' + transaction.Id);
-            var newElement = self._createTransactionElement(transaction, false);
+            var newElement = self._createTransactionElement(transaction);
             newElement.hide();
             oldElement.fadeOut(consts.fadeDuration, function () {
                 newElement.insertAfter(oldElement);

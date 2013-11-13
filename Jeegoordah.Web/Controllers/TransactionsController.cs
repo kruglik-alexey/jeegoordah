@@ -69,8 +69,13 @@ namespace Jeegoordah.Web.Controllers
         {
             using (var db = DbFactory.Open())
             {
-                var list = db.Query<Transaction>().Where(t => t.Event == null).ToList().Select(t => new TransactionRest(t)).ToList();
-                return Json(list, JsonRequestBehavior.AllowGet);
+                return Json(db.Query<Transaction>()
+                            .Where(t => t.Event == null)
+                            .OrderByDescending(t => t.Date)
+                            .ToList()
+                            .Select(t => new TransactionRest(t))
+                            // TODO why we need ToList() here?
+                            .ToList(), JsonRequestBehavior.AllowGet);
             }
         }
 

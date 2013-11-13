@@ -44,7 +44,12 @@ namespace Jeegoordah.Web.Controllers
         {
             using (var db = DbFactory.Open())
             {
-                return Json(db.Query<Transaction>().Fetch(t => t.Targets).Where(t => t.Event.Id == id).ToList().Select(t => new TransactionRest(t)), JsonRequestBehavior.AllowGet);
+                return Json(db.Query<Transaction>()
+                            .Fetch(t => t.Targets)
+                            .Where(t => t.Event.Id == id)
+                            .OrderByDescending(t => t.Date)
+                            .ToList()
+                            .Select(t => new TransactionRest(t)), JsonRequestBehavior.AllowGet);
             }
         }
 
