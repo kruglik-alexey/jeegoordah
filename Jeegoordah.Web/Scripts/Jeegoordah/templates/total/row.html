@@ -6,17 +6,19 @@
                     <%= this.bro.Name %> 
                 </td>
                 <td class="total-amount">
-                    <% for(var i = 0; i < this.amounts.length; i++) { %>
-
-                    <% var signClass = 'zero'; %>
-                    <% if (this.amounts[i].rawAmount !== 0) { %>                    
-                    <%   signClass = this.amounts[i].rawAmount >= 0 ? 'positive' : 'negative'; %>                    
+                    <% if (this.amounts.length > 0) { %>
+                        <% for(var i = 0; i < this.amounts.length; i++) { %>
+                            <% var signClass = 'zero'; %>
+                            <% if (this.amounts[i].rawAmount !== 0) { %>                    
+                            <%   signClass = this.amounts[i].rawAmount >= 0 ? 'positive' : 'negative'; %>                    
+                            <% } %>
+                            <div class="text-right <%= signClass %>">
+                                <%= this.amounts[i].amount %> <%= this.amounts[i].currency.Name %>
+                            </div>
+                        <% } %>    
+                    <% } else { %>    
+                        <div class="text-right zero">0</div>
                     <% } %>
-                    <div class="text-right <%= signClass %>">
-                        <%= this.amounts[i].amount %> <%= this.amounts[i].currency.Name %>
-                    </div>
-
-                    <% } %>    
                 </td>
             </tr>
         </tbody>

@@ -28,6 +28,17 @@
                 return false;
             }
             return _.union(array1, array2).length === array1.length;
+        },
+        
+        withAccuracy: function(number, accuracy) {
+            if (accuracy == 0) {
+                return number;
+            }
+            if (accuracy > 0) {
+                var factor = Math.pow(10, accuracy);
+                return Math.round(number / factor) * factor;
+            }
+            throw new Error('Not implemented, duh');
         }
     };
 });

@@ -1,4 +1,4 @@
-﻿define(['$', '_', 'rest', 'text!templates/total/module.html', 'text!templates/total/row.html'], function ($, _, rest, moduleTemplate, rowTemplate) {
+﻿define(['$', '_', 'rest', 'helper', 'text!templates/total/module.html', 'text!templates/total/row.html'], function ($, _, rest, helper, moduleTemplate, rowTemplate) {
     var self = {        
         activate: function () {
             $.when(rest.get('total'),
@@ -24,13 +24,19 @@
             var broTotal = _.find(total, function(t) {
                 return t.Bro == bro.Id;
             });
-            var amounts = _.map(broTotal.Amounts, function(amount) {
-                return {
-                    amount: $.number(amount.Amount, 0, '.', ' '),
-                    rawAmount: Math.floor(amount.Amount),
-                    currency: self._getCurrency(amount.Currency, currencies)
-                };
-            });
+            var amounts = _.chain(broTotal.Amounts).map(function (amount) {
+                var currency = self._getCurrency(amount.Currency, currencies);
+                var rawAmount = helper.withAccuracy(amount.Amount, currency.Accuracy);
+                if (rawAmount !== 0) {
+                    return {
+                        amount: $.number(rawAmount, 0, '.', ' '),
+                        rawAmount: rawAmount,
+                        currency: currency
+                    };
+                } else {
+                    return null;
+                }                
+            }).filter(function(i) { return i !== null; }).value();
             return {
                 bro: bro,
                 amounts: amounts
