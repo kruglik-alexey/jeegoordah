@@ -33,11 +33,20 @@ namespace Jeegoordah.Core.DL
         public void Dispose()
         {
             if (Session == null) return;
-
-            transaction.Commit();
-            Session.Flush();
-            Session.Dispose();
+            var session = Session;
             Session = null;
+
+            try
+            {
+                transaction.Commit();
+            }
+            catch (Exception)
+            {
+                transaction.Rollback();
+                throw;
+            }
+            session.Flush();
+            session.Dispose();
         }
     }
 }
