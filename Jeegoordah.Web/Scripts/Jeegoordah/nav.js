@@ -8,6 +8,10 @@
             window.onhashchange = this._processRoute;            
             this._processRoute();                       
         },
+
+        go: function(route) {
+            window.location.hash = '#' + route;
+        },
         
         _initRoutes: function() {
             crossroads.addRoute('events', function () {

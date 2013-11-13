@@ -1,4 +1,4 @@
-﻿define(function() {
+﻿define(['_'], function(_) {
     return {                        
         // Replaces urls with <a> tags. Replaces newlines with <br /> tag.
         textToHtml: function(text) {            
@@ -21,6 +21,13 @@
                 return num;
             };
             return lead(date.getDate()) + '-' + lead(date.getMonth() + 1) + '-' + date.getFullYear();
+        },
+        
+        equalArrays: function (array1, array2) {
+            if (array1.length !== array2.length) {
+                return false;
+            }
+            return _.union(array1, array2).length === array1.length;
         }
     };
 });

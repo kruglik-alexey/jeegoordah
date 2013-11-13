@@ -29,7 +29,7 @@ function (_, $, rest, helper, editor, broSelector, notification, entityControls,
                 rest.post('transactions/create', transaction).done(function (createdTransaction) {
                     self._createTransactionElement(createdTransaction);
                     editor.close();
-                    notification.success('Transaction created.');
+                    notification.success('Transaction created');
                 });
             });
         },
@@ -91,8 +91,8 @@ function (_, $, rest, helper, editor, broSelector, notification, entityControls,
                 return _.find(self.bros, function (bro) { return bro.Id === target; });
             }).sortBy('Name').value();
             ui.Amount = $.number(ui.Amount, 0, '.', ' ');
-            ui.Currency = _.find(self.currencies, function (currency) { return currency.Id === ui.Currency; });            
-            ui.targetsEqualsEvent = self.event && _.union(transaction.Targets, self.event.Bros).length === transaction.Targets.length;
+            ui.Currency = _.find(self.currencies, function (currency) { return currency.Id === ui.Currency; });
+            ui.targetsEqualsEvent = self.event && helper.equalArrays(transaction.Targets, self.event.Bros);
 
             var element = $($.jqote(transactionTemplate, ui));
             entityControls.render(element.find('.entity-controls'),
@@ -124,7 +124,7 @@ function (_, $, rest, helper, editor, broSelector, notification, entityControls,
                 rest.post('transactions/update', updatedTransaction).done(function () {
                     self._updateTransactionElement(updatedTransaction);
                     editor.close();
-                    notification.success('Transaction updated.');
+                    notification.success('Transaction updated');
                 });
             });
         },
