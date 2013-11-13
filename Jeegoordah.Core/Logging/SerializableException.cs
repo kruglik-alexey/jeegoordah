@@ -40,12 +40,12 @@ namespace Common.Logging
         public string Source { get; set; }
         public string StackTrace { get; set; }        
         public SerializableException InnerException { get; set; }
-        public KeyValuePair<object, object>[] Data { get; set; }
+        public DictionaryEntry[] Data { get; set; }
 
         private void SetData(ICollection collection)
         {
             if (collection == null || collection.Count == 0) return;
-            Data = new KeyValuePair<object, object>[0];
+            Data = new DictionaryEntry[collection.Count];
             collection.CopyTo(Data, 0);
         }
     }
