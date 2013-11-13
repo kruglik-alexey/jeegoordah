@@ -29,7 +29,7 @@ namespace Jeegoordah.Core.DL.Entity
             Map(x => x.StartDate).Not.Nullable();            
             Map(x => x.Description).Not.Nullable();
             HasManyToMany(x => x.Bros).AsSet().Table("BroEvents");
-            HasMany(x => x.Transactions).Inverse();
+            HasMany(x => x.Transactions).Inverse().Cascade.Delete();
         }
     }
 }
