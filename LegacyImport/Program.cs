@@ -67,13 +67,13 @@ namespace LegacyImport
             var q = session.CreateSQLQuery(
                 "insert into [transaction] (date, amount, comment, currency_id, source_id) values(:date, :amount, :comment, :currency, :source)");
             var qq = session.CreateSQLQuery("insert into transactiontargets (transaction_id, bro_id) values(:transaction, :bro)");
-            q.SetParameter("currency", 1);
-            q.SetParameter("date", "2013-01-01 00:00:00");
+            q.SetParameter("currency", 1);            
             foreach (string[] transaction in directs)
             {
                 q.SetParameter("amount", transaction[3]);
                 q.SetParameter("comment", transaction[4]);
                 q.SetParameter("source", broMap[int.Parse(transaction[2])]);
+                q.SetParameter("date", transaction[5] == "0000-00-00" ? "2013-01-01 00:00:00" : transaction[5] + " 00:00:00");
                 q.ExecuteUpdate();
 
                 qq.SetParameter("transaction", id);
