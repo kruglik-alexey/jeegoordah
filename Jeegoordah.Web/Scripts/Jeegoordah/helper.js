@@ -9,6 +9,12 @@
         // Converts date string 01-10-2013 to the date object
         parseDate: function(dateStr) {
             var parts = dateStr.split('-');
+            if (parts[1].charAt(0) === '0') {
+                parts[1] = parts[1].charAt(1);
+            }
+            if (parts[0].charAt(0) === '0') {
+                parts[0] = parts[0].charAt(1);
+            }
             return new Date(parts[2], parts[1] - 1, parts[0]);
         },
 

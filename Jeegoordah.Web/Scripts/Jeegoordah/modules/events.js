@@ -12,10 +12,16 @@
             });                        
         },
         
-        _loadEvents: function (events) {                                    
-            _.each(events, function (event) {
-                self._createEventElement(event);
-            });            
+        _loadEvents: function (events) {            
+            _.chain(events)
+                .map(function (event) {                    
+                    event.StartDateObj = helper.parseDate(event.StartDate);
+                    return event;
+                })
+                .sortBy(function(event) {
+                    return event.StartDateObj;
+                })
+                .each(self._createEventElement);
         },
         
         _createEvent: function () {
@@ -35,11 +41,11 @@
                 return _.find(self.bros, function(bro) { return bro.Id === broId; });
             }).sortBy('Name').value();
             var $event = $($.jqote(rowTemplate, uiEvent));            
-            self._getEventList(event).append($event);                        
+            self._getEventList(event).prepend($event);                        
         },                                       
         
         _getEventList: function (event) {
-            if (helper.parseDate(event.StartDate) >= new Date()) {
+            if (event.StartDateObj >= new Date()) {
                 return $('#event-list-pending');
             } else {
                 return $('#event-list-past');
