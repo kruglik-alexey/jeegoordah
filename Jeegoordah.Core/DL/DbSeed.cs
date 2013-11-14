@@ -13,6 +13,7 @@ namespace Jeegoordah.Core.DL
 
             session.Save(new Currency {Name = "BYR", Accuracy = 3});
             session.Save(new Currency {Name = "USD", Accuracy = 0});
+            session.Save(new Currency {Name = "EUR", Accuracy = 0});
 
             session.Save(new Bro {Name = "Шылдон"});
             session.Save(new Bro {Name = "Мартен"});
