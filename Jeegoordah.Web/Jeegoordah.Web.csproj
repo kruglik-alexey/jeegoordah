@@ -175,8 +175,10 @@
     <Content Include="Scripts\Jeegoordah\broSelector.js" />
     <Content Include="Scripts\Jeegoordah\entityControls.js" />
     <Content Include="Scripts\Jeegoordah\eventEditor.js" />
+    <Content Include="Scripts\Jeegoordah\modules\bro-total.js" />
     <Content Include="Scripts\Jeegoordah\modules\event-details.js" />
     <Content Include="Scripts\Jeegoordah\modules\p2p.js" />
+    <Content Include="Scripts\Jeegoordah\templates\bro-total\module.html" />
     <Content Include="Scripts\Jeegoordah\templates\broSelector.html" />
     <Content Include="Scripts\Jeegoordah\templates\entityControls.html" />
     <Content Include="Scripts\Jeegoordah\templates\event-details\module.html" />
