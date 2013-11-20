@@ -37,21 +37,7 @@ namespace Jeegoordah.Web.Controllers
             {
                 return Json(new EventRest(db.Query<Event>().First(e => e.Id == id)), JsonRequestBehavior.AllowGet);
             }
-        }
-
-        [HttpGet]
-        public ActionResult GetTransactions(int id)
-        {
-            using (var db = DbFactory.Open())
-            {
-                return Json(db.Query<Transaction>()
-                            .Fetch(t => t.Targets)
-                            .Where(t => t.Event.Id == id)
-                            .OrderByDescending(t => t.Date)
-                            .ToList()
-                            .Select(t => new TransactionRest(t)), JsonRequestBehavior.AllowGet);
-            }
-        }
+        }        
 
         [HttpPost]
         [ValidateModelState]

@@ -50,6 +50,6 @@ namespace Jeegoordah.Web.Controllers
                 var result = total.Keys.Select(bro => new BroTotalRest(bro, total[bro])).ToList();
                 return Json(result, JsonRequestBehavior.AllowGet);
             }
-        }
+        }        
     }
 }

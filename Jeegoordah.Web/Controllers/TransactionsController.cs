@@ -9,6 +9,7 @@ using Jeegoordah.Core.DL.Entity;
 using Jeegoordah.Web.DL;
 using Jeegoordah.Web.Models;
 using Jeegoordah.Web.Models.Validation;
+using NHibernate.Linq;
 
 namespace Jeegoordah.Web.Controllers
 {
@@ -65,7 +66,36 @@ namespace Jeegoordah.Web.Controllers
         }
 
         [HttpGet]
-        public ActionResult ListP2P()
+        public ActionResult GetEventTransactions(int id)
+        {
+            using (var db = DbFactory.Open())
+            {
+                return Json(db.Query<Transaction>()
+                            .Fetch(t => t.Targets)
+                            .Where(t => t.Event.Id == id)
+                            .OrderByDescending(t => t.Date)
+                            .ToList()
+                            .Select(t => new TransactionRest(t)), JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpGet]
+        public ActionResult GetBroTransactions(int id)
+        {
+            using (var db = DbFactory.Open())
+            {
+                return Json(db.Query<Transaction>()
+                            .Fetch(t => t.Targets)
+                            .Where(t => t.Source.Id == id)
+                            .Where(t => t.Targets.Any(b => b.Id == id))
+                            .OrderByDescending(t => t.Date)
+                            .ToList()
+                            .Select(t => new TransactionRest(t)), JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        [HttpGet]
+        public ActionResult GetP2PTransactions()
         {
             using (var db = DbFactory.Open())
             {

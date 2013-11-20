@@ -39,13 +39,7 @@ namespace Jeegoordah.Web
                 name: "GetEvent",
                 url: "events/{id}",
                 defaults: new { controller = "Events", action = "Get" }
-            );
-
-            routes.MapRoute(
-                name: "GetEventTransactions",
-                url: "events/{id}/transactions",
-                defaults: new { controller = "Events", action = "GetTransactions" }
-            );
+            );           
 
             #endregion
 
@@ -70,12 +64,24 @@ namespace Jeegoordah.Web
             );
 
             routes.MapRoute(
-                name: "ListP2PTransactions",
+                name: "GetP2PTransactions",
                 url: "transactions/p2p",
-                defaults: new { controller = "Transactions", action = "ListP2P" }
+                defaults: new { controller = "Transactions", action = "GetP2PTransactions" }
             );
 
-            #endregion
+            routes.MapRoute(
+               name: "GetEventTransactions",
+               url: "events/{id}/transactions",
+               defaults: new { controller = "Transactions", action = "GetEventTransactions" }
+           );
+
+            routes.MapRoute(
+               name: "GetBroTransactions",
+               url: "bros/{id}/transactions",
+               defaults: new { controller = "Transactions", action = "GetBroTransactions" }
+           );
+
+           #endregion
 
             #region General
 

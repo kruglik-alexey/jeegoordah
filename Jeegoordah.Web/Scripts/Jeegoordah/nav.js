@@ -30,8 +30,8 @@
                 total.activate();
                 self._activateNavigation('total');
             });
-            crossroads.addRoute('bros/{id}/total', function () {
-                broTotal.activate();
+            crossroads.addRoute('bros/{id}/total', function (id) {
+                broTotal.activate(id);
                 self._activateNavigation('total');
             });
         },
