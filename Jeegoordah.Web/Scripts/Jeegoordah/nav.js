@@ -1,5 +1,6 @@
-﻿define(['$', 'modules/total', 'modules/events', 'modules/event-details', 'modules/p2p', 'modules/bro-total', 'text!templates/nav.html', '../crossroads/crossroads.min'],
-    function ($, total, events, eventDetail, p2p, broTotal, template, crossroads) {
+﻿define(['$', 'modules/total', 'modules/events', 'modules/event-details', 'modules/p2p', 'modules/bro-total', 'modules/return-money',
+        'text!templates/nav.html', '../crossroads/crossroads.min'],
+    function ($, total, events, eventDetail, p2p, broTotal, returnMoney, template, crossroads) {
 
     var self = {        
         init: function () {
@@ -35,6 +36,11 @@
                 broTotal.activate(id);
                 self._activateNavigation('total');
             });
+            crossroads.addRoute('return-money', function () {
+                returnMoney.activate(function() {
+                    self.go('total');
+                });                
+            });
         },
         
         _activateNavigation: function(navigation) {
@@ -44,8 +50,7 @@
         },
         
         _processRoute: function () {            
-            var hash = window.location.hash.substring(1) || 'total';
-            $('#modules').empty();
+            var hash = window.location.hash.substring(1) || 'total';            
             crossroads.parse(hash);            
         }
     };

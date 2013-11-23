@@ -3,5 +3,5 @@
     require(['../noty/topCenter', '../noty/default'], function () {        
         d.resolve();        
     });
-    return d;
+    return d.promise();
 });

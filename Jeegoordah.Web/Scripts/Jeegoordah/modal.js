@@ -9,9 +9,7 @@
             callbacks = callbacks || {};
             $modal.find('.modal-title').text(title);
             $modal.find('.modal-body').empty().append($content);
-            
-            $modal.find('#modalOkButton').off('click');
-            $modal.find('#modalCancelButton').off('click');
+                                   
             $modal.off('hidden.bs.modal');
             $modal.on('hidden.bs.modal', function () {                
                 if (callbacks && callbacks.hidden) {
@@ -19,10 +17,19 @@
                 }                
             });
 
-            $modal.find('#modalOkButton').click(callbacks.ok || $.noop);
-            $modal.find('#modalCancelButton').click(callbacks.cancel || $.noop);                
+            var assignClick = function(selector, click) {
+                var target = $modal.find(selector);
+                target.off('click');
+                target.click(click || $.noop);
+            };
+
+            assignClick('#modalOkButton', callbacks.ok);
+            assignClick('#modalCancelButton', callbacks.cancel);
+            assignClick('[data-dismiss=modal]', callbacks.cancel);
+                      
             $modal.modal('show');                                                  
         },
+        
         close: function() {
             $modal.modal('hide');            
         }

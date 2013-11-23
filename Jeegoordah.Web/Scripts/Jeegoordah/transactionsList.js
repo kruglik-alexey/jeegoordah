@@ -1,12 +1,13 @@
-﻿define(['_', '$', 'rest', 'helper', 'entityEditor', 'broSelector', 'notification', 'entityControls', 'consts',
-        'text!templates/transactions/transactionsList.html', 'text!templates/transactions/transaction.html', 'text!templates/transactions/transactionEditor.html'],
-function (_, $, rest, helper, editor, broSelector, notification, entityControls, consts, listTemplate, transactionTemplate, editorTemplate) {
+﻿define(['_', '$', 'rest', 'helper', 'notification', 'entityControls', 'consts', 'transactionEditor',
+        'text!templates/transactions/transactionsList.html', 'text!templates/transactions/transaction.html'],
+function (_, $, rest, helper, notification, entityControls, consts, transactionEditor, listTemplate, transactionTemplate) {
     var self = {
         init: function(currencies, bros, event) {
             self.currencies = currencies;
             self.bros = bros;
             self.event = event;
-        },
+            transactionEditor.init(self.currencies, self.bros);
+        },        
         
         renderTransactions: function (transactions, target, highlightBro) {
             self.highlightBro = highlightBro || {Id: null};
@@ -19,77 +20,17 @@ function (_, $, rest, helper, editor, broSelector, notification, entityControls,
                 });
             });
         },
-
+        
         createTransaction: function () {
-            var defaults;
+            var defaults = {};
             if (self.event) {
-                defaults = {Date: self.event.StartDate, Currency: self.currencies[0].Id, Targets: self.event.Bros};
-            } else {
-                defaults = {Date: helper.dateToString(new Date())};
+                defaults = { Currency: self.currencies[0].Id, Targets: self.event.Bros };
             }
-            
-            self._showTransactionEditor(defaults, 'Create Transaction', function (transaction) {
-                if (self.event) {
-                    transaction = _.defaults(transaction, {Event: self.event.Id});
-                }                
-                rest.post('transactions/create', transaction).done(function (createdTransaction) {
-                    self._createTransactionElement(createdTransaction, function (list, element) {
-                        list.prepend(element);
-                    });
-                    editor.close();
-                    notification.success('Transaction created');
+            transactionEditor.createTransaction(defaults).done(function(transaction) {
+                self._createTransactionElement(transaction, function (list, element) {
+                    list.prepend(element);
                 });
             });
-        },
-        
-        _showTransactionEditor: function (transaction, title, ok) {
-            var rendered = helper.template(editorTemplate, { currencies: self.currencies });
-            rendered.find('#transactionSource').append(broSelector.render(true, self.bros));
-            rendered.find('#transactionTargets').append(broSelector.render(false, self.bros));
-            rendered.find('input[name=Amount]').number(true, 0, '.', ' ');
-
-            editor.show(rendered, transaction, title, {
-                ok: ok,
-                toForm: self._bindTransaction,
-                fromForm: self._unbindTransaction,
-                validate: self._validateTransaction
-            });
-        },
-        
-        _bindTransaction: function (transaction, $editor) {
-            broSelector.bind($editor.find('#transactionSource'), transaction.Source);
-            broSelector.bind($editor.find('#transactionTargets'), transaction.Targets);
-            $editor.find('#transactionCurrencies>label[data-id=' + transaction.Currency + ']').addClass('active');
-            return transaction;
-        },
-
-        _unbindTransaction: function (transaction, $editor) {
-            transaction.Source = broSelector.unbind($editor.find('#transactionSource'));
-            transaction.Targets = broSelector.unbind($editor.find('#transactionTargets'));
-            transaction.Currency = parseInt($editor.find('#transactionCurrencies>label.active').attr('data-id'));
-            return transaction;
-        },
-
-        _validateTransaction: function ($editor) {
-            if ($editor.find('#transactionCurrencies>.active').length === 0) {
-                notification.error('Please specify transaction Currency');
-                return false;
-            }
-            var source = broSelector.unbind($editor.find('#transactionSource'));
-            if (_.isUndefined(source)) {
-                notification.error('Please specify transaction Source');
-                return false;
-            }
-            var targets = broSelector.unbind($editor.find('#transactionTargets'));
-            if (targets.length === 0) {
-                notification.error('Please specify transaction Targets');
-                return false;
-            }
-            if (targets.length === 1 && targets[0] === source) {
-                notification.error("You can't spent money on yourself alone, fucking egoist!");
-                return false;
-            }
-            return true;
         },
         
         _createTransactionElement: function (transaction, action) {
@@ -128,20 +69,13 @@ function (_, $, rest, helper, editor, broSelector, notification, entityControls,
         },
         
         _editTransaction: function (transaction) {
-            self._showTransactionEditor(transaction, 'Edit Transaction', function (updatedTransaction) {
-                var eventId = self.event ? self.event.Id : undefined;
-                updatedTransaction = _.defaults(updatedTransaction, {Id: transaction.Id, Event: eventId});
-                rest.post('transactions/update', updatedTransaction).done(function () {
-                    self._updateTransactionElement(updatedTransaction);
-                    editor.close();
-                    notification.success('Transaction updated');
-                });
-            });
+            transactionEditor.editTransaction(transaction).done(self._updateTransactionElement);
         },
 
         _deleteTransaction: function (transaction) {
-            var $transaction = $('#transaction' + transaction.Id);
+            var $transaction = self.list.find('#transaction' + transaction.Id);
             rest.post('transactions/delete/' + transaction.Id).done(function () {
+                notification.success("Transaction deleted");
                 $transaction.fadeOut(consts.fadeDuration, function () {
                     $transaction.remove();
                 });
