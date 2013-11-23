@@ -1,11 +1,8 @@
-﻿define(['$', 'transactionEditor', 'rest'], function($, transactionEditor, rest) {
+﻿define(['$', 'transactionEditor', 'app-context'], function($, transactionEditor, context) {
     var self = {        
-        activate: function (transactionCreated) {
-            $.when(rest.get('bros'), rest.get('currencies'))
-                .done(function (bros, currencies) {
-                    transactionEditor.init(currencies[0], bros[0]);
-                    transactionEditor.createTransaction({ Comment: "Money Return" }).always(transactionCreated);
-                });           
+        activate: function (transactionCreated) {            
+            transactionEditor.init(context.currencies, context.bros);
+            transactionEditor.createTransaction({ Comment: "Money Return" }).always(transactionCreated);                           
         }
     };
     return self;

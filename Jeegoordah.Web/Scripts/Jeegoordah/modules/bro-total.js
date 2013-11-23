@@ -1,14 +1,14 @@
-﻿define(['$', '_', 'rest', 'transactionsList', 'helper', 'text!templates/bro-total/module.html'], function($, _, rest, transactionsList, helper, moduleTemplate) {
+﻿define(['$', '_', 'rest', 'transactionsList', 'helper', 'app-context', 'text!templates/bro-total/module.html'],
+function ($, _, rest, transactionsList, helper, context, moduleTemplate) {
     var self = {        
         activate: function (id) {
             id = parseInt(id);            
-            $.when(rest.get('bros'), rest.get('bros/' + id + '/transactions'), rest.get('currencies'))
-             .done(function (bros, broTransactions, currencies) {
-                 var bro = _.find(bros[0], function (b) { return b.Id === id; });
+            rest.get('bros/' + id + '/transactions').done(function (broTransactions) {
+                 var bro = _.find(context.bros, function (b) { return b.Id === id; });
                  var module = helper.template(moduleTemplate, bro);
                  $('#modules').empty().append(module);
-                 transactionsList.init(currencies[0], bros[0], null);
-                 transactionsList.renderTransactions(broTransactions[0], module.find('#transactions'), bro);
+                 transactionsList.init(context.currencies, context.bros, null);
+                 transactionsList.renderTransactions(broTransactions, module.find('#transactions'), bro);
              });            
         }
     };

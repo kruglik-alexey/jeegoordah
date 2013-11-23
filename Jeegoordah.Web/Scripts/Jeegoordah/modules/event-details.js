@@ -1,22 +1,18 @@
-﻿define(['$', '_', 'rest', 'helper', 'transactionsList', 'entityControls', 'eventEditor', 'notification', 'consts', 'text!templates/event-details/module.html'],
-function ($, _, rest, helper, transactionsList, entityControls, eventEditor, notification, consts, moduleTemplate) {
+﻿define(['$', '_', 'rest', 'helper', 'transactionsList', 'entityControls', 'eventEditor', 'notification', 'consts', 'app-context', 'text!templates/event-details/module.html'],
+function ($, _, rest, helper, transactionsList, entityControls, eventEditor, notification, consts, context, moduleTemplate) {
     var self = {        
         activate: function(id) {
             $.when(rest.get('events/' + id),
-                   rest.get('events/' + id + '/transactions'),
-                   rest.get('bros'),
-                   rest.get('currencies'))
-            .done(function (event, transactions, bros, currencies) {
-                self.bros = bros[0];
+                   rest.get('events/' + id + '/transactions'))
+            .done(function (event, transactions) {
                 self.event = event[0];
-                self.currencies = currencies[0];
                 self.transactions = transactions[0];
                 self._render();
             });
         },
         
         _editEvent: function() {
-            eventEditor.edit(self.event, self.bros, 'Edit Event', function (updatedEvent) {
+            eventEditor.edit(self.event, context.bros, 'Edit Event', function (updatedEvent) {
                 updatedEvent = _.extend(self.event, updatedEvent);
                 rest.post('events/update', updatedEvent).done(function () {
                     eventEditor.close();
@@ -39,7 +35,7 @@ function ($, _, rest, helper, transactionsList, entityControls, eventEditor, not
             var uiEvent = _.clone(restEvent);
             uiEvent.Description = helper.textToHtml(uiEvent.Description || '');
             uiEvent.Bros = _.chain(uiEvent.Bros).map(function (broId) {
-                return _.find(self.bros, function (bro) { return bro.Id === broId; });
+                return _.find(context.bros, function (bro) { return bro.Id === broId; });
             }).sortBy('Name').value();            
             return uiEvent;
         },
@@ -49,7 +45,7 @@ function ($, _, rest, helper, transactionsList, entityControls, eventEditor, not
             $('#modules').empty().append(self.module);
             self.module.find('#createTransactionButton').click(transactionsList.createTransaction);
             entityControls.render(self.module.find('.page-header>h1'), self._editEvent, self._deleteEvent);
-            transactionsList.init(self.currencies, self.bros, self.event);
+            transactionsList.init(context.currencies, context.bros, self.event);
             transactionsList.renderTransactions(self.transactions, self.module.find('#transactions'));
         }
     };

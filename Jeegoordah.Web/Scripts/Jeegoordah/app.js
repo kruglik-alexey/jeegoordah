@@ -19,39 +19,18 @@
             }            
         },
         urlArgs: window.jgdhCacheBuster
-    });
-
-    var deferred = {
-        _callbacks: [],
-        _resolved: false,
-        done: function (callback) {
-            if (this._resolved) {
-                callback();
-            } else {
-                this._callbacks.push(callback);
-            }            
-        },
-        resolve: function() {
-            this._resolved = true;
-            for (var i = 0; i < this._callbacks.length; i++) {
-                this._callbacks[i]();
-            }
-        }
-    };
+    });   
 
     // First load jquery. Second load all libraries (see about noty below). Third load and initialize jeegoordah stuff.
     // Noty consists of multiple files. Main file should be loaded first, all other second. jeegoordah-noty returns deferred which resolves when they are loaded in the right order.
-    require(['$'], function () {        
+    require(['$'], function ($) {        
         require(['jeegoordah-noty', '../bootstrap/bootstrap.min', '../bootstrap/bootstrap-datepicker', '../jquery.validate.min', '../jquery.number.min'],
         function (noty) {
-            require(['nav'], function (nav) {
-                noty.done(function() {
-                    nav.init();                    
-                    deferred.resolve();
-                });
+            require(['nav', 'app-context'], function (nav, context) {
+                $.when(noty, context.init()).done(function() {
+                    nav.init();
+                });                
             });
         });
     });
-
-    return deferred;
 });

@@ -1,15 +1,13 @@
-﻿define(['_', '$', 'rest', 'notification', 'helper', 'eventEditor', 'text!templates/events/row.html', 'text!templates/events/editor.html', 'text!templates/events/module.html'],
-    function (_, $, rest, notification, helper, eventEditor, rowTemplate, editorTemplate, moduleTemplate) {
+﻿define(['_', '$', 'rest', 'notification', 'helper', 'eventEditor', 'app-context', 'text!templates/events/row.html', 'text!templates/events/editor.html', 'text!templates/events/module.html'],
+    function (_, $, rest, notification, helper, eventEditor, context, rowTemplate, editorTemplate, moduleTemplate) {
 
     var self = {
-        activate: function () {            
-            // TODO add spinner while loading
-            $.when(rest.get('bros'), rest.get('events')).done(function (bros, events) {
-                self.bros = bros[0];
+        activate: function () {                        
+            rest.get('events').done(function (events) {
                 self.module = $(moduleTemplate);
                 $('#modules').empty().append(self.module);
                 self.module.find('#createEventButton').click(self._createEvent);
-                self._loadEvents(events[0]);                                
+                self._loadEvents(events);                                
             });                        
         },
         
@@ -26,7 +24,7 @@
         },
         
         _createEvent: function () {
-            eventEditor.edit({}, self.bros, 'Create Event', function(event) {
+            eventEditor.edit({}, context.bros, 'Create Event', function(event) {
                 rest.post('events/create', event).done(function (createdEvent) {
                     createdEvent.StartDateObj = helper.parseDate(createdEvent.StartDate);
                     self._createEventElement(createdEvent);
@@ -40,7 +38,7 @@
             var uiEvent = _.clone(event);
             uiEvent.Description = helper.textToHtml(uiEvent.Description || '');
             uiEvent.Bros = _.chain(uiEvent.Bros).map(function(broId) {
-                return _.find(self.bros, function(bro) { return bro.Id === broId; });
+                return _.find(context.bros, function(bro) { return bro.Id === broId; });
             }).sortBy('Name').value();
             var $event = helper.template(rowTemplate, uiEvent);            
             self._getEventList(event).prepend($event);                        

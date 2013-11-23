@@ -172,12 +172,14 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Content Include="Scripts\Crossroads\crossroads.min.js" />
     <Content Include="Scripts\Crossroads\signals.min.js" />
+    <Content Include="Scripts\Jeegoordah\app-context.js" />
     <Content Include="Scripts\Jeegoordah\broSelector.js" />
     <Content Include="Scripts\Jeegoordah\entityControls.js" />
     <Content Include="Scripts\Jeegoordah\eventEditor.js" />
     <Content Include="Scripts\Jeegoordah\modules\bro-total.js" />
     <Content Include="Scripts\Jeegoordah\modules\event-details.js" />
     <Content Include="Scripts\Jeegoordah\modules\p2p.js" />
+    <Content Include="Scripts\Jeegoordah\modules\return-money.js" />
     <Content Include="Scripts\Jeegoordah\templates\bro-total\module.html" />
     <Content Include="Scripts\Jeegoordah\templates\broSelector.html" />
     <Content Include="Scripts\Jeegoordah\templates\entityControls.html" />
@@ -188,6 +190,7 @@
     <Content Include="Scripts\Jeegoordah\templates\transactions\transactionEditor.html" />
     <Content Include="Scripts\Jeegoordah\templates\p2p\module.html" />
     <Content Include="Scripts\Jeegoordah\templates\transactions\transactionsList.html" />
+    <Content Include="Scripts\Jeegoordah\transactionEditor.js" />
     <Content Include="Scripts\Jeegoordah\transactionsList.js" />
     <Content Include="Scripts\jquery.number.min.js" />
     <Content Include="Scripts\Tests\entityEditor-tests.js" />
