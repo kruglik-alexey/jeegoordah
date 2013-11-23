@@ -7,7 +7,7 @@
                  var bro = _.find(bros[0], function(b) { return b.Id === id; });
                  $('#modules').empty().append($($.jqote(moduleTemplate, bro)));
                  transactionsList.init(currencies[0], bros[0], null);
-                 transactionsList.renderTransactions(transactions[0]);
+                 transactionsList.renderTransactions(broTransactions[0], $('#transactions'), bro);
              });            
         }
     };

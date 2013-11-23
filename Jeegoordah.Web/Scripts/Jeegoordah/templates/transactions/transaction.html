@@ -1,13 +1,25 @@
 ﻿<tr id="transaction<%= this.Id %>">
     <td class="auto-width"><%= this.Date %></td>
     <td class="auto-width text-right"><%= this.Amount %> <%= this.Currency.Name %></td>
-    <td class="auto-width"><%= this.Source.Name %></td>
+    <td class="auto-width">
+        <% if (this.highlightBro.Id === this.Source.Id) { %>
+            <strong><%= this.Source.Name %></strong>
+        <% } else { %>
+            <%= this.Source.Name %>
+        <% } %>
+    </td>
     <td class="auto-width">                
         <% if (this.targetsEqualsEvent) { %>
             <span>All</span>
         <% } else { %>
             <% for(var i = 0; i < this.Targets.length; i++) { %>
-                <span><%= this.Targets[i].Name %></span>
+                <span>
+                    <% if (this.highlightBro.Id === this.Targets[i].Id) { %>
+                        <strong><%= this.Targets[i].Name %></strong>
+                    <% } else { %>
+                        <%= this.Targets[i].Name %>
+                    <% } %>            
+                </span>
             <% } %>    
         <% } %>
     </td>

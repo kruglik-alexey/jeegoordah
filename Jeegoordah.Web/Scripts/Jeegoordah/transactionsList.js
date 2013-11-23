@@ -1,6 +1,6 @@
 ﻿define(['_', '$', 'rest', 'helper', 'entityEditor', 'broSelector', 'notification', 'entityControls', 'consts',
-        'text!templates/transactions/transaction.html', 'text!templates/transactions/transactionEditor.html'],
-function (_, $, rest, helper, editor, broSelector, notification, entityControls, consts, transactionTemplate, editorTemplate) {
+        'text!templates/transactions/transactionsList.html', 'text!templates/transactions/transaction.html', 'text!templates/transactions/transactionEditor.html'],
+function (_, $, rest, helper, editor, broSelector, notification, entityControls, consts, listTemplate, transactionTemplate, editorTemplate) {
     var self = {
         init: function(currencies, bros, event) {
             self.currencies = currencies;
@@ -8,7 +8,11 @@ function (_, $, rest, helper, editor, broSelector, notification, entityControls,
             self.event = event;
         },
         
-        renderTransactions: function (transactions) {
+        renderTransactions: function (transactions, target, highlightBro) {
+            self.highlightBro = highlightBro || {Id: null};
+            var table = $($.jqote(listTemplate));
+            self.list = table.find('tbody');
+            target.append(table);
             _.each(transactions, function (t) {
                 self._createTransactionElement(t, function(list, element) {
                     list.append(element);
@@ -98,14 +102,15 @@ function (_, $, rest, helper, editor, broSelector, notification, entityControls,
             ui.Currency = _.find(self.currencies, function (currency) { return currency.Id === ui.Currency; });
             ui.targetsEqualsEvent = self.event && helper.equalArrays(transaction.Targets, self.event.Bros);
             ui.Comment = helper.textToHtml(ui.Comment);
-
+            ui.highlightBro = self.highlightBro;
+            
             var element = $($.jqote(transactionTemplate, ui));
             entityControls.render(element.find('.entity-controls'),
                 _.partial(self._editTransaction, transaction),
                 _.partial(self._deleteTransaction, transaction));
 
             if (!_.isUndefined(action)) {
-                action($('#transactions'), element);                
+                action(self.list, element);                
             }
 
             return element;

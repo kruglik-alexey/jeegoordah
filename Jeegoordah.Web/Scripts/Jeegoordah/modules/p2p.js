@@ -9,7 +9,7 @@
 
                 $('#modules').empty().append($(moduleTemplate));
                 $('#createTransactionButton').click(transactionsList.createTransaction);
-                transactionsList.renderTransactions(transactions[0]);
+                transactionsList.renderTransactions(transactions[0], $('#transactions'));
             });            
         }              
     };

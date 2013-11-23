@@ -187,6 +187,7 @@
     <Content Include="Scripts\Jeegoordah\templates\transactions\transaction.html" />
     <Content Include="Scripts\Jeegoordah\templates\transactions\transactionEditor.html" />
     <Content Include="Scripts\Jeegoordah\templates\p2p\module.html" />
+    <Content Include="Scripts\Jeegoordah\templates\transactions\transactionsList.html" />
     <Content Include="Scripts\Jeegoordah\transactionsList.js" />
     <Content Include="Scripts\jquery.number.min.js" />
     <Content Include="Scripts\Tests\entityEditor-tests.js" />

@@ -86,8 +86,7 @@ namespace Jeegoordah.Web.Controllers
             {
                 return Json(db.Query<Transaction>()
                             .Fetch(t => t.Targets)
-                            .Where(t => t.Source.Id == id)
-                            .Where(t => t.Targets.Any(b => b.Id == id))
+                            .Where(t => t.Source.Id == id || t.Targets.Any(b => b.Id == id))
                             .OrderByDescending(t => t.Date)
                             .ToList()
                             .Select(t => new TransactionRest(t)), JsonRequestBehavior.AllowGet);

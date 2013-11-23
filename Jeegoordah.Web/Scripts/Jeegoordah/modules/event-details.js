@@ -49,7 +49,7 @@ function ($, _, rest, helper, transactionsList, entityControls, eventEditor, not
             $('#createTransactionButton').click(transactionsList.createTransaction);
             entityControls.render($('#module-event-details>.page-header>h1'), self._editEvent, self._deleteEvent);
             transactionsList.init(self.currencies, self.bros, self.event);
-            transactionsList.renderTransactions(self.transactions);
+            transactionsList.renderTransactions(self.transactions, $('#transactions'));
         }
     };
 
