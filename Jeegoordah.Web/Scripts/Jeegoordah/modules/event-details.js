@@ -29,7 +29,7 @@ function ($, _, rest, helper, transactionsList, entityControls, eventEditor, not
         _deleteEvent: function () {            
             rest.post('events/delete/' + self.event.Id).done(function () {
                 notification.success('Event deleted');
-                $('#module-event-details').fadeOut(consts.fadeDuration, function () {
+                self.module.fadeOut(consts.fadeDuration, function () {
                     require('nav').go('events');
                 });
             });
@@ -44,12 +44,13 @@ function ($, _, rest, helper, transactionsList, entityControls, eventEditor, not
             return uiEvent;
         },
         
-        _render: function() {
-            $('#modules').empty().append(helper.template(moduleTemplate, self._getUiEvent(self.event)));
-            $('#createTransactionButton').click(transactionsList.createTransaction);
-            entityControls.render($('#module-event-details>.page-header>h1'), self._editEvent, self._deleteEvent);
+        _render: function () {
+            self.module = helper.template(moduleTemplate, self._getUiEvent(self.event));
+            $('#modules').empty().append(self.module);
+            self.module.find('#createTransactionButton').click(transactionsList.createTransaction);
+            entityControls.render(self.module.find('.page-header>h1'), self._editEvent, self._deleteEvent);
             transactionsList.init(self.currencies, self.bros, self.event);
-            transactionsList.renderTransactions(self.transactions, $('#transactions'));
+            transactionsList.renderTransactions(self.transactions, self.module.find('#transactions'));
         }
     };
 

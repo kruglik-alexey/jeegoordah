@@ -5,9 +5,10 @@
         activate: function () {            
             // TODO add spinner while loading
             $.when(rest.get('bros'), rest.get('events')).done(function (bros, events) {
-                self.bros = bros[0];                
-                $('#modules').empty().append($(moduleTemplate));
-                $('#createEventButton').click(self._createEvent);
+                self.bros = bros[0];
+                self.module = $(moduleTemplate);
+                $('#modules').empty().append(self.module);
+                self.module.find('#createEventButton').click(self._createEvent);
                 self._loadEvents(events[0]);                                
             });                        
         },
@@ -47,9 +48,9 @@
         
         _getEventList: function (event) {
             if (event.StartDateObj >= new Date()) {
-                return $('#event-list-pending');
+                return self.module.find('#event-list-pending');
             } else {
-                return $('#event-list-past');
+                return self.module.find('#event-list-past');
             }            
         }              
     };

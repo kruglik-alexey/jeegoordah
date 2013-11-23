@@ -5,13 +5,14 @@
                    rest.get('bros'),
                    rest.get('currencies'))
             .done(function (total, bros, currencies) {
-                $('#modules').empty().append($(moduleTemplate));
+                self.module = $(moduleTemplate);
+                $('#modules').empty().append(self.module);
                 self._render(total[0], bros[0], currencies[0]);                            
             });
         },
         
         _render: function (total, bros, currencies) {
-            var list = $('#totalList');
+            var list = self.module.find('#totalList');
             _.chain(bros).sortBy(function (bro) {
                 return bro.Name;
             }).each(function (bro) {

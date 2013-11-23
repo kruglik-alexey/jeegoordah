@@ -1,10 +1,11 @@
-﻿define(['$', 'modules/total', 'modules/people', 'modules/events', 'modules/event-details', 'modules/p2p', 'modules/bro-total', 'text!templates/nav.html', '../crossroads/crossroads.min'],
-    function ($, total, people, events, eventDetail, p2p, broTotal, template, crossroads) {
+﻿define(['$', 'modules/total', 'modules/events', 'modules/event-details', 'modules/p2p', 'modules/bro-total', 'text!templates/nav.html', '../crossroads/crossroads.min'],
+    function ($, total, events, eventDetail, p2p, broTotal, template, crossroads) {
 
     var self = {        
         init: function () {
             this._initRoutes();
-            $('#nav-container').append($(template));            
+            self.nav = $('#nav-container');
+            self.nav.append($(template));
             window.onhashchange = this._processRoute;            
             this._processRoute();                       
         },
@@ -37,8 +38,8 @@
         },
         
         _activateNavigation: function(navigation) {
-            $('ul.nav>li').removeClass('active');
-            var navLi = $('#nav-' + navigation);
+            self.nav.find('ul.nav>li').removeClass('active');
+            var navLi = self.nav.find('#nav-' + navigation);
             navLi.addClass('active');
         },
         

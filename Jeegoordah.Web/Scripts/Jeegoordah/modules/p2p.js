@@ -7,9 +7,10 @@
             .done(function (transactions, bros, currencies) {
                 transactionsList.init(currencies[0], bros[0]);
 
-                $('#modules').empty().append($(moduleTemplate));
-                $('#createTransactionButton').click(transactionsList.createTransaction);
-                transactionsList.renderTransactions(transactions[0], $('#transactions'));
+                var module = $(moduleTemplate);
+                $('#modules').empty().append(module);
+                module.find('#createTransactionButton').click(transactionsList.createTransaction);
+                transactionsList.renderTransactions(transactions[0], module.find('#transactions'));
             });            
         }              
     };

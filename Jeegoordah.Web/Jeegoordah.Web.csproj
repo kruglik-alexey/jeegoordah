@@ -217,7 +217,6 @@
     <Content Include="Scripts\Jeegoordah\jeegoordah.css" />
     <Content Include="Scripts\Jeegoordah\modal.js" />
     <Content Include="Scripts\Jeegoordah\modules\events.js" />
-    <Content Include="Scripts\Jeegoordah\modules\people.js" />
     <Content Include="Scripts\Jeegoordah\modules\total.js" />
     <Content Include="Scripts\Jeegoordah\nav.js" />
     <Content Include="Scripts\Jeegoordah\notification.js" />
