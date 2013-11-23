@@ -41,7 +41,7 @@
             uiEvent.Bros = _.chain(uiEvent.Bros).map(function(broId) {
                 return _.find(self.bros, function(bro) { return bro.Id === broId; });
             }).sortBy('Name').value();
-            var $event = $($.jqote(rowTemplate, uiEvent));            
+            var $event = helper.template(rowTemplate, uiEvent);            
             self._getEventList(event).prepend($event);                        
         },                                       
         

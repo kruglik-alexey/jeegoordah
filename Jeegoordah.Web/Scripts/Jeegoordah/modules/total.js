@@ -16,7 +16,7 @@
                 return bro.Name;
             }).each(function (bro) {
                 var broAmounts = self._getBroAmounts(bro, total, currencies);
-                list.append($($.jqote(rowTemplate, broAmounts)));
+                list.append(helper.template(rowTemplate, broAmounts));
             });
         },
         

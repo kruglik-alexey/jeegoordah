@@ -1,8 +1,9 @@
-﻿define(['_'], function(_) {
+﻿define(['_', '$'], function(_, $) {
     return {                        
         // Replaces urls with <a> tags. Replaces newlines with <br /> tag.
-        textToHtml: function(text) {            
+        textToHtml: function (text) {
             var exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/i;
+            text = String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');            
             return text.replace(exp, '<a href="$1" target="_blank">$1</a>').replace('\r\n','<br />');           
         },
         
@@ -45,6 +46,10 @@
                 return Math.round(number / factor) * factor;
             }
             throw new Error('Not implemented, duh');
+        },
+        
+        template: function (template, obj) {
+            return $(_.template(template, obj || {}, {variable: 'self'}));
         }
     };
 });

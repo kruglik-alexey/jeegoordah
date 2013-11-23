@@ -45,7 +45,7 @@ function ($, _, rest, helper, transactionsList, entityControls, eventEditor, not
         },
         
         _render: function() {
-            $('#modules').empty().append($($.jqote(moduleTemplate, self._getUiEvent(self.event))));
+            $('#modules').empty().append(helper.template(moduleTemplate, self._getUiEvent(self.event)));
             $('#createTransactionButton').click(transactionsList.createTransaction);
             entityControls.render($('#module-event-details>.page-header>h1'), self._editEvent, self._deleteEvent);
             transactionsList.init(self.currencies, self.bros, self.event);

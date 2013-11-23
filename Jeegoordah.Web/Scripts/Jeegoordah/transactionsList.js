@@ -10,7 +10,7 @@ function (_, $, rest, helper, editor, broSelector, notification, entityControls,
         
         renderTransactions: function (transactions, target, highlightBro) {
             self.highlightBro = highlightBro || {Id: null};
-            var table = $($.jqote(listTemplate));
+            var table = helper.template(listTemplate);
             self.list = table.find('tbody');
             target.append(table);
             _.each(transactions, function (t) {
@@ -43,7 +43,7 @@ function (_, $, rest, helper, editor, broSelector, notification, entityControls,
         },
         
         _showTransactionEditor: function (transaction, title, ok) {
-            var rendered = $($.jqote(editorTemplate, { currencies: self.currencies }));
+            var rendered = helper.template(editorTemplate, { currencies: self.currencies });
             rendered.find('#transactionSource').append(broSelector.render(true, self.bros));
             rendered.find('#transactionTargets').append(broSelector.render(false, self.bros));
             rendered.find('input[name=Amount]').number(true, 0, '.', ' ');
@@ -104,7 +104,7 @@ function (_, $, rest, helper, editor, broSelector, notification, entityControls,
             ui.Comment = helper.textToHtml(ui.Comment);
             ui.highlightBro = self.highlightBro;
             
-            var element = $($.jqote(transactionTemplate, ui));
+            var element = helper.template(transactionTemplate, ui);
             entityControls.render(element.find('.entity-controls'),
                 _.partial(self._editTransaction, transaction),
                 _.partial(self._deleteTransaction, transaction));

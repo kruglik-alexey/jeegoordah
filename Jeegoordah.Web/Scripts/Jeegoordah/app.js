@@ -42,7 +42,7 @@
     // First load jquery. Second load all libraries (see about noty below). Third load and initialize jeegoordah stuff.
     // Noty consists of multiple files. Main file should be loaded first, all other second. jeegoordah-noty returns deferred which resolves when they are loaded in the right order.
     require(['$'], function () {        
-        require(['jeegoordah-noty', '../bootstrap/bootstrap.min', '../bootstrap/bootstrap-datepicker', '../jquery.validate.min', '../jquery.jqote2.min', '../jquery.number.min'],
+        require(['jeegoordah-noty', '../bootstrap/bootstrap.min', '../bootstrap/bootstrap-datepicker', '../jquery.validate.min', '../jquery.number.min'],
         function (noty) {
             require(['nav'], function (nav) {
                 noty.done(function() {

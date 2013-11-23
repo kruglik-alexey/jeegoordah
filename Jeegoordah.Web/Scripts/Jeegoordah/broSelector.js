@@ -1,7 +1,7 @@
-﻿define(['$', '_', 'text!templates/broSelector.html'], function ($, _, template) {
+﻿define(['$', '_', 'helper', 'text!templates/broSelector.html'], function ($, _, helper, template) {
     var self = {
-        render: function (isRadio, bros) {
-            var $selector = $($.jqote(template, { isRadio: isRadio, bros: bros }));
+        render: function (isRadio, bros) {            
+            var $selector = helper.template(template, { isRadio: isRadio, bros: bros });
             var $buttons = $selector.find('.btn');
             $buttons.click(function () {
                 if (isRadio) {

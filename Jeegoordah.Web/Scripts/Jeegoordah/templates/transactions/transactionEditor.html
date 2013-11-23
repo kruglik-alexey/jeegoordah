@@ -11,9 +11,9 @@
             <div class="input-group">
                 <input type="text" class="form-control" name="Amount" required>
                 <span class="input-group-btn" data-toggle="buttons" id="transactionCurrencies">
-                    <% for(var i = 0; i < this.currencies.length; i++) { %>
-                    <label class="btn btn-default" data-id="<%= this.currencies[i].Id %>">
-                        <input type="radio"> <%= this.currencies[i].Name %>
+                    <% for(var i = 0; i < self.currencies.length; i++) { %>
+                    <label class="btn btn-default" data-id="<%- self.currencies[i].Id %>">
+                        <input type="radio"> <%- self.currencies[i].Name %>
                     </label>                        
                     <% } %>
                 </span>

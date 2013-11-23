@@ -1,23 +1,23 @@
-﻿<tr id="transaction<%= this.Id %>">
-    <td class="auto-width"><%= this.Date %></td>
-    <td class="auto-width text-right"><%= this.Amount %> <%= this.Currency.Name %></td>
+﻿<tr id="transaction<%- self.Id %>">
+    <td class="auto-width"><%- self.Date %></td>
+    <td class="auto-width text-right"><%- self.Amount %> <%- self.Currency.Name %></td>
     <td class="auto-width">
-        <% if (this.highlightBro.Id === this.Source.Id) { %>
-            <strong><%= this.Source.Name %></strong>
+        <% if (self.highlightBro.Id === self.Source.Id) { %>
+            <strong><%- self.Source.Name %></strong>
         <% } else { %>
-            <%= this.Source.Name %>
+            <%- self.Source.Name %>
         <% } %>
     </td>
     <td class="auto-width">                
-        <% if (this.targetsEqualsEvent) { %>
+        <% if (self.targetsEqualsEvent) { %>
             <span>All</span>
         <% } else { %>
-            <% for(var i = 0; i < this.Targets.length; i++) { %>
+            <% for(var i = 0; i < self.Targets.length; i++) { %>
                 <span>
-                    <% if (this.highlightBro.Id === this.Targets[i].Id) { %>
-                        <strong><%= this.Targets[i].Name %></strong>
+                    <% if (self.highlightBro.Id === self.Targets[i].Id) { %>
+                        <strong><%- self.Targets[i].Name %></strong>
                     <% } else { %>
-                        <%= this.Targets[i].Name %>
+                        <%- self.Targets[i].Name %>
                     <% } %>            
                 </span>
             <% } %>    
@@ -25,7 +25,7 @@
     </td>
     <td>
         <div class="entity-controls-host">
-            <%= this.Comment %>
+            <%- self.Comment %>
             <div class="entity-controls"></div>  
         </div>
     </td>
