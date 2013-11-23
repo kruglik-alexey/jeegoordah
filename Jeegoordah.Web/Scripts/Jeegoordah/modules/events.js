@@ -27,6 +27,7 @@
         _createEvent: function () {
             eventEditor.edit({}, self.bros, 'Create Event', function(event) {
                 rest.post('events/create', event).done(function (createdEvent) {
+                    createdEvent.StartDateObj = helper.parseDate(createdEvent.StartDate);
                     self._createEventElement(createdEvent);
                     eventEditor.close();
                     notification.success('Event created');
