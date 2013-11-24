@@ -66,6 +66,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BL\TotalCalculator.cs" />
+    <Compile Include="DL\DbBackup.cs" />
     <Compile Include="DL\DbFactory.cs" />
     <Compile Include="DL\Entity\Bro.cs" />
     <Compile Include="DL\Entity\Identifiable.cs" />

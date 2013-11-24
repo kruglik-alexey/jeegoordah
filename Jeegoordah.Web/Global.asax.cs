@@ -5,9 +5,10 @@ using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Routing;
+using Jeegoordah.Core.DL;
 using Jeegoordah.Core.Logging;
 using Jeegoordah.Web.Controllers;
-using Jeegoordah.Web.Models.Validation;
+using Jeegoordah.Web.DL;
 using StructureMap;
 
 namespace Jeegoordah.Web
@@ -19,7 +20,9 @@ namespace Jeegoordah.Web
         protected void Application_Start()
         {
 			ConfigureLogger();
-			Logger.For(this).I("Start Jeegoordah for the greater good!");
+            var logger = Logger.For(this);
+			logger.I("Start Jeegoordah for the greater good!");
+            AppDomain.CurrentDomain.DomainUnload += (_, __) => logger.I("Unloaded");
 
             AreaRegistration.RegisterAllAreas();
 
@@ -28,10 +31,18 @@ namespace Jeegoordah.Web
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             
             ControllerBuilder.Current.SetControllerFactory(ObjectFactory.Container.GetInstance<ControllerFactory>());
-            GlobalConfiguration.Configuration.BindParameter(typeof(DateTime), new DateTimeModelBinder());                        
+            GlobalConfiguration.Configuration.BindParameter(typeof(DateTime), new DateTimeModelBinder());
+
+            RunBackup();                
         }
 
-	    private void ConfigureLogger()
+        private void RunBackup()
+        {
+            string appDataDirectory = HttpContext.Current.Server.MapPath("~/App_Data");            
+            DbBackup.Backup(ObjectFactory.Container.GetInstance<DbFactoryRepository>().RealDbFactory.Value, appDataDirectory);
+        }
+
+        private void ConfigureLogger()
 	    {
 			Logger.Configure(@"App_Data\log.txt");
 			log4net.Config.XmlConfigurator.Configure();
