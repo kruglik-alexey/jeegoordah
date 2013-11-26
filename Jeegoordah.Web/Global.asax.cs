@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
@@ -32,14 +35,20 @@ namespace Jeegoordah.Web
             
             ControllerBuilder.Current.SetControllerFactory(ObjectFactory.Container.GetInstance<ControllerFactory>());
             GlobalConfiguration.Configuration.BindParameter(typeof(DateTime), new DateTimeModelBinder());
-
+            
             RunBackup();                
         }
 
         private void RunBackup()
         {
-            string appDataDirectory = HttpContext.Current.Server.MapPath("~/App_Data");            
-            DbBackup.Backup(ObjectFactory.Container.GetInstance<DbFactoryRepository>().RealDbFactory.Value, appDataDirectory);
+            Timer timer = null;
+            timer = new Timer(s =>
+            {
+                timer.Dispose();
+                // path to AppData directory
+                string appDataDirectory = AppDomain.CurrentDomain.GetData("DataDirectory").ToString();
+                DbBackup.Backup(ConfigurationManager.ConnectionStrings["Jeegoordah"].ConnectionString, appDataDirectory);
+            }, null, TimeSpan.FromSeconds(10), TimeSpan.Zero);             
         }
 
         private void ConfigureLogger()

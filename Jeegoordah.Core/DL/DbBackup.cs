@@ -14,25 +14,35 @@ namespace Jeegoordah.Core.DL
     {
         private static readonly Logger Logger = Logger.For(typeof(DbBackup));
 
-        public static void Backup(DbFactory dbFactory, string appDataDirectory)
+        public static void Backup(string sourceConnectionString, string appDataDirectory)
         {
+            var now = DateTime.UtcNow;
             var backupDirectory = Path.Combine(appDataDirectory, "Backup");
             if (!Directory.Exists(backupDirectory))
                 Directory.CreateDirectory(backupDirectory);
-            var backupFile = "{0}.sqlite".F(DateTime.UtcNow.ToString("yyyy-MM-dd_hh-mm-ss"));
+
+            if (HasBackupForToday(now, backupDirectory)) return;
+                        
+            var backupFile = "{0}.sqlite".F(now.ToString("yyyy-MM-dd_hh-mm-ss"));
             backupFile = Path.Combine(backupDirectory, backupFile);
             Logger.I("Database backup to {0}", backupFile);
 
             string backupConnectionString = "data source={0}".F(backupFile);
             using (var backupConnection = new SQLiteConnection(backupConnectionString))
-            using (var db = dbFactory.Open())
+            using (var sourceConnection = new SQLiteConnection(sourceConnectionString))
             {
                 backupConnection.Open();
-                var sourceConnection = (SQLiteConnection)db.Session.Connection;
-                sourceConnection.BackupDatabase(backupConnection, "main", "main", -1, null, -1);
+                sourceConnection.Open();
+                sourceConnection.BackupDatabase(backupConnection, "main", "main", -1, null, 0);
             }
 
             DeleteOldBackups(backupDirectory, 2);
+        }
+
+        private static bool HasBackupForToday(DateTime now, string backupDirectory)
+        {
+            var today = now.ToString("yyyy-MM-dd");
+            return Directory.EnumerateFiles(backupDirectory).Any(f => Path.GetFileName(f).StartsWith(today));
         }
 
         private static void DeleteOldBackups(string backupDirectory, int numberToKeep)
