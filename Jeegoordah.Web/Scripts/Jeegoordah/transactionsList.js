@@ -2,16 +2,17 @@
         'text!templates/transactions/transactionsList.html', 'text!templates/transactions/transaction.html'],
 function (_, $, rest, helper, notification, entityControls, consts, transactionEditor, listTemplate, transactionTemplate) {
     var self = {
-        init: function(currencies, bros, event) {
+        init: function(currencies, bros, event, events) {
             self.currencies = currencies;
             self.bros = bros;
             self.event = event;
+            self.events = events;
             transactionEditor.init(self.currencies, self.bros);
         },        
         
         renderTransactions: function (transactions, target, highlightBro) {
             self.highlightBro = highlightBro || {Id: null};
-            var table = helper.template(listTemplate);
+            var table = helper.template(listTemplate, {events: self.events});
             self.list = table.find('tbody');
             target.append(table);
             _.each(transactions, function (t) {
@@ -34,6 +35,20 @@ function (_, $, rest, helper, notification, entityControls, consts, transactionE
         },
         
         _createTransactionElement: function (transaction, action) {
+            var ui = self._createUiTransaction(transaction);
+            var element = helper.template(transactionTemplate, ui);
+            entityControls.render(element.find('.entity-controls'),
+                _.partial(self._editTransaction, transaction),
+                _.partial(self._deleteTransaction, transaction));
+
+            if (!_.isUndefined(action)) {
+                action(self.list, element);
+            }
+
+            return element;
+        },
+        
+        _createUiTransaction: function(transaction) {
             var ui = _.clone(transaction);
             ui.Source = _.find(self.bros, function (bro) { return bro.Id === ui.Source; });
             ui.Targets = _.chain(ui.Targets).map(function (target) {
@@ -44,17 +59,15 @@ function (_, $, rest, helper, notification, entityControls, consts, transactionE
             ui.targetsEqualsEvent = self.event && helper.equalArrays(transaction.Targets, self.event.Bros);
             ui.Comment = helper.textToHtml(ui.Comment);
             ui.highlightBro = self.highlightBro;
-            
-            var element = helper.template(transactionTemplate, ui);
-            entityControls.render(element.find('.entity-controls'),
-                _.partial(self._editTransaction, transaction),
-                _.partial(self._deleteTransaction, transaction));
-
-            if (!_.isUndefined(action)) {
-                action(self.list, element);                
+            if (ui.Event) {
+                ui.Event = _.find(self.events, function (e) {
+                    return e.Id === ui.Event;
+                });
+            } else {
+                ui.Event = { Name: '' };
             }
-
-            return element;
+            ui.events = self.events;
+            return ui;
         },
         
         _updateTransactionElement: function (transaction) {

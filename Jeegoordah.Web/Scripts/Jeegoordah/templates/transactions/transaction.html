@@ -1,5 +1,5 @@
 ﻿<tr id="transaction<%- self.Id %>">
-    <td class="auto-width"><%- self.Date %></td>
+    <td class="auto-width"><%- self.Date %></td>    
     <td class="auto-width text-right"><%- self.Amount %> <%- self.Currency.Name %></td>
     <td class="auto-width">
         <% if (self.highlightBro.Id === self.Source.Id) { %>
@@ -23,6 +23,9 @@
             <% } %>    
         <% } %>
     </td>
+    <% if (self.events) { %>
+        <td class="auto-width"><%- self.Event.Name %></td>
+    <% } %>
     <td>
         <div class="entity-controls-host">
             <%- self.Comment %>
