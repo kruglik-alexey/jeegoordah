@@ -25,7 +25,7 @@ function (_, $, rest, helper, notification, entityControls, consts, transactionE
         createTransaction: function () {
             var defaults = {};
             if (self.event) {
-                defaults = { Currency: self.currencies[0].Id, Targets: self.event.Bros };
+                defaults = { Currency: self.currencies[0].Id, Targets: self.event.Bros, Event: self.event.Id };
             }
             transactionEditor.createTransaction(defaults).done(function(transaction) {
                 self._createTransactionElement(transaction, function (list, element) {
