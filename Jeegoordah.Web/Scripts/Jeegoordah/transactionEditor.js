@@ -21,9 +21,8 @@ function (_, $, helper, notification, editor, broSelector, rest, editorTemplate)
         },
         
         editTransaction: function (transaction) {
-            var deferred = self._showTransactionEditor(transaction, 'Edit Transaction', function (updatedTransaction) {
-                var eventId = transaction.Event ? transaction.Event.Id : undefined;
-                updatedTransaction = _.defaults(updatedTransaction, { Id: transaction.Id, Event: eventId });
+            var deferred = self._showTransactionEditor(transaction, 'Edit Transaction', function (updatedTransaction) {                
+                updatedTransaction = _.defaults(updatedTransaction, { Id: transaction.Id, Event: transaction.Event });
                 rest.post('transactions/update', updatedTransaction).done(function () {                    
                     editor.close();
                     notification.success('Transaction updated');
