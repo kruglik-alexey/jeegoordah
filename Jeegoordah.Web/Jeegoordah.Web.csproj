@@ -170,6 +170,7 @@
     <Compile Include="Models\Helper.cs" />
     <Compile Include="Models\TransactionRest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Content Include="robots.txt" />
     <Content Include="Scripts\Crossroads\crossroads.min.js" />
     <Content Include="Scripts\Crossroads\signals.min.js" />
     <Content Include="Scripts\Jeegoordah\app-context.js" />
