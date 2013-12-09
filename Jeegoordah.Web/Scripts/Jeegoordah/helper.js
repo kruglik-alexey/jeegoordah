@@ -1,5 +1,5 @@
 ﻿define(['_', '$'], function(_, $) {
-    return {                        
+    var self = {                        
         // Replaces urls with <a> tags. Replaces newlines with <br /> tag.
         textToHtml: function (text) {
             var exp = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/i;
@@ -49,7 +49,20 @@
         },
         
         template: function (template, obj) {
-            return $(_.template(template, obj || {}, {variable: 'self'}));
+            obj = obj || {};
+            obj.helper = self;
+            return $(_.template(template, obj, {variable: 'self'}));
+        },
+        
+        getSignClass: function(amount) {
+            if (amount === 0) return 'zero';
+            if (amount > 0) return 'positive';
+            return 'negative';
+        },
+        
+        plural: function (number, singular, plural) {
+            return number > 1 ? plural : singular;
         }
     };
+    return self;
 });

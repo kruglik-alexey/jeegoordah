@@ -45,8 +45,14 @@ function ($, _, rest, helper, transactionsList, entityControls, eventEditor, not
             $('#modules').empty().append(self.module);
             self.module.find('#createTransactionButton').click(transactionsList.createTransaction);
             entityControls.render(self.module.find('.page-header>h1'), self._editEvent, self._deleteEvent);
-            transactionsList.init(context.currencies, context.bros, self.event);
-            transactionsList.renderTransactions(self.transactions, self.module.find('#transactions'));
+            
+            transactionsList.init({
+                currencies: context.currencies,
+                bros: context.bros,
+                event: self.event,
+                transactions: self.transactions,
+                target: self.module.find('#transactions')
+            });           
         }
     };
 

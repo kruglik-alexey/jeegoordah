@@ -1,0 +1,30 @@
+﻿<tr id="transaction<%- self.Id %>">
+    <td class="auto-width"><%- self.Date %></td>    
+    <td class="auto-width text-right zero"><%- self.AmountFormatted %> <%- self.Currency.Name %></td>
+    <td class="auto-width text-right <%- self.helper.getSignClass(self.delta) %>"><%- self.deltaFormatted %> <%- self.Currency.Name %></td>
+    <td class="auto-width">
+        <% if (self.highlightBro.Id === self.Source.Id) { %>
+            <strong><%- self.Source.Name %></strong>
+        <% } else { %>
+            <%- self.Source.Name %>
+        <% } %>
+    </td>
+    <td class="auto-width">        
+        <% if (self.targetsBro) { %>
+            <% var brosMore = self.Targets.length - 1 %>
+            <strong><%- self.highlightBro.Name %></strong>
+            <% if (brosMore > 0) { %>
+                <span> and </span><span class="label label-default" title="<%- self.allTargets %>"><%- brosMore %> <%- self.helper.plural(brosMore, 'bro', 'broes') %> more</span>
+            <% } %>
+        <% } else { %>
+            <span class="label label-default" title="<%- self.allTargets %>"><%- self.Targets.length %> <%- self.helper.plural(self.Targets.length, 'bro', 'broes') %></span>
+        <% } %>                                             
+    </td>    
+    <td class="auto-width"><%- self.eventName %></td>
+    <td>
+        <div class="entity-controls-host">
+            <%- self.Comment %>
+            <div class="entity-controls"></div>  
+        </div>
+    </td>
+</tr>

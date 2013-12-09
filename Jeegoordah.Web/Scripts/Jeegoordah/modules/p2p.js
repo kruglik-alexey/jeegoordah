@@ -2,12 +2,16 @@
     var self = {        
         activate: function () {
             rest.get('transactions/p2p').done(function (transactions) {
-                transactionsList.init(context.currencies, context.bros);
-
                 var module = $(moduleTemplate);
                 $('#modules').empty().append(module);
                 module.find('#createTransactionButton').click(transactionsList.createTransaction);
-                transactionsList.renderTransactions(transactions, module.find('#transactions'));
+                
+                transactionsList.init({
+                    currencies: context.currencies,
+                    bros: context.bros,
+                    transactions: transactions,
+                    target: module.find('#transactions')
+                });
             });            
         }              
     };

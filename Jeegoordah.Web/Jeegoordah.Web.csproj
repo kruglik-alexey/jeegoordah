@@ -182,6 +182,8 @@
     <Content Include="Scripts\Jeegoordah\modules\p2p.js" />
     <Content Include="Scripts\Jeegoordah\modules\return-money.js" />
     <Content Include="Scripts\Jeegoordah\templates\bro-total\module.html" />
+    <Content Include="Scripts\Jeegoordah\templates\bro-total\transaction.html" />
+    <Content Include="Scripts\Jeegoordah\templates\bro-total\transactionsList.html" />
     <Content Include="Scripts\Jeegoordah\templates\broSelector.html" />
     <Content Include="Scripts\Jeegoordah\templates\entityControls.html" />
     <Content Include="Scripts\Jeegoordah\templates\event-details\module.html" />

@@ -2,25 +2,24 @@
         'text!templates/transactions/transactionsList.html', 'text!templates/transactions/transaction.html'],
 function (_, $, rest, helper, notification, entityControls, consts, transactionEditor, listTemplate, transactionTemplate) {
     var self = {
-        init: function(currencies, bros, event, events) {
-            self.currencies = currencies;
-            self.bros = bros;
-            self.event = event;
-            self.events = events;
+        init: function (config) {
+            self.currencies = config.currencies;
+            self.bros = config.bros;
+            self.event = config.event;            
+            self.transactionTemplate = config.transactionTemplate || transactionTemplate;
+            self.transactionAugmenter = config.transactionAugmenter || $.noop;
             transactionEditor.init(self.currencies, self.bros);
-        },        
-        
-        renderTransactions: function (transactions, target, highlightBro) {
-            self.highlightBro = highlightBro || {Id: null};
-            var table = helper.template(listTemplate, {events: self.events});
+                        
+            var actualListTemplate = config.transactionsListTemplate || listTemplate;
+            var table = helper.template(actualListTemplate);
             self.list = table.find('tbody');
-            target.append(table);
-            _.each(transactions, function (t) {
-                self._createTransactionElement(t, function(list, element) {
+            config.target.append(table);
+            _.each(config.transactions, function (t) {
+                self._createTransactionElement(t, function (list, element) {
                     list.append(element);
                 });
             });
-        },
+        },        
         
         createTransaction: function () {
             var defaults = {};
@@ -36,7 +35,8 @@ function (_, $, rest, helper, notification, entityControls, consts, transactionE
         
         _createTransactionElement: function (transaction, action) {
             var ui = self._createUiTransaction(transaction);
-            var element = helper.template(transactionTemplate, ui);
+            self.transactionAugmenter(ui);
+            var element = helper.template(self.transactionTemplate, ui);
             entityControls.render(element.find('.entity-controls'),
                 _.partial(self._editTransaction, transaction),
                 _.partial(self._deleteTransaction, transaction));
@@ -54,18 +54,10 @@ function (_, $, rest, helper, notification, entityControls, consts, transactionE
             ui.Targets = _.chain(ui.Targets).map(function (target) {
                 return _.find(self.bros, function (bro) { return bro.Id === target; });
             }).sortBy('Name').value();
-            ui.Amount = $.number(ui.Amount, 0, '.', ' ');
+            ui.AmountFormatted = $.number(ui.Amount, 0, '.', ' ');
             ui.Currency = _.find(self.currencies, function (currency) { return currency.Id === ui.Currency; });
             ui.targetsEqualsEvent = self.event && helper.equalArrays(transaction.Targets, self.event.Bros);
-            ui.Comment = helper.textToHtml(ui.Comment);
-            ui.highlightBro = self.highlightBro;
-            if (ui.Event) {
-                ui.Event = _.find(self.events, function (e) {
-                    return e.Id === ui.Event;
-                });
-            } else {
-                ui.Event = { Name: '' };
-            }
+            ui.Comment = helper.textToHtml(ui.Comment);                    
             ui.events = self.events;
             return ui;
         },

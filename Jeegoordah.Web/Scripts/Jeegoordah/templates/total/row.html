@@ -8,11 +8,7 @@
                 <td class="total-amount">
                     <% if (self.amounts.length > 0) { %>
                         <% for(var i = 0; i < self.amounts.length; i++) { %>
-                            <% var signClass = 'zero'; %>
-                            <% if (self.amounts[i].rawAmount !== 0) { %>                    
-                            <%   signClass = self.amounts[i].rawAmount >= 0 ? 'positive' : 'negative'; %>                    
-                            <% } %>
-                            <div class="text-right <%- signClass %>">
+                            <div class="text-right <%- self.helper.getSignClass(self.amounts[i].rawAmount) %>">
                                 <%- self.amounts[i].amount %> <%- self.amounts[i].currency.Name %>
                             </div>
                         <% } %>    
