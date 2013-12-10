@@ -41,7 +41,7 @@ function ($, _, rest, transactionsList, helper, context, moduleTemplate, transac
             } else {
                 transaction.delta = -1 * transaction.Amount / transaction.Targets.length;
             }
-            transaction.deltaFormatted = $.number(transaction.delta, 0, '.', ' ');
+            transaction.deltaFormatted = helper.formatNumber(transaction.delta);
 
             transaction.allTargets = _.pluck(transaction.Targets, "Name").join(', ');
         }

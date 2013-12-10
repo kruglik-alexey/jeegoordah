@@ -62,6 +62,10 @@
         
         plural: function (number, singular, plural) {
             return number > 1 ? plural : singular;
+        },
+        
+        formatNumber: function(number) {
+            return $.number(number, 0, '.', ' ');
         }
     };
     return self;

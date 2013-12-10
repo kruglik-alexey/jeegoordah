@@ -27,7 +27,7 @@
                 var rawAmount = helper.withAccuracy(amount.Amount, currency.Accuracy);
                 if (rawAmount !== 0) {
                     return {
-                        amount: $.number(rawAmount, 0, '.', ' '),
+                        amount: helper.formatNumber(rawAmount),
                         rawAmount: rawAmount,
                         currency: currency
                     };
