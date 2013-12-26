@@ -1,6 +1,8 @@
-﻿define(['$', '_', 'rest', 'helper', 'app-context', 'text!templates/total/module.html', 'text!templates/total/row.html'], function ($, _, rest, helper, context, moduleTemplate, rowTemplate) {
+﻿define(['$', '_', 'analytics', 'rest', 'helper', 'app-context', 'text!templates/total/module.html', 'text!templates/total/row.html'],
+    function ($, _, analytics, rest, helper, context, moduleTemplate, rowTemplate) {
     var self = {        
         activate: function () {
+            analytics.page('Total', '/total');
             rest.get('total').done(function (total) {
                 self.module = $(moduleTemplate);
                 $('#modules').empty().append(self.module);

@@ -1,6 +1,8 @@
-﻿define(['_', '$', 'rest', 'app-context', 'transactionsList', 'text!templates/p2p/module.html'], function(_, $, rest, context, transactionsList, moduleTemplate) {
+﻿define(['_', '$', 'analytics', 'rest', 'app-context', 'transactionsList', 'text!templates/p2p/module.html'],
+    function (_, $, analytics, rest, context, transactionsList, moduleTemplate) {
     var self = {        
         activate: function () {
+            analytics.page('P2P');
             rest.get('transactions/p2p').done(function (transactions) {
                 var module = $(moduleTemplate);
                 $('#modules').empty().append(module);

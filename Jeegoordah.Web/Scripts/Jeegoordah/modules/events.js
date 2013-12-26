@@ -1,8 +1,9 @@
-﻿define(['_', '$', 'rest', 'notification', 'helper', 'eventEditor', 'app-context', 'text!templates/events/row.html', 'text!templates/events/editor.html', 'text!templates/events/module.html'],
-    function (_, $, rest, notification, helper, eventEditor, context, rowTemplate, editorTemplate, moduleTemplate) {
+﻿define(['_', '$', 'analytics', 'rest', 'notification', 'helper', 'eventEditor', 'app-context', 'text!templates/events/row.html', 'text!templates/events/editor.html', 'text!templates/events/module.html'],
+    function (_, $, analytics, rest, notification, helper, eventEditor, context, rowTemplate, editorTemplate, moduleTemplate) {
 
     var self = {
-        activate: function () {                        
+        activate: function () {
+            analytics.page('Events');
             rest.get('events').done(function (events) {
                 self.module = $(moduleTemplate);
                 $('#modules').empty().append(self.module);

@@ -1,11 +1,12 @@
-﻿define(['$', '_', 'rest', 'helper', 'transactionsList', 'entityControls', 'eventEditor', 'notification', 'consts', 'app-context', 'text!templates/event-details/module.html'],
-function ($, _, rest, helper, transactionsList, entityControls, eventEditor, notification, consts, context, moduleTemplate) {
+﻿define(['$', '_', 'analytics', 'rest', 'helper', 'transactionsList', 'entityControls', 'eventEditor', 'notification', 'consts', 'app-context', 'text!templates/event-details/module.html'],
+function ($, _, analytics, rest, helper, transactionsList, entityControls, eventEditor, notification, consts, context, moduleTemplate) {
     var self = {        
         activate: function(id) {
             $.when(rest.get('events/' + id),
                    rest.get('events/' + id + '/transactions'))
-            .done(function (event, transactions) {
+            .done(function (event, transactions) {                
                 self.event = event[0];
+                analytics.page('Event ' + self.event.Name);
                 self.transactions = transactions[0];
                 self._render();
             });

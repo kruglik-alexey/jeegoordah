@@ -173,6 +173,7 @@
     <Content Include="robots.txt" />
     <Content Include="Scripts\Crossroads\crossroads.min.js" />
     <Content Include="Scripts\Crossroads\signals.min.js" />
+    <Content Include="Scripts\Jeegoordah\analytics.js" />
     <Content Include="Scripts\Jeegoordah\app-context.js" />
     <Content Include="Scripts\Jeegoordah\broSelector.js" />
     <Content Include="Scripts\Jeegoordah\entityControls.js" />
