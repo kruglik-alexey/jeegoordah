@@ -1,9 +1,9 @@
 ﻿<div style="text-align: center" data-radio="<%- self.isRadio %>">
-    <% for(var i = 0; i < self.bros.length / 8; i++) { %>
+    <% for(var i = 0; i < self.bros.length / 7; i++) { %>
     <div class="btn-group" style="padding-bottom: 5px">
-        <% for(var j = 0; j < Math.min(8, self.bros.length - i * 8); j++) { %>
-        <label class="btn btn-default" data-id="<%- self.bros[i * 8 + j].Id %>">
-            <%- self.bros[i * 8 + j].Name %>
+        <% for(var j = 0; j < Math.min(7, self.bros.length - i * 7); j++) { %>
+        <label class="btn btn-default" data-id="<%- self.bros[i * 7 + j].Id %>">
+            <%- self.bros[i * 7 + j].Name %>
         </label>
         <% } %>
     </div>
