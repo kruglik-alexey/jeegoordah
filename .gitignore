@@ -5,3 +5,4 @@ obj/
 bin/
 *.sqlite
 log.txt
+*.userprefs
