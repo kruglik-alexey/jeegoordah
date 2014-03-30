@@ -68,6 +68,9 @@
     <Compile Include="BroMultiSelector.cs" />
     <Compile Include="IConnectionHelper.cs" />
     <Compile Include="ISharedPreferencesProvider.cs" />
+    <Compile Include="SettingsActivity.cs" />
+    <Compile Include="ActivityRepositoryAdapter.cs" />
+    <Compile Include="Entities\Identifiable.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\AndroidManifest.xml" />
@@ -76,11 +79,14 @@
     <AndroidResource Include="Resources\layout\Main.axml" />
     <AndroidResource Include="Resources\values\Strings.xml" />
     <AndroidResource Include="Resources\drawable\Icon.png" />
+    <AndroidResource Include="Resources\menu\main.xml" />
+    <AndroidResource Include="Resources\layout\Settings.axml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Repositories\" />
     <Folder Include="Entities\" />
     <Folder Include="Assets\" />
+    <Folder Include="Resources\menu\" />
   </ItemGroup>
 </Project>

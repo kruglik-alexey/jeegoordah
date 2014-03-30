@@ -9,11 +9,12 @@ using Android.Widget;
 using Jeegoordah.Droid.Entities;
 using Jeegoordah.Droid.Repositories;
 using Android.Net;
+using Android.Views;
 
 namespace Jeegoordah.Droid
 {
     [Activity(Label = "Jeegoordah.Droid", MainLauncher = true)]
-	public class MainActivity : Activity, IConnectionHelper, ISharedPreferencesProvider
+	public class MainActivity : Activity
     {
 		private LocalRepository repo;
 		private IList<Bro> bros;
@@ -28,7 +29,9 @@ namespace Jeegoordah.Droid
         {
             base.OnCreate(savedInstanceState);
 
-			CreateRepository();
+			var settings = this.GetSharedPreferences("jeegoordah.settings");
+			var repositoryAdapter = new ActivityRepositoryAdapter(this);
+			repo = new LocalRepository(new HttpRepository(), repositoryAdapter, repositoryAdapter);
 			await TryUpdateFromWeb();
 			await LoadEntities();
 
@@ -45,10 +48,20 @@ namespace Jeegoordah.Droid
 			eventSelector.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleSpinnerItem, 
 				events.OrderByDescending(e => e.GetRealStartDate()).Select(e => e.Name).ToArray());
 			eventSelector.ItemSelected += (s, e) => targets = null;
+			var defaultEvent = Helper.GetEntityFromSettings(events, settings, "defaultEvent");
+			if (defaultEvent != null)
+			{
+				eventSelector.SetSelectedItem(defaultEvent.Name);
+			}
 
 			currencySelector = FindViewById<Spinner>(Resource.Id.CurrencySelector);
 			currencySelector.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleSpinnerItem, 
 				currencies.OrderBy(c => c.Name).Select(c => c.Name).ToArray());
+			var defaultCurrency = Helper.GetEntityFromSettings(currencies, settings, "defaultCurrency");
+			if (defaultCurrency != null)
+			{
+				currencySelector.SetSelectedItem(defaultCurrency.Name);
+			}
 
 			sourceSelector = FindViewById<Spinner>(Resource.Id.SourceSelector);
 			sourceSelector.Adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleSpinnerItem, 
@@ -140,17 +153,6 @@ namespace Jeegoordah.Droid
 			return bros.First(b => b.Name == sourceSelector.SelectedItem.ToString());
 		}	
 	
-		private void CreateRepository()
-		{
-			string host;
-#if DEBUG
-			host = "jeegoordah-test.azurewebsites.net";
-#else
-			host ="jeegoordah.azurewebsites.net";
-#endif
-			repo = new LocalRepository(new HttpRepository(host), this, this);
-		}
-
 		private async Task TryUpdateFromWeb()
 		{
 			var progress = ProgressDialog.Show(this, "Please wait", "Loading data from Jeegoordah", true);
@@ -175,18 +177,25 @@ namespace Jeegoordah.Droid
 			bros = await repo.GetBros();
 			currencies = await repo.GetCurencies();
 		}
-	
-		bool IConnectionHelper.HasConnection
+
+		public override bool OnCreateOptionsMenu(IMenu menu)
 		{
-			get
-			{
-                return ((ConnectivityManager)GetSystemService(Context.ConnectivityService)).GetAllNetworkInfo().Any(n => n.IsConnected);
-			}
+			MenuInflater.Inflate(Resource.Menu.main, menu);
+			return true;
 		}
-	
-		ISharedPreferences ISharedPreferencesProvider.Get(string name)
+
+		public override bool OnOptionsItemSelected(IMenuItem item)
 		{
-            return GetSharedPreferences(name, FileCreationMode.Private);
+			switch (item.ItemId)
+			{
+				case Resource.Id.SettingsMenu:
+				{
+					var intent = new Intent(this, typeof(SettingsActivity));
+					StartActivity(intent);
+					break;
+				}
+			}
+			return true;
 		}
     }
 }

@@ -2,9 +2,8 @@ using System;
 
 namespace Jeegoordah.Droid.Entities
 {
-    public class Bro
+	public class Bro : Identifiable
     {    
-		public int Id;
 		public string Name;
     }
 }

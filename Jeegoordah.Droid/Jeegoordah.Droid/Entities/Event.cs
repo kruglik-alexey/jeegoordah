@@ -4,9 +4,8 @@ using System.Globalization;
 
 namespace Jeegoordah.Droid.Entities
 {
-    public class Event
+	public class Event : Identifiable
     {      
-		public int Id;
 		public string Name;
 		public string StartDate;
 		public IList<int> Bros;

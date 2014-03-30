@@ -4,9 +4,8 @@ using System.Linq;
 
 namespace Jeegoordah.Droid.Entities
 {
-	public class Transaction
+	public class Transaction : Identifiable
     {
-		public int? Id;
 		public string Date;
 		public int? Event;
 		public int Source;

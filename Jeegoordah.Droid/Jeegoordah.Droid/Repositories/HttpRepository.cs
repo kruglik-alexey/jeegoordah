@@ -12,9 +12,13 @@ namespace Jeegoordah.Droid.Repositories
     {
 		private readonly string host;
 
-		public HttpRepository(string host)
+		public HttpRepository()
         {
-			this.host = host;
+#if DEBUG
+			host = "jeegoordah-test.azurewebsites.net";
+#else
+			host ="jeegoordah.azurewebsites.net";
+#endif
         }
 
 		public async Task<IList<Bro>> GetBros()
