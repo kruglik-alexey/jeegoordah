@@ -12,7 +12,7 @@ using Android.Preferences;
 using Jeegoordah.Droid.Repositories;
 using Jeegoordah.Droid.Entities;
 
-namespace Jeegoordah.Droid
+namespace Jeegoordah.Droid.UI
 {
     [Activity(Label = "Settings")]			
 	public class SettingsActivity : Activity

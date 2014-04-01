@@ -3,7 +3,7 @@ using Android.Content;
 using Android.Net;
 using System.Linq;
 
-namespace Jeegoordah.Droid
+namespace Jeegoordah.Droid.UI
 {
 	public class ActivityRepositoryAdapter : IConnectionHelper, ISharedPreferencesProvider
     {

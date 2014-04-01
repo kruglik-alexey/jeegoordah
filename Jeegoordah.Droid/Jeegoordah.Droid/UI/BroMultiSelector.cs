@@ -6,7 +6,7 @@ using Android.App;
 using Android.OS;
 using Jeegoordah.Droid.Entities;
 
-namespace Jeegoordah.Droid
+namespace Jeegoordah.Droid.UI
 {
 	public class BroMultiSelector : DialogFragment
     {

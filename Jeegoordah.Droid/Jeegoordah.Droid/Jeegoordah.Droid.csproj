@@ -52,7 +52,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Helper.cs" />
@@ -65,12 +64,15 @@
     <Compile Include="Entities\BroTotal.cs" />
     <Compile Include="Entities\Event.cs" />
     <Compile Include="Entities\Transaction.cs" />
-    <Compile Include="BroMultiSelector.cs" />
     <Compile Include="IConnectionHelper.cs" />
     <Compile Include="ISharedPreferencesProvider.cs" />
-    <Compile Include="SettingsActivity.cs" />
-    <Compile Include="ActivityRepositoryAdapter.cs" />
     <Compile Include="Entities\Identifiable.cs" />
+    <Compile Include="UI\CreateTransactionFragment.cs" />
+    <Compile Include="UI\TotalFragment.cs" />
+    <Compile Include="UI\MainActivity.cs" />
+    <Compile Include="UI\SettingsActivity.cs" />
+    <Compile Include="UI\BroMultiSelector.cs" />
+    <Compile Include="UI\ActivityRepositoryAdapter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\AndroidManifest.xml" />
@@ -81,6 +83,9 @@
     <AndroidResource Include="Resources\drawable\Icon.png" />
     <AndroidResource Include="Resources\menu\main.xml" />
     <AndroidResource Include="Resources\layout\Settings.axml" />
+    <AndroidResource Include="Resources\layout\CreateTransaction.axml" />
+    <AndroidResource Include="Resources\layout\Total.axml" />
+    <AndroidResource Include="Resources\layout\TotalRow.axml" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Novell\Novell.MonoDroid.CSharp.targets" />
   <ItemGroup>
@@ -88,5 +93,6 @@
     <Folder Include="Entities\" />
     <Folder Include="Assets\" />
     <Folder Include="Resources\menu\" />
+    <Folder Include="UI\" />
   </ItemGroup>
 </Project>

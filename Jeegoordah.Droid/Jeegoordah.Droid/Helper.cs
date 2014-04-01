@@ -4,6 +4,7 @@ using Android.Widget;
 using System.Collections.Generic;
 using System.Linq;
 using Jeegoordah.Droid.Entities;
+using System.Globalization;
 
 namespace Jeegoordah.Droid
 {
@@ -31,6 +32,16 @@ namespace Jeegoordah.Droid
 		{
 			var id = settings.GetInt(key, -1);
 			return entities.FirstOrDefault(e => e.Id == id);		
+		}
+
+		public static decimal WithAccuracy(this decimal number, int accuracy) 
+		{
+			if (accuracy == 0)
+				return (int)number;
+			if (accuracy < 0)
+				throw new ArgumentOutOfRangeException();
+			var factor = Math.Pow(10, accuracy);
+			return (decimal)(Math.Round((double)number / factor) * factor);
 		}
     }
 }
