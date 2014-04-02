@@ -15,6 +15,7 @@ namespace Jeegoordah.Droid.UI
     {
 		private LocalRepository repository;
 		private int cirrentNavigation = -1;
+		private Fragment activeFragment;
 
 		protected async override void OnCreate(Bundle savedInstanceState)
         {
@@ -46,7 +47,7 @@ namespace Jeegoordah.Droid.UI
 
 		private void UpdatePendingTransactionCount()
 		{
-			FindViewById<TextView>(Resource.Id.PendingTransactionCount).Text =  "Pending transactions: {0}".F(repository.PendingTransactionCount.ToString());
+			FindViewById<TextView>(Resource.Id.PendingTransactionCount).Text = "Pending transactions: {0}".F(repository.GetPendingTransactions().Count.ToString());
 		}
 
 		private async Task TryUpdateFromWeb()
@@ -92,25 +93,30 @@ namespace Jeegoordah.Droid.UI
 		{
 			if (cirrentNavigation == itemPosition)
 				return true;
-			Fragment fragment;
+
+			activeFragment.As<CreateTransactionFragment>(f => f.TransactionCreated -= UpdatePendingTransactionCount);
+
 			switch (itemPosition)
 			{
 				case 0:
 				{
-					fragment = new CreateTransactionFragment(repository);
+					var createTransactionFragment = new CreateTransactionFragment(repository);
+					createTransactionFragment.TransactionCreated += UpdatePendingTransactionCount;
+					activeFragment = createTransactionFragment;
 					break;
 				}
 				case 1:
 				{
-					fragment = new TotalFragment(repository);
+					activeFragment = new TotalFragment(repository);
 					break;
 				}
 				default: throw new ArgumentOutOfRangeException();
 			}
+
 			FindViewById<ViewGroup>(Resource.Id.Content).RemoveAllViews();
 			using (var t = FragmentManager.BeginTransaction())
 			{
-				t.Add(Resource.Id.Content, fragment);
+				t.Add(Resource.Id.Content, activeFragment);
 				t.Commit();
 			}
 			cirrentNavigation = itemPosition;

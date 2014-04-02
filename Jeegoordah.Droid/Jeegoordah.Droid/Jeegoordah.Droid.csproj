@@ -73,6 +73,8 @@
     <Compile Include="UI\SettingsActivity.cs" />
     <Compile Include="UI\BroMultiSelector.cs" />
     <Compile Include="UI\ActivityRepositoryAdapter.cs" />
+    <Compile Include="TotalCalculator.cs" />
+    <Compile Include="UI\TotalAdapter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\AndroidManifest.xml" />

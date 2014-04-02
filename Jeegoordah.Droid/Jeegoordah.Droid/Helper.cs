@@ -43,6 +43,13 @@ namespace Jeegoordah.Droid
 			var factor = Math.Pow(10, accuracy);
 			return (decimal)(Math.Round((double)number / factor) * factor);
 		}
+
+		public static void As<T>(this object obj, Action<T> action) where T : class
+		{
+			T tobj = obj as T;
+			if (tobj != null)
+				action(tobj);
+		}
     }
 }
 

@@ -6,6 +6,15 @@ namespace Jeegoordah.Droid.Entities
     {      
 		public int Currency;
 		public decimal Amount;
+
+		public CurrencyAmount Clone() 
+		{
+			return new CurrencyAmount
+			{
+				Currency = Currency,
+				Amount = Amount
+			};
+		}
     }
 }
 

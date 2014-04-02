@@ -55,16 +55,21 @@ namespace Jeegoordah.Droid.Repositories
 		{
 			if (connectionHelper.HasConnection)
 			{
+				int? id = null;
 				try
 				{
-					return await parentRepository.PostTransaction(transaction);                	
+					id = await parentRepository.PostTransaction(transaction);                	
+					await Put(totalKey, parentRepository.GetTotal());
+					return id;
 				}
 				catch (Exception)
 				{
-					AddPendingTransaction(transaction);
+					if (!id.HasValue)
+						AddPendingTransaction(transaction);
 					throw;
 				}
 			}
+
 			AddPendingTransaction(transaction);
 			return null;
 		}
@@ -84,20 +89,27 @@ namespace Jeegoordah.Droid.Repositories
 			{
 				return false;
 			}
+
 			await Task.WhenAll(new []
 			{
 				Put(brosKey, parentRepository.GetBros()),
 				Put(eventsKey, parentRepository.GetEvents()),
-				Put(currenciesKey, parentRepository.GetCurencies()),
-				Put(totalKey, parentRepository.GetTotal()),
+				Put(currenciesKey, parentRepository.GetCurencies()),				
 				SubmitPendingTransactions()
 			});
+			await Put(totalKey, parentRepository.GetTotal());
+
 			using (var e = miscStorage.Edit())
 			{
 				e.PutLong("lastRefresh", DateTime.UtcNow.Ticks);
 				e.Commit();
 			}
 			return true;
+		}
+
+		public IList<Transaction> GetPendingTransactions()
+		{
+			return pendingTransactions.All.Select(p => JsonConvert.DeserializeObject<Transaction>(p.Value.ToString())).ToList();
 		}
 
 		public DateTime? LastRefresh
@@ -107,12 +119,7 @@ namespace Jeegoordah.Droid.Repositories
 				long lastRefresh = miscStorage.GetLong("lastRefresh", 0);
 				return lastRefresh != 0 ? DateTime.FromFileTime(lastRefresh).ToLocalTime() : (DateTime?)null;
 			}
-		}
-
-		public int PendingTransactionCount
-		{
-			get { return pendingTransactions.All.Count; }
-		}
+		}	
 
 		private async Task Put<T>(string key, Task<T> dataSource)
 		{
