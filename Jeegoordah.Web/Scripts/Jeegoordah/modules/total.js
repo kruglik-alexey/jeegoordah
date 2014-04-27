@@ -26,8 +26,8 @@
             });
             var amounts = _.chain(broTotal.Amounts).map(function (amount) {
                 var currency = self._getCurrency(amount.Currency);
-                var rawAmount = helper.withAccuracy(amount.Amount, currency.Accuracy);
-                if (rawAmount !== 0) {
+                var rawAmount = helper.withAccuracy(amount.Amount, currency.Accuracy);                
+                if (rawAmount >= 1 || rawAmount <= -1) {
                     return {
                         amount: helper.formatNumber(rawAmount),
                         rawAmount: rawAmount,
