@@ -3,6 +3,12 @@ function (_, $, helper, notification, editor, broSelector, rest, editorTemplate)
     var self = {
         init: function(currencies, bros) {
             self.currencies = currencies;
+            self.visibleCurrencies = _.filter(self.currencies, function(c) {
+                return !c.IsHidden;
+            });
+            self.hiddenCurrencies = _.filter(self.currencies, function (c) {
+                return c.IsHidden;
+            });
             self.bros = bros;
         },
 
@@ -34,7 +40,8 @@ function (_, $, helper, notification, editor, broSelector, rest, editorTemplate)
 
         _showTransactionEditor: function(transaction, title, ok) {
             var deferred = $.Deferred();
-            var rendered = helper.template(editorTemplate, { currencies: self.currencies });
+            var currencies = self._getCurrenciesForTransaction(transaction);
+            var rendered = helper.template(editorTemplate, { currencies: currencies });
             rendered.find('#transactionSource').append(broSelector.render(true, self.bros));
             rendered.find('#transactionTargets').append(broSelector.render(false, self.bros));
             rendered.find('input[name=Amount]').number(true, 0, '.', ' ');
@@ -49,6 +56,13 @@ function (_, $, helper, notification, editor, broSelector, rest, editorTemplate)
                 validate: self._validateTransaction
             });
             return deferred;
+        },
+
+        _getCurrenciesForTransaction: function(transaction) {            
+            var hidden = _.find(self.hiddenCurrencies, function(c) {
+                return c.Id === transaction.Currency;
+            });
+            return hidden ? self.currencies : self.visibleCurrencies;
         },
 
         _bindTransaction: function(transaction, $editor) {
