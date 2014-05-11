@@ -1,8 +1,21 @@
 ﻿define(['$', '_', 'analytics', 'rest', 'helper', 'app-context', 'text!templates/total/module.html', 'text!templates/total/row.html'],
     function ($, _, analytics, rest, helper, context, moduleTemplate, rowTemplate) {
-    var self = {        
+    var self = {                
         activate: function () {
             analytics.page('Total', '/total');
+
+            self.views = {
+                all: {
+                    resource: 'total',
+                    renderer: self._renderTotalWithCurrencies
+                },
+                base: {
+                    resource: 'total/base',
+                    renderer: self._renderTotalInBase
+                }
+            };
+
+            self.total = {};
             self._renderModule();
             self._navigate('all');
         },
@@ -10,30 +23,25 @@
         _renderModule: function() {
             self.$module = $(moduleTemplate);
             $('#modules').empty().append(self.$module);
-            self.$navs = self.$module.find('[data-role=nav]').find('li');
+            self.$navs = self.$module.find('[data-role=views]').find('li');
             self.$navs.click(function () {                
-                self._navigate($(this).data('role'));
+                self._navigate($(this).data('view'));
             });
         },
 
-        _navigate: function (renderType) {            
+        _navigate: function (view) {            
             self.$navs.removeClass('active');
-            self.$navs.filter('[data-role=' + renderType + ']').addClass('active');
+            self.$navs.filter('[data-view=' + view + ']').addClass('active');
+            self._getTotal(view).done(function (total) {
+                self.views[view].renderer(total);
+            });            
+        },
 
-            switch (renderType) {
-                case 'all': {
-                    rest.get('total').done(function (total) {                        
-                        self._renderTotalWithCurrencies(total);
-                    });
-                    break;
-                }
-                case 'base': {
-                    rest.get('total/base').done(function (total) {
-                        self._renderTotalInBase(total);
-                    });
-                    break;
-                }
+        _getTotal: function (view) {
+            if (!self.total[view]) {
+                self.total[view] = rest.get(self.views[view].resource).promise();
             }
+            return self.total[view];
         },
 
         // expects {bro, [{currency, amount}]}
