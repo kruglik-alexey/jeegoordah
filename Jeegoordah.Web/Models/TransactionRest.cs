@@ -19,6 +19,7 @@ namespace Jeegoordah.Web.Models
             Id = transaction.Id;
             Date = JsonDate.ToString(transaction.Date);
             Amount = transaction.Amount;
+            Rate = transaction.Rate;
             Currency = transaction.Currency.Id;
             Source = transaction.Source.Id;
             Targets = transaction.Targets.Select(t => t.Id).ToList();
@@ -28,7 +29,8 @@ namespace Jeegoordah.Web.Models
         
         public int? Id { get; set; }
         [Required] public string Date { get; set; }
-        [Required] public decimal? Amount { get; set; }
+        [Required] public decimal Amount { get; set; }
+        [Required] public decimal Rate { get; set; }
         [Required] public int? Currency { get; set; }
         [Required] public int? Source { get; set; }
         public List<int> Targets { get; set; }

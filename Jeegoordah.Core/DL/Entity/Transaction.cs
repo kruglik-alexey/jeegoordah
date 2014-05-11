@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using FluentNHibernate.Mapping;
 
 namespace Jeegoordah.Core.DL.Entity
@@ -19,6 +17,7 @@ namespace Jeegoordah.Core.DL.Entity
         public virtual DateTime Date { get; set; }              
         public virtual Currency Currency { get; set; }
         public virtual decimal Amount { get; set; }
+        public virtual decimal Rate { get; set; }
         public virtual Bro Source { get; set; }
         public virtual IList<Bro> Targets { get; set; }
         public virtual Event Event { get; set; }
@@ -33,6 +32,7 @@ namespace Jeegoordah.Core.DL.Entity
             Map(x => x.Date).Not.Nullable();            
             References(x => x.Currency).Not.Nullable();
             Map(x => x.Amount).Not.Nullable();
+            Map(x => x.Rate).Not.Nullable().Default("0");
             References(x => x.Source).Not.Nullable();
             HasManyToMany(x => x.Targets).Table("TransactionTargets");
             References(x => x.Event).Nullable();

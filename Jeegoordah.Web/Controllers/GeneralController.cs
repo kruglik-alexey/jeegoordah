@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Web.Mvc;
 using Jeegoordah.Core.BL;
 using Jeegoordah.Web.DL;
@@ -37,19 +38,24 @@ namespace Jeegoordah.Web.Controllers
         {
             using (var db = DbFactory.Open())
             {
-                return Json(db.Query<Currency>().OrderBy(c => c.Name).ToList(), JsonRequestBehavior.AllowGet);
+                var currencies = db.Query<Currency>().OrderBy(c => c.Name).ToList().Select(c => new CurrencyRest(c)).ToList();
+                // sanity check
+                currencies.Single(c => c.IsBase);
+                return Json(currencies, JsonRequestBehavior.AllowGet);
             }
-        }
+        }        
 
-        [HttpGet]
-        public ActionResult GetTotal()
+        [HttpPost]
+        async public Task<ActionResult> UpdateExchangeRates()
         {
             using (var db = DbFactory.Open())
             {
-                Dictionary<Bro, Dictionary<Currency, decimal>> total = TotalCalculator.Calculate(db.Query<Transaction>().ToList(), db.Query<Bro>().ToList());
-                var result = total.Keys.Select(bro => new BroTotalRest(bro, total[bro])).ToList();
-                return Json(result, JsonRequestBehavior.AllowGet);
-            }
+                Logger.I("Begin updating exchange rates");            
+                await ExchangeRatesUpdater.Update(db);   
+                db.Commit();
+                Logger.I("Updating exchange rates complete");
+                return Json(new { });
+            }            
         }        
     }
 }

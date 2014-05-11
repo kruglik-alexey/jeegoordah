@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using Jeegoordah.Core.DL.Entity;
 
 namespace Jeegoordah.Core.BL
@@ -32,6 +31,27 @@ namespace Jeegoordah.Core.BL
                 result[t.Source][t.Currency] += t.Amount;                
             }
 
+            return result;
+        }
+
+        public static Dictionary<Bro, decimal> CalculateInBaseCurrency(IList<Transaction> transactions, IList<Bro> bros)
+        {
+            var result = new Dictionary<Bro, decimal>(bros.Count);
+            foreach (Bro bro in bros)
+            {
+                result[bro] = 0;
+            }
+
+            foreach (Transaction t in transactions)
+            {
+                decimal amount = t.Amount/t.Rate;
+                decimal share = amount/t.Targets.Count;
+                foreach (Bro bro in t.Targets)
+                {
+                    result[bro] -= share;
+                }
+                result[t.Source] += amount;   
+            }
             return result;
         }
     }

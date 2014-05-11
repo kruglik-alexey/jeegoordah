@@ -15,7 +15,7 @@ namespace Jeegoordah.Core.DL
         public Db(ISession hibernateSession)
         {
             Session = hibernateSession;
-            this.transaction = hibernateSession.BeginTransaction();
+            transaction = hibernateSession.BeginTransaction();
         }
 
         public ISession Session { get; private set; }
@@ -30,23 +30,15 @@ namespace Jeegoordah.Core.DL
             return Session.Load<T>(id);
         }
 
-        public void Dispose()
+        public void Commit()
         {
-            if (Session == null) return;
-            var session = Session;
-            Session = null;
+            transaction.Commit();
+        }
 
-            try
-            {
-                transaction.Commit();
-            }
-            catch (Exception)
-            {
-                transaction.Rollback();
-                throw;
-            }
-            session.Flush();
-            session.Dispose();
+        public void Dispose()
+        {                 
+            transaction.Dispose();            
+            Session.Dispose();
         }
     }
 }

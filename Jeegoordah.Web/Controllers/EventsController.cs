@@ -53,8 +53,10 @@ namespace Jeegoordah.Web.Controllers
 
                 var dlEvent = EventFromRest(@event, db);
                 db.Session.Save(dlEvent);
+                db.Commit();
+
 	            var response = new EventRest(dlEvent);
-				Logger.I("Created event {0}", response.ToJson());
+				Logger.I("Created event {0}", response.ToJson());                
                 return Json(response);
             }            
         }
@@ -80,6 +82,8 @@ namespace Jeegoordah.Web.Controllers
 
                 var dlEvent = EventFromRest(@event, db);
                 db.Session.Update(dlEvent);
+                db.Commit();
+
 	            var response = new EventRest(dlEvent);
 				Logger.I("Updated event {0}", response.ToJson());
                 return Json(response);
@@ -92,6 +96,7 @@ namespace Jeegoordah.Web.Controllers
             using (var db = DbFactory.Open())
             {
                 db.Session.Delete(db.Load<Event>(id));
+                db.Commit();
 				Logger.I("Deleted event {0}", id);
             }            
             return Json(new { });

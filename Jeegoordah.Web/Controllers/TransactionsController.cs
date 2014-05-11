@@ -27,6 +27,8 @@ namespace Jeegoordah.Web.Controllers
             {
                 var dlTransaction = TransactionFromRest(transaction, db);
                 db.Session.Save(dlTransaction);
+                db.Commit();
+
 	            var response = new TransactionRest(dlTransaction);
 				Logger.I("Created transaction {0}", response.ToJson());
                 return Json(response);
@@ -48,6 +50,8 @@ namespace Jeegoordah.Web.Controllers
             {
                 var dlTransaction = TransactionFromRest(transaction, db);
                 db.Session.Update(dlTransaction);
+                db.Commit();
+
 				var response = new TransactionRest(dlTransaction);
 				Logger.I("Updated transaction {0}", response.ToJson());
 				return Json(response);
@@ -60,6 +64,7 @@ namespace Jeegoordah.Web.Controllers
             using (var db = DbFactory.Open())
             {
                 db.Session.Delete(db.Load<Transaction>(id));
+                db.Commit();
 				Logger.I("Deleted transaction {0}", id);
             }
             return Json(new { });
@@ -116,7 +121,8 @@ namespace Jeegoordah.Web.Controllers
                 target.Id = source.Id.Value;
             }
             target.Date = JsonDate.Parse(source.Date);
-            target.Amount = source.Amount.Value;
+            target.Amount = source.Amount;
+            target.Rate = source.Rate;
             target.Comment = source.Comment ?? "";
 
             target.Source = source.Source.Load<Bro>(db);

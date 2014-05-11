@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 using FluentNHibernate.Cfg;
 using FluentNHibernate.Cfg.Db;
 using Jeegoordah.Core.Logging;
 using NHibernate;
-using NHibernate.Linq;
 using NHibernate.Tool.hbm2ddl;
 using Jeegoordah.Core.DL.Entity;
 
@@ -39,6 +36,7 @@ namespace Jeegoordah.Core.DL
             {
                 if (!db.Query<Currency>().Any())
                     DbSeed.Seed(db.Session);
+                db.Commit();
             }
         }
 

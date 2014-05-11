@@ -147,6 +147,7 @@
     <Compile Include="App_Start\StructuremapMvc.cs" />
     <Compile Include="CacheBuster.cs" />
     <Compile Include="Controllers\BaseController.cs" />
+    <Compile Include="Controllers\TotalController.cs" />
     <Compile Include="DL\ContextDependentDbFactory.cs" />
     <Compile Include="Controllers\ControllerFactory.cs" />
     <Compile Include="Controllers\DbController.cs" />
@@ -159,7 +160,9 @@
     <Compile Include="DependencyResolution\IoC.cs" />
     <Compile Include="DependencyResolution\StructureMapDependencyResolver.cs" />
     <Compile Include="DependencyResolution\StructureMapDependencyScope.cs" />
-    <Compile Include="Models\TotalRest.cs" />
+    <Compile Include="Models\BroTotalInBaseRest.cs" />
+    <Compile Include="Models\CurrencyRest.cs" />
+    <Compile Include="Models\BroTotalRest.cs" />
     <Compile Include="Models\Validation\ValidateModelStateAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>

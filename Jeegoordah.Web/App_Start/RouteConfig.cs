@@ -95,18 +95,34 @@ namespace Jeegoordah.Web
                 name: "ListCurrensies",
                 url: "currencies",
                 defaults: new { controller = "General", action = "ListCurrencies" }
-            );
+            );            
 
             routes.MapRoute(
-                name: "GetTotal",
-                url: "total",
-                defaults: new { controller = "General", action = "GetTotal" }
+                name: "UpdateExchangeRates",
+                url: "update_exchange_rates",
+                defaults: new { controller = "General", action = "UpdateExchangeRates" }
             );
 
             routes.MapRoute(
                 name: "Default",
                 url: "",
                 defaults: new { controller = "General", action = "Index" }
+            );
+
+            #endregion
+
+            #region Total
+
+            routes.MapRoute(
+                name: "GetTotal",
+                url: "total",
+                defaults: new { controller = "Total", action = "GetTotal" }
+            );
+
+            routes.MapRoute(
+                name: "GetTotalInBaseCurrency",
+                url: "total/base",
+                defaults: new { controller = "Total", action = "GetTotalInBaseCurrency" }
             );
 
             #endregion
