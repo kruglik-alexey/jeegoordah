@@ -4,6 +4,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using System.Web.Script.Serialization;
 using Jeegoordah.Core.BL;
 using Jeegoordah.Web.DL;
 using NHibernate.Linq;
@@ -56,6 +57,19 @@ namespace Jeegoordah.Web.Controllers
                 Logger.I("Updating exchange rates complete");
                 return Json(new { });
             }            
-        }        
+        }
+
+        [HttpGet]
+        public ActionResult GetRates(string date)
+        {
+            var d = JsonDate.Parse(date);
+            using (var db = DbFactory.Open())
+            {
+                return Json(db.Query<ExchangeRate>().Where(r => r.Date == d)
+                    .ToList()
+                    .Select(r => new { Rate = Math.Round(r.Rate, 2), Date = JsonDate.ToString(r.Date), Currency = r.Currency.Id })
+                    .ToList(), JsonRequestBehavior.AllowGet);
+            }
+        }
     }
 }

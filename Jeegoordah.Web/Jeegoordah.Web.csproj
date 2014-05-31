@@ -155,7 +155,6 @@
     <Compile Include="Controllers\GeneralController.cs" />
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Controllers\TransactionsController.cs" />
-    <Compile Include="DateTimeModelBinder.cs" />
     <Compile Include="DL\DbFactoryRepository.cs" />
     <Compile Include="DependencyResolution\IoC.cs" />
     <Compile Include="DependencyResolution\StructureMapDependencyResolver.cs" />
@@ -181,6 +180,7 @@
     <Content Include="Scripts\Jeegoordah\broSelector.js" />
     <Content Include="Scripts\Jeegoordah\entityControls.js" />
     <Content Include="Scripts\Jeegoordah\eventEditor.js" />
+    <Content Include="Scripts\Jeegoordah\exchangeRates.js" />
     <Content Include="Scripts\Jeegoordah\modules\bro-total.js" />
     <Content Include="Scripts\Jeegoordah\modules\event-details.js" />
     <Content Include="Scripts\Jeegoordah\modules\p2p.js" />

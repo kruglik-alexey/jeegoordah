@@ -57,12 +57,19 @@ namespace Jeegoordah.Core.BL
 
         async private Task UpdateCurrencyRate(Currency currency, DateTime date)
         {
-            decimal rate = await GetRate(currency, date);
-            logger.I("Rate for {0} on {1} is {2}", currency.Name, date.ToShortDateString(), rate);
-            db.Session.Save(new ExchangeRate {Currency = currency, Date = date, Rate = rate});
+            decimal? rate = await GetRate(currency, date);
+            if (rate.HasValue)
+            {
+                logger.I("Rate for {0} on {1} is {2}", currency.Name, date.ToShortDateString(), rate);
+                db.Session.Save(new ExchangeRate { Currency = currency, Date = date, Rate = rate.Value });    
+            }
+            else
+            {
+                logger.I("There is no rate for {0} on {1}", currency.Name, date.ToShortDateString());
+            }
         }
 
-        async private Task<decimal> GetRate(Currency currency, DateTime date)
+        async private Task<decimal?> GetRate(Currency currency, DateTime date)
         {
             JToken ratesForDate;
             if (!rates.TryGetValue(date, out ratesForDate))
@@ -70,7 +77,8 @@ namespace Jeegoordah.Core.BL
                 ratesForDate = await LoadRatesForDate(date);
                 rates[date] = ratesForDate;
             }
-            return ratesForDate[currency.Name].ToObject<decimal>();
+            var rate = ratesForDate[currency.Name];
+            return rate != null ? rate.ToObject<decimal>() : (decimal?)null;
         }
 
         async private Task<JToken> LoadRatesForDate(DateTime dateTime)

@@ -104,6 +104,12 @@ namespace Jeegoordah.Web
             );
 
             routes.MapRoute(
+                name: "GetRates",
+                url: "rates/{date}",
+                defaults: new { controller = "General", action = "GetRates" }
+            );
+
+            routes.MapRoute(
                 name: "Default",
                 url: "",
                 defaults: new { controller = "General", action = "Index" }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -122,7 +123,7 @@ namespace Jeegoordah.Web.Controllers
             }
             target.Date = JsonDate.Parse(source.Date);
             target.Amount = source.Amount;
-            target.Rate = source.Rate;
+            target.Rate = decimal.Parse(source.Rate, CultureInfo.InvariantCulture);
             target.Comment = source.Comment ?? "";
 
             target.Source = source.Source.Load<Bro>(db);

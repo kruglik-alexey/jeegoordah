@@ -33,8 +33,7 @@ namespace Jeegoordah.Web
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             
-            ControllerBuilder.Current.SetControllerFactory(ObjectFactory.Container.GetInstance<ControllerFactory>());
-            GlobalConfiguration.Configuration.BindParameter(typeof(DateTime), new DateTimeModelBinder());
+            ControllerBuilder.Current.SetControllerFactory(ObjectFactory.Container.GetInstance<ControllerFactory>());            
             
             RunBackup();                
         }

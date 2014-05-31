@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using System.Linq;
 using System.Web;
 using Jeegoordah.Core.DL.Entity;
@@ -19,7 +20,7 @@ namespace Jeegoordah.Web.Models
             Id = transaction.Id;
             Date = JsonDate.ToString(transaction.Date);
             Amount = transaction.Amount;
-            Rate = transaction.Rate;
+            Rate = transaction.Rate.ToString(CultureInfo.InvariantCulture);
             Currency = transaction.Currency.Id;
             Source = transaction.Source.Id;
             Targets = transaction.Targets.Select(t => t.Id).ToList();
@@ -30,9 +31,9 @@ namespace Jeegoordah.Web.Models
         public int? Id { get; set; }
         [Required] public string Date { get; set; }
         [Required] public decimal Amount { get; set; }
-        [Required] public decimal Rate { get; set; }
-        [Required] public int? Currency { get; set; }
-        [Required] public int? Source { get; set; }
+        [Required] public string Rate { get; set; }
+        [Required] public int Currency { get; set; }
+        [Required] public int Source { get; set; }
         public List<int> Targets { get; set; }
         public int? Event { get; set; }
         public string Comment { get; set; }        

@@ -22,6 +22,21 @@
     </div>
 </div>
 
+<div class="form-group">    
+    <table width="100%">
+        <tr>
+            <td>
+                <label>Rate to <%- self.baseCurrencyName %></label>
+                <input type="text" class="form-control" name="Rate" required>                
+            </td>
+            <td>
+                <label>Amount in <%- self.baseCurrencyName %></label>
+                <input type="text" class="form-control" name="AmountInBase" disabled>                
+            </td>
+        </tr>
+    </table>    
+</div>
+
 <div class="form-group">
     <label>Source</label>    
     <div id="transactionSource"></div>
