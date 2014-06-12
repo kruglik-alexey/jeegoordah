@@ -3,10 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Android.App;
-using Android.Content;
 using Android.OS;
-using Android.Runtime;
-using Android.Util;
 using Android.Views;
 using Android.Widget;
 using Jeegoordah.Droid.Repositories;
@@ -24,6 +21,9 @@ namespace Jeegoordah.Droid.UI
 		private Spinner eventSelector;
 		private Spinner currencySelector;
 		private Spinner sourceSelector;
+        private EditText amount;
+        private EditText rate;
+        private EditText amountInBase;
 		private IList<Tuple<Bro, bool>> targets;
 
 		public event Action TransactionCreated = () => {};
@@ -43,6 +43,8 @@ namespace Jeegoordah.Droid.UI
 		{
 			var settings = Activity.GetSharedPreferences("jeegoordah.settings");
 			var view = inflater.Inflate(Resource.Layout.CreateTransaction, container, false);
+
+            amount = view.FindViewById<EditText>(Resource.Id.AmountInput);
 
 			eventSelector = view.FindViewById<Spinner>(Resource.Id.EventSelector);
 			eventSelector.Adapter = new ArrayAdapter(Activity, Android.Resource.Layout.SimpleSpinnerItem, 
@@ -111,7 +113,7 @@ namespace Jeegoordah.Droid.UI
 			{
 				Date = DateTime.UtcNow.ToString("dd-MM-yyyy"),
 				Event = GetSelectedEvent().Id,
-				Amount = int.Parse(View.FindViewById<EditText>(Resource.Id.AmountInput).Text),
+				Amount = int.Parse(amount.Text),
 				Currency = GetSelectedCurrency().Id,
 				Source = GetSelectedSource().Id,
 				Targets = targets.Where(t => t.Item2).Select(t => t.Item1.Id).ToList(),
@@ -120,8 +122,7 @@ namespace Jeegoordah.Droid.UI
 
 			bool submitted = (await repository.PostTransaction(transaction)).HasValue;
 			Toast.MakeText(Activity, "Transaction {0}".F(submitted ? "submitted" : "stored locally"), ToastLength.Short).Show();
-			TransactionCreated();
-			//UpdatePendingTransactionCount();
+			TransactionCreated();			
 			Clear();
 		}
 
@@ -134,7 +135,7 @@ namespace Jeegoordah.Droid.UI
 
 		private bool Validate()
 		{
-			if (View.FindViewById<EditText>(Resource.Id.AmountInput).Text.Trim() == "")
+			if (amount.Text.Trim() == "")
 			{
 				Toast.MakeText(Activity, "Please enter amount", ToastLength.Short).Show();
 				return false;

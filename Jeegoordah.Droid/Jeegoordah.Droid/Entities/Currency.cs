@@ -6,6 +6,7 @@ namespace Jeegoordah.Droid.Entities
     {
 		public string Name;
 		public int Accuracy;
+	    public bool IsBase;
     }
 }
 

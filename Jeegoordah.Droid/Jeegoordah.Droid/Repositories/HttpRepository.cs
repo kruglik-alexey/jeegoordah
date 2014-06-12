@@ -41,7 +41,12 @@ namespace Jeegoordah.Droid.Repositories
 			return await Get<IList<BroTotal>>("total");
 		}
 
-		public async Task<int?> PostTransaction(Transaction transaction)
+	    public async Task<IList<ExchangeRate>> GetRates(DateTime date)
+	    {
+            return await Get<IList<ExchangeRate>>("rates/{0}".F(date.ToJson()));
+	    }
+
+	    public async Task<int?> PostTransaction(Transaction transaction)
 		{
 			return (await Post(transaction, "transactions/create")).Id;
 		}

@@ -13,8 +13,8 @@ namespace Jeegoordah.Droid.Repositories
 		private const string brosKey = "bros";
 		private const string currenciesKey = "currencies";
 		private const string eventsKey = "events";
-		private const string totalKey = "total";
-		private const string lastRefreshKey = "lastRefresh";
+		private const string totalKey = "total";		
+		private const string ratesKey = "rates";		
 
 		private readonly IRepository parentRepository;
 		private readonly ISharedPreferences localCache;
@@ -51,7 +51,15 @@ namespace Jeegoordah.Droid.Repositories
 			return Get<IList<BroTotal>>(totalKey);
 		}
 
-		public async Task<int?> PostTransaction(Transaction transaction)
+	    public async Task<IList<ExchangeRate>> GetRates(DateTime date)
+	    {
+	        var key = GetRatesKey(date);
+	        if (localCache.Contains(key))
+	            return await Get<IList<ExchangeRate>>(key);	        
+	        return await Put(key, parentRepository.GetRates(date));
+	    }	    
+
+	    public async Task<int?> PostTransaction(Transaction transaction)
 		{
 			if (connectionHelper.HasConnection)
 			{
@@ -90,11 +98,13 @@ namespace Jeegoordah.Droid.Repositories
 				return false;
 			}
 
+		    var now = DateTime.UtcNow;
 			await Task.WhenAll(new []
 			{
 				Put(brosKey, parentRepository.GetBros()),
 				Put(eventsKey, parentRepository.GetEvents()),
-				Put(currenciesKey, parentRepository.GetCurencies()),				
+				Put(currenciesKey, parentRepository.GetCurencies()),
+				Put(GetRatesKey(now), parentRepository.GetRates(now)),
 				SubmitPendingTransactions()
 			});
 			await Put(totalKey, parentRepository.GetTotal());
@@ -121,7 +131,7 @@ namespace Jeegoordah.Droid.Repositories
 			}
 		}	
 
-		private async Task Put<T>(string key, Task<T> dataSource)
+		private async Task<T> Put<T>(string key, Task<T> dataSource)
 		{
 			T data = await dataSource;
 			string serialized = JsonConvert.SerializeObject(data);
@@ -130,6 +140,7 @@ namespace Jeegoordah.Droid.Repositories
 				editor.PutString(key, serialized);
 				editor.Commit();
 			}
+		    return data;
 		}
 
 		private Task<T> Get<T>(string key)
@@ -157,5 +168,10 @@ namespace Jeegoordah.Droid.Repositories
 				}
 			}
 		}
+
+        private string GetRatesKey(DateTime date)
+        {
+            return ratesKey + date.ToJson();
+        }
 	}	
 }

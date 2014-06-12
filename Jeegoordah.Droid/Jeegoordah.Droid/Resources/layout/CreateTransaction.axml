@@ -6,8 +6,7 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/linearLayout1">
+        android:layout_height="wrap_content">
         <TextView
             android:text="Event"
             android:layout_width="wrap_content"
@@ -21,8 +20,7 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/linearLayout1">
+        android:layout_height="wrap_content">
         <TextView
             android:text="Amount"
             android:layout_width="wrap_content"
@@ -39,10 +37,39 @@
             android:id="@+id/CurrencySelector" />
     </LinearLayout>
     <LinearLayout
+          android:orientation="horizontal"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content">
+      <TextView
+          android:text="Rate to USD"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_gravity="center_vertical" />
+      <EditText
+          android:inputType="number"
+          android:layout_width="150dp"
+          android:layout_height="wrap_content"
+          android:id="@+id/Rate" />
+    </LinearLayout>
+    <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+      <TextView
+          android:text="Amount in USD"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_gravity="center_vertical" />
+      <EditText
+          android:inputType="number"
+          android:layout_width="150dp"
+          android:layout_height="wrap_content"
+          android:id="@+id/AmountInBase" />
+    </LinearLayout>
+    <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/linearLayout1">
+        android:layout_height="wrap_content">
         <TextView
             android:text="Source"
             android:layout_width="wrap_content"

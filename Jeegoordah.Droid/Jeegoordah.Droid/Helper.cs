@@ -50,6 +50,11 @@ namespace Jeegoordah.Droid
 			if (tobj != null)
 				action(tobj);
 		}
+
+	    public static string ToJson(this DateTime date)
+	    {
+	        return date.ToString("dd-mm-yyyy");
+	    }
     }
 }
 

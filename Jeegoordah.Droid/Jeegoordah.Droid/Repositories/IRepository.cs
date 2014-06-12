@@ -13,6 +13,7 @@ namespace Jeegoordah.Droid.Repositories
 		Task<IList<Currency>> GetCurencies();
 		Task<IList<Event>> GetEvents();
 		Task<IList<BroTotal>> GetTotal();
+		Task<IList<ExchangeRate>> GetRates(DateTime date);
 		Task<int?> PostTransaction(Transaction transaction);
 	}	
 }

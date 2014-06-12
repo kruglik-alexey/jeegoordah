@@ -41,7 +41,7 @@ namespace Jeegoordah.Droid.UI
 		private void SetNavigation()
 		{
 			ActionBar.NavigationMode = ActionBarNavigationMode.List;
-			ArrayAdapter<string> items = new ArrayAdapter<string>(this, Android.Resource.Layout.SimpleSpinnerItem, new[] {"Transactions", "Total"});
+			var items = new ArrayAdapter<string>(this, Android.Resource.Layout.SimpleSpinnerItem, new[] {"Transactions", "Total"});
 			ActionBar.SetListNavigationCallbacks(items, this);
 		}		 
 

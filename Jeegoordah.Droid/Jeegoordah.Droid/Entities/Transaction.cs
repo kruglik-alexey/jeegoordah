@@ -12,6 +12,7 @@ namespace Jeegoordah.Droid.Entities
 		public IList<int> Targets;
 		public int Currency;
 		public decimal Amount;
+		public decimal Rate;
 		public string Comment;
     }
 }
