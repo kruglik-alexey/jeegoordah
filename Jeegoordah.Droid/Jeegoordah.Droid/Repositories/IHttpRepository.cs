@@ -7,7 +7,7 @@ using Jeegoordah.Droid.Entities;
 
 namespace Jeegoordah.Droid.Repositories
 {
-	public interface IRepository
+	public interface IHttpRepository
 	{
 		Task<IList<Bro>> GetBros();
 		Task<IList<Currency>> GetCurencies();

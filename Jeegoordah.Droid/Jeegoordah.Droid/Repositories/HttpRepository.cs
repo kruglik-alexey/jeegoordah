@@ -1,21 +1,27 @@
 using System;
 using System.Net.Http;
+using Android.Util;
+using Java.Lang;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Jeegoordah.Droid.Entities;
 using System.Text;
+using Exception = System.Exception;
 
 namespace Jeegoordah.Droid.Repositories
 {
-	public class HttpRepository : IRepository
+	public class HttpRepository : IHttpRepository
     {
 		private readonly string host;
+	    private readonly int? port;
 
 		public HttpRepository()
         {
 #if DEBUG
 			host = "jeegoordah-test.azurewebsites.net";
+		    host = "192.168.1.2";
+		    port = 3107;
 #else
 			host ="jeegoordah.azurewebsites.net";
 #endif
@@ -55,7 +61,9 @@ namespace Jeegoordah.Droid.Repositories
 		{
 			using (var client = new HttpClient())
 			{
-				var content = await client.GetStringAsync(GetUrl(resourceName));
+			    var url = GetUrl(resourceName);
+			    Log.Info(GetType().Name, "GET {0}".F(url));
+				var content = await client.GetStringAsync(url);
 				return JsonConvert.DeserializeObject<T>(content);
 			}
 		}	
@@ -66,17 +74,23 @@ namespace Jeegoordah.Droid.Repositories
 			{
 				var content = JsonConvert.SerializeObject(data);
 				var httpContent = new StringContent(content, Encoding.UTF8, "application/json");
-				using (var response = await client.PostAsync(GetUrl(resourceName), httpContent))
+                var url = GetUrl(resourceName);
+                Log.Info(GetType().Name, "POST {0}".F(url));
+                using (var response = await client.PostAsync(url, httpContent))
 				{
-					var r = await response.Content.ReadAsStringAsync();
-					return JsonConvert.DeserializeObject<T>(r);
+				    if (!response.IsSuccessStatusCode)
+				        throw new Exception("Server Error. Status code: {0}".F(response.StatusCode));
+				    var r = await response.Content.ReadAsStringAsync();
+				    return JsonConvert.DeserializeObject<T>(r);
 				}
 			}
 		}
 
 		private string GetUrl(string resourceName)
 		{
-			return "http://{0}/{1}".F(host, resourceName);
+		    return port.HasValue
+		        ? "http://{0}:{1}/{2}".F(host, port.Value, resourceName)
+		        : "http://{0}/{1}".F(host, resourceName);
 		}
     }
 }

@@ -46,10 +46,10 @@
           android:layout_height="wrap_content"
           android:layout_gravity="center_vertical" />
       <EditText
-          android:inputType="number"
+          android:inputType="numberDecimal"
           android:layout_width="150dp"
           android:layout_height="wrap_content"
-          android:id="@+id/Rate" />
+          android:id="@+id/RateInput" />
     </LinearLayout>
     <LinearLayout
             android:orientation="horizontal"
@@ -60,11 +60,11 @@
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
           android:layout_gravity="center_vertical" />
-      <EditText
-          android:inputType="number"
+      <EditText          
           android:layout_width="150dp"
           android:layout_height="wrap_content"
-          android:id="@+id/AmountInBase" />
+          android:enabled="false"
+          android:id="@+id/AmountInBaseInput" />
     </LinearLayout>
     <LinearLayout
         android:orientation="horizontal"

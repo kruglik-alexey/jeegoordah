@@ -22,7 +22,7 @@ namespace Jeegoordah.Droid.UI
 		private IList<Currency> currencies;
 		private IList<Event> events;
 
-		protected async override void OnCreate(Bundle savedInstanceState)
+		protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
 			SetContentView(Resource.Layout.Settings);
@@ -30,8 +30,8 @@ namespace Jeegoordah.Droid.UI
 			var repositoryAdapter = new ActivityRepositoryAdapter(this);
 			repo = new LocalRepository(new HttpRepository(), repositoryAdapter, repositoryAdapter);
 
-			currencies = await repo.GetCurencies();
-			events = await repo.GetEvents();
+			currencies = repo.GetCurencies();
+			events = repo.GetEvents();
 
 			SetupEvents();
 			SetupCurrencies();
@@ -44,9 +44,7 @@ namespace Jeegoordah.Droid.UI
 				currencies.OrderByDescending(c => c.Name).Select(c => c.Name).ToArray());
 			currencySelector.Adapter = currencysAdapter;
 
-			var defaultCurrency = Helper.GetEntityFromSettings(currencies, settings, "defaultCurrency");
-			/*var defaultCurrencyId = settings.GetInt("defaultCurrency", -1);
-			var defaultCurrency = currencies.FirstOrDefault(c => c.Id == defaultCurrencyId);*/
+			var defaultCurrency = Helper.GetEntityFromSettings(currencies, settings, "defaultCurrency");			
 			if (defaultCurrency != null)
 			{
 				currencySelector.SetSelectedItem(defaultCurrency.Name);

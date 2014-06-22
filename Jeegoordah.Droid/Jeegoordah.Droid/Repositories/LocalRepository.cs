@@ -3,26 +3,40 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Android.Content;
+using Android.Util;
 using Newtonsoft.Json;
 using Jeegoordah.Droid.Entities;
 
 namespace Jeegoordah.Droid.Repositories
 {
-	public class LocalRepository : IRepository
+    public class PostTransactionResult
+    {
+        public bool StoredLocally { get; private set; }
+        public string ReasonStoredLocally { get; private set; }
+
+        public PostTransactionResult(bool storedLocally, string reasonStoredLocally)
+        {
+            if (!storedLocally && reasonStoredLocally != null) throw new ArgumentException();
+            StoredLocally = storedLocally;
+            ReasonStoredLocally = reasonStoredLocally;
+        }
+    }
+
+	public class LocalRepository
 	{
 		private const string brosKey = "bros";
 		private const string currenciesKey = "currencies";
 		private const string eventsKey = "events";
 		private const string totalKey = "total";		
-		private const string ratesKey = "rates";		
+		private const string ratesKey = "rates";
 
-		private readonly IRepository parentRepository;
+        private readonly IHttpRepository parentRepository;
 		private readonly ISharedPreferences localCache;
 		private readonly ISharedPreferences pendingTransactions;
 		private readonly ISharedPreferences miscStorage;
 		private readonly IConnectionHelper connectionHelper;	
 
-		public LocalRepository(IRepository parentRepository, IConnectionHelper connectionHelper, ISharedPreferencesProvider sharedPreferencesProvider)
+		public LocalRepository(IHttpRepository parentRepository, IConnectionHelper connectionHelper, ISharedPreferencesProvider sharedPreferencesProvider)
 		{
 			this.connectionHelper = connectionHelper;
 			this.localCache = sharedPreferencesProvider.Get("jeegoordah.localCache");
@@ -31,55 +45,52 @@ namespace Jeegoordah.Droid.Repositories
 			this.parentRepository = parentRepository;			
 		}	
 
-		public Task<IList<Bro>> GetBros()
+		public IList<Bro> GetBros()
 		{
 			return Get<IList<Bro>>(brosKey);
 		}
 
-		public Task<IList<Currency>> GetCurencies()
+		public IList<Currency> GetCurencies()
 		{
 			return Get<IList<Currency>>(currenciesKey);
 		}
 
-		public Task<IList<Event>> GetEvents()
+		public IList<Event> GetEvents()
 		{
 			return Get<IList<Event>>(eventsKey);
 		}
 
-		public Task<IList<BroTotal>> GetTotal()
+		public IList<BroTotal> GetTotal()
 		{
 			return Get<IList<BroTotal>>(totalKey);
 		}
 
-	    public async Task<IList<ExchangeRate>> GetRates(DateTime date)
+	    public IList<ExchangeRate> GetRates()
 	    {
-	        var key = GetRatesKey(date);
-	        if (localCache.Contains(key))
-	            return await Get<IList<ExchangeRate>>(key);	        
-	        return await Put(key, parentRepository.GetRates(date));
-	    }	    
+	        return Get<IList<ExchangeRate>>(ratesKey);
+	    }
 
-	    public async Task<int?> PostTransaction(Transaction transaction)
+        public async Task<PostTransactionResult> PostTransaction(Transaction transaction)
 		{
-			if (connectionHelper.HasConnection)
-			{
-				int? id = null;
-				try
-				{
-					id = await parentRepository.PostTransaction(transaction);                	
-					await Put(totalKey, parentRepository.GetTotal());
-					return id;
-				}
-				catch (Exception)
-				{
-					if (!id.HasValue)
-						AddPendingTransaction(transaction);
-					throw;
-				}
-			}
+	        if (!connectionHelper.HasConnection)
+	        {
+	            AddPendingTransaction(transaction);
+	            return new PostTransactionResult(true, "No connection");
+	        }
 
-			AddPendingTransaction(transaction);
-			return null;
+            int? id = null;
+	        try
+	        {
+	            id = await parentRepository.PostTransaction(transaction);                	
+	            await Put(totalKey, parentRepository.GetTotal());
+	            return new PostTransactionResult(false, null);
+	        }
+	        catch (Exception ex)
+	        {
+	            if (id.HasValue) throw;
+	            AddPendingTransaction(transaction);
+	            return new PostTransactionResult(true, ex.Message);
+	        }            
 		}
 
 		private void AddPendingTransaction(Transaction transaction)
@@ -99,19 +110,19 @@ namespace Jeegoordah.Droid.Repositories
 			}
 
 		    var now = DateTime.UtcNow;
-			await Task.WhenAll(new []
+		    Log.Info(GetType().Name, "Refreshing");		    
+			await Task.WhenAll(new Task[]
 			{
+                SubmitPendingTransactions().ContinueWith(_ => Put(totalKey, parentRepository.GetTotal())),
 				Put(brosKey, parentRepository.GetBros()),
 				Put(eventsKey, parentRepository.GetEvents()),
 				Put(currenciesKey, parentRepository.GetCurencies()),
-				Put(GetRatesKey(now), parentRepository.GetRates(now)),
-				SubmitPendingTransactions()
-			});
-			await Put(totalKey, parentRepository.GetTotal());
+				Put(ratesKey, parentRepository.GetRates(now)),			
+			});            
 
 			using (var e = miscStorage.Edit())
 			{
-				e.PutLong("lastRefresh", DateTime.UtcNow.Ticks);
+                e.PutLong("lastRefresh", now.Ticks);
 				e.Commit();
 			}
 			return true;
@@ -127,7 +138,7 @@ namespace Jeegoordah.Droid.Repositories
 			get 
 			{
 				long lastRefresh = miscStorage.GetLong("lastRefresh", 0);
-				return lastRefresh != 0 ? DateTime.FromFileTime(lastRefresh).ToLocalTime() : (DateTime?)null;
+				return lastRefresh != 0 ? new DateTime(lastRefresh).ToLocalTime() : (DateTime?)null;
 			}
 		}	
 
@@ -143,10 +154,9 @@ namespace Jeegoordah.Droid.Repositories
 		    return data;
 		}
 
-		private Task<T> Get<T>(string key)
+		private T Get<T>(string key)
 		{
-			T data = JsonConvert.DeserializeObject<T>(localCache.GetString(key, ""));
-			return Task.FromResult(data);
+			return JsonConvert.DeserializeObject<T>(localCache.GetString(key, ""));			
 		}	
 
 		private async Task SubmitPendingTransactions()
@@ -167,11 +177,6 @@ namespace Jeegoordah.Droid.Repositories
 					e.Commit();
 				}
 			}
-		}
-
-        private string GetRatesKey(DateTime date)
-        {
-            return ratesKey + date.ToJson();
-        }
+		}        
 	}	
 }

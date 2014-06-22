@@ -57,7 +57,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="Repositories\HttpRepository.cs" />
-    <Compile Include="Repositories\IRepository.cs" />
+    <Compile Include="Repositories\IHttpRepository.cs" />
     <Compile Include="Repositories\LocalRepository.cs" />
     <Compile Include="Entities\CurrencyAmount.cs" />
     <Compile Include="Entities\Bro.cs" />

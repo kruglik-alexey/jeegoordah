@@ -9,7 +9,7 @@ using System.Globalization;
 namespace Jeegoordah.Droid
 {
 	public static class Helper
-    {
+    {        
 		public static string F(this string format, params object[] args)
 		{
 			return String.Format(format, args);
@@ -53,7 +53,7 @@ namespace Jeegoordah.Droid
 
 	    public static string ToJson(this DateTime date)
 	    {
-	        return date.ToString("dd-mm-yyyy");
+	        return date.ToString("dd-MM-yyyy");
 	    }
     }
 }

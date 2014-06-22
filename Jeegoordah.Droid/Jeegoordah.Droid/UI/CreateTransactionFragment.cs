@@ -1,9 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using Android.App;
 using Android.OS;
+using Android.Text;
 using Android.Views;
 using Android.Widget;
 using Jeegoordah.Droid.Repositories;
@@ -21,22 +24,23 @@ namespace Jeegoordah.Droid.UI
 		private Spinner eventSelector;
 		private Spinner currencySelector;
 		private Spinner sourceSelector;
-        private EditText amount;
-        private EditText rate;
-        private EditText amountInBase;
+        private EditText amountInput;
+        private EditText rateInput;
+        private EditText amountInBaseInput;
 		private IList<Tuple<Bro, bool>> targets;
+        private IList<ExchangeRate> rates;
 
-		public event Action TransactionCreated = () => {};
+        public event Action TransactionCreated = () => {};
 
 		public CreateTransactionFragment(LocalRepository repository)
 		{
 			this.repository = repository;
 		}
 
-		public override async void OnCreate(Bundle savedInstanceState)
+		public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-			await LoadEntities();
+			LoadEntities();
         }
 
 		public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -44,7 +48,12 @@ namespace Jeegoordah.Droid.UI
 			var settings = Activity.GetSharedPreferences("jeegoordah.settings");
 			var view = inflater.Inflate(Resource.Layout.CreateTransaction, container, false);
 
-            amount = view.FindViewById<EditText>(Resource.Id.AmountInput);
+            amountInput = view.FindViewById<EditText>(Resource.Id.AmountInput);              
+            rateInput = view.FindViewById<EditText>(Resource.Id.RateInput);
+            amountInBaseInput = view.FindViewById<EditText>(Resource.Id.AmountInBaseInput);
+
+            amountInput.TextChanged += (_, __) => UpdateAmountInBase();
+            rateInput.TextChanged += (_, __) => UpdateAmountInBase();
 
 			eventSelector = view.FindViewById<Spinner>(Resource.Id.EventSelector);
 			eventSelector.Adapter = new ArrayAdapter(Activity, Android.Resource.Layout.SimpleSpinnerItem, 
@@ -57,13 +66,14 @@ namespace Jeegoordah.Droid.UI
 			}
 
 			currencySelector = view.FindViewById<Spinner>(Resource.Id.CurrencySelector);
+            currencySelector.ItemSelected += (_, __) => CurrencyChanged();
 			currencySelector.Adapter = new ArrayAdapter(Activity, Android.Resource.Layout.SimpleSpinnerItem, 
 				currencies.OrderBy(c => c.Name).Select(c => c.Name).ToArray());
 			var defaultCurrency = Helper.GetEntityFromSettings(currencies, settings, "defaultCurrency");
 			if (defaultCurrency != null)
 			{
 				currencySelector.SetSelectedItem(defaultCurrency.Name);
-			}
+			}		    
 
 			sourceSelector = view.FindViewById<Spinner>(Resource.Id.SourceSelector);
 			sourceSelector.Adapter = new ArrayAdapter(Activity, Android.Resource.Layout.SimpleSpinnerItem, 
@@ -82,13 +92,31 @@ namespace Jeegoordah.Droid.UI
 			view.FindViewById<Button>(Resource.Id.CreateTransaction).Click += (s, e) => CreateTransaction();		
 
 			return view;
-		}
+		}       
 
-		private async Task LoadEntities()
+        private void CurrencyChanged()
+        {
+            var currency = GetSelectedCurrency();
+            var rate = rates.FirstOrDefault(r => r.Currency == currency.Id);
+            rateInput.Text = rate != null ? rate.Rate.ToString("", Thread.CurrentThread.CurrentCulture) : "";
+        }       
+
+        private void UpdateAmountInBase()
+        {
+            amountInBaseInput.Text = "";
+            decimal rate;
+            decimal amount;
+            if (!(decimal.TryParse(rateInput.Text, out rate) && decimal.TryParse(amountInput.Text, out amount)))
+                return;
+            amountInBaseInput.Text = (amount/rate).ToString("N2", Thread.CurrentThread.CurrentCulture);
+        }
+
+        private void LoadEntities()
 		{
-			events = await repository.GetEvents();
-			bros = await repository.GetBros();
-			currencies = await repository.GetCurencies();
+			events = repository.GetEvents();
+			bros = repository.GetBros();
+			currencies = repository.GetCurencies();
+            rates = repository.GetRates();
 		}
 
 		private void CreateDefaultTargets()
@@ -103,7 +131,6 @@ namespace Jeegoordah.Droid.UI
 			{
 				CreateDefaultTargets();
 			}
-
 			if (!Validate())
 			{
 				return;
@@ -113,33 +140,49 @@ namespace Jeegoordah.Droid.UI
 			{
 				Date = DateTime.UtcNow.ToString("dd-MM-yyyy"),
 				Event = GetSelectedEvent().Id,
-				Amount = int.Parse(amount.Text),
+				Amount = int.Parse(amountInput.Text),
+                Rate = decimal.Parse(rateInput.Text).ToString(CultureInfo.InvariantCulture),
 				Currency = GetSelectedCurrency().Id,
 				Source = GetSelectedSource().Id,
 				Targets = targets.Where(t => t.Item2).Select(t => t.Item1.Id).ToList(),
 				Comment = View.FindViewById<EditText>(Resource.Id.CommentInput).Text
 			};
-
-			bool submitted = (await repository.PostTransaction(transaction)).HasValue;
-			Toast.MakeText(Activity, "Transaction {0}".F(submitted ? "submitted" : "stored locally"), ToastLength.Short).Show();
+		    
+            PostTransactionResult result = await repository.PostTransaction(transaction);
+		    if (result.StoredLocally)
+		    {
+                Toast.MakeText(Activity, "Transaction stored locally: {0}".F(result.ReasonStoredLocally), ToastLength.Long).Show();
+		    }
+		    else
+		    {
+                Toast.MakeText(Activity, "Transaction stored remotely", ToastLength.Long).Show();
+		    }
+			
 			TransactionCreated();			
 			Clear();
 		}
 
 		private void Clear()
 		{
-			View.FindViewById<EditText>(Resource.Id.AmountInput).Text = "";
+			amountInput.Text = "";		    
 			View.FindViewById<EditText>(Resource.Id.CommentInput).Text = "";
 			targets = null;
 		}
 
 		private bool Validate()
 		{
-			if (amount.Text.Trim() == "")
+			if (amountInput.Text.Trim() == "")
 			{
 				Toast.MakeText(Activity, "Please enter amount", ToastLength.Short).Show();
+			    amountInput.RequestFocus();
 				return false;
 			}
+            if (rateInput.Text.Trim() == "")
+            {
+                Toast.MakeText(Activity, "Please enter rate", ToastLength.Short).Show();
+                rateInput.RequestFocus();
+                return false;
+            }
 			return true;
 		}
 
