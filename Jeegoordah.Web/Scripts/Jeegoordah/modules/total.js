@@ -4,47 +4,38 @@
         activate: function () {
             analytics.page('Total', '/total');
 
-            self.views = {
-                all: {
-                    resource: 'total',
-                    renderer: self._renderTotalWithCurrencies
-                },
-                base: {
-                    resource: 'total/base',
-                    renderer: self._renderTotalInBase
-                }
-            };
-
             self.total = {};
             self._renderModule();
-            self._navigate('all');
+            self._navigate('usd');
         },
 
         _renderModule: function() {
             self.$module = $(moduleTemplate);
             $('#modules').empty().append(self.$module);
-            self.$navs = self.$module.find('[data-role=views]').find('li');
-            self.$navs.click(function () {                
-                self._navigate($(this).data('view'));
+            self.$currencies = self.$module.find('[data-role=currencies]').find('li');
+            self.$currencies.click(function () {
+                self._navigate($(this).data('currency'));
             });
         },
 
-        _navigate: function (view) {            
-            self.$navs.removeClass('active');
-            self.$navs.filter('[data-view=' + view + ']').addClass('active');
-            self._getTotal(view).done(function (total) {
-                self.views[view].renderer(total);
+        _navigate: function (currencyName) {
+            analytics.page('Total/' + currencyName, '/total/' + currencyName);
+            self.$currencies.removeClass('active');
+            self.$currencies.filter('[data-currency=' + currencyName + ']').addClass('active');
+            var currency = self._getCurrencyByName(currencyName);
+            self._getTotal(currency.Id).done(function (total) {
+                _renderTotal(currency, total);
             });            
         },
 
-        _getTotal: function (view) {
-            if (!self.total[view]) {
-                self.total[view] = rest.get(self.views[view].resource).promise();
+        _getTotal: function (currencyId) {
+            if (!self.total[currencyId]) {
+                self.total[currencyId] = rest.get('total/' + currencyId).promise();
             }
-            return self.total[view];
+            return self.total[currencyId];
         },
 
-        // expects {bro, [{currency, amount}]}
+        // expects [{bro, [{currency, amount}]}]
         _renderTotalWithCurrencies: function (total) {
             var list = self.$module.find('#totalList');
             list.find('li').remove();
@@ -55,18 +46,16 @@
                 list.append(helper.template(rowTemplate, broAmounts));
             });
         },
-
-        _renderTotalInBase: function(total) {            
-            var baseCurrency = _.find(context.currencies, function(c) {
-                return c.IsBase;
-            });
+        
+        // expects [{bro, amount}]
+        _renderTotal: function(currency, total) {            
             total = _.map(total, function(broTotal) {
                 return {
-                    Bro: broTotal.Bro,
-                    Amounts: [
+                    bro: broTotal.Bro,
+                    amounts: [
                         {
-                            Currency: baseCurrency.Id,
-                            Amount: broTotal.Amount
+                            currency: currency,
+                            amount: broTotal.Amount
                         }
                     ]
                 };
@@ -76,16 +65,15 @@
         
         _getBroAmounts: function(bro, total) {
             var broTotal = _.find(total, function(t) {
-                return t.Bro == bro.Id;
+                return t.bro == bro.Id;
             });
-            var amounts = _.chain(broTotal.Amounts).map(function (amount) {                
-                var currency = self._getCurrency(amount.Currency);
-                var rawAmount = helper.withAccuracy(amount.Amount, currency.Accuracy);                
+            var amounts = _.chain(broTotal.amounts).map(function (amount) {                                
+                var rawAmount = helper.withAccuracy(amount.amount, amount.currency.Accuracy);
                 if (rawAmount >= 1 || rawAmount <= -1) {
                     return {
                         amount: helper.formatNumber(rawAmount),
                         rawAmount: rawAmount,
-                        currency: currency
+                        currency: amount.currency
                     };
                 } else {
                     return null;
@@ -97,9 +85,10 @@
             };
         },
         
-        _getCurrency: function(currency) {
+        _getCurrencyByName: function (currencyName) {
+            currencyName = currencyName.toLowerCase();
             return _.find(context.currencies, function(c) {
-                return c.Id == currency;
+                return c.Name.toLowerCase() == currencyName;
             });
         }
     };
