@@ -2,38 +2,18 @@
     function ($, _, analytics, rest, helper, context, moduleTemplate, rowTemplate) {
     var self = {                
         activate: function () {
-            analytics.page('Total', '/total');
-
-            self.total = {};
+            analytics.page('Total', '/total');            
             self._renderModule();
-            self._navigate('usd');
+            var baseCurrency = _.find(context.currencies, function(c) { return c.IsBase; });
+            rest.get('total/base').done(function (total) {
+                self._renderTotal(baseCurrency, total);
+            });
         },
 
         _renderModule: function() {
             self.$module = $(moduleTemplate);
-            $('#modules').empty().append(self.$module);
-            self.$currencies = self.$module.find('[data-role=currencies]').find('li');
-            self.$currencies.click(function () {
-                self._navigate($(this).data('currency'));
-            });
-        },
-
-        _navigate: function (currencyName) {
-            analytics.page('Total/' + currencyName, '/total/' + currencyName);
-            self.$currencies.removeClass('active');
-            self.$currencies.filter('[data-currency=' + currencyName + ']').addClass('active');
-            var currency = self._getCurrencyByName(currencyName);
-            self._getTotal(currency.Id).done(function (total) {
-                _renderTotal(currency, total);
-            });            
-        },
-
-        _getTotal: function (currencyId) {
-            if (!self.total[currencyId]) {
-                self.total[currencyId] = rest.get('total/' + currencyId).promise();
-            }
-            return self.total[currencyId];
-        },
+            $('#modules').empty().append(self.$module);            
+        },               
 
         // expects [{bro, [{currency, amount}]}]
         _renderTotalWithCurrencies: function (total) {

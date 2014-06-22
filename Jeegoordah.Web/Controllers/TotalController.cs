@@ -33,9 +33,9 @@ namespace Jeegoordah.Web.Controllers
             using (var db = DbFactory.Open())
             {
                 Dictionary<Bro, decimal> total = TotalCalculator.CalculateInBaseCurrency(db.Query<Transaction>().ToList(), db.Query<Bro>().ToList());
-                var result = total.Keys.Select(bro => new BroTotalInBaseCurrencyRest(bro, total[bro])).ToList();
+                var result = total.Keys.Select(bro => new BroTotalInCurrencyRest(bro, total[bro])).ToList();
                 return Json(result, JsonRequestBehavior.AllowGet);
             }
-        }
+        }        
     }
 }

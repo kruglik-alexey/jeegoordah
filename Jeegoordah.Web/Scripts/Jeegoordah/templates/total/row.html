@@ -5,7 +5,7 @@
                 <td>
                     <a href="#bros/<%- self.bro.Id %>/total"><%- self.bro.Name %></a>
                 </td>
-                <td class="total-amount">
+                <td>
                     <% if (self.amounts.length > 0) { %>
                         <% for(var i = 0; i < self.amounts.length; i++) { %>
                             <div class="text-right <%- self.helper.getSignClass(self.amounts[i].rawAmount) %>">

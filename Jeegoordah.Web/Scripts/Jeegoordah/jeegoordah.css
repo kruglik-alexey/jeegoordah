@@ -69,10 +69,10 @@ table.entity-list tr:hover td div.entity-controls { display:inline-block; }
     color: silver;
 }
 
-.total-amount {
-    width: 100%;
-}
-
 ul.nav-pills li a {
     cursor: pointer;
+}
+
+.list-group-item table {
+    width: 100%;
 }

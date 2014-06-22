@@ -6,9 +6,9 @@ using Jeegoordah.Core.DL.Entity;
 
 namespace Jeegoordah.Web.Models
 {
-    public class BroTotalInBaseCurrencyRest
+    public class BroTotalInCurrencyRest
     {
-        public BroTotalInBaseCurrencyRest(Bro bro, decimal amount)
+        public BroTotalInCurrencyRest(Bro bro, decimal amount)
         {
             Bro = bro.Id;
             Amount = amount;            

@@ -159,7 +159,7 @@
     <Compile Include="DependencyResolution\IoC.cs" />
     <Compile Include="DependencyResolution\StructureMapDependencyResolver.cs" />
     <Compile Include="DependencyResolution\StructureMapDependencyScope.cs" />
-    <Compile Include="Models\BroTotalInBaseRest.cs" />
+    <Compile Include="Models\BroTotalInCurrencyRest.cs" />
     <Compile Include="Models\CurrencyRest.cs" />
     <Compile Include="Models\BroTotalRest.cs" />
     <Compile Include="Models\Validation\ValidateModelStateAttribute.cs" />
