@@ -13,15 +13,12 @@ namespace Jeegoordah.Web.Models
             Id = currency.Id;
             Name = currency.Name;
             Accuracy = currency.Accuracy;
+            IsBase = currency.IsBase();
         }
 
         public int Id { get; set; }
         public string Name { get; set; }
         public int Accuracy { get; set; }
-
-        public bool IsBase
-        {
-            get { return Name == "USD"; }
-        }
+        public bool IsBase { get; set; }
     }
 }

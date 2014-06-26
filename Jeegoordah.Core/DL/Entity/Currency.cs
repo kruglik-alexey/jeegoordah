@@ -11,6 +11,11 @@ namespace Jeegoordah.Core.DL.Entity
         public virtual string Name { get; set; }        
         public virtual int Accuracy { get; set; }
         public virtual bool IsHidden { get; set; }
+
+        public virtual bool IsBase()
+        {
+            return Name == "USD";
+        }
     }
 
     class CurrencyMap : ClassMap<Currency>
