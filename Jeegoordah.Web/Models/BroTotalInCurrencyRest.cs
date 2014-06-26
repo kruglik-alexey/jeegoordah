@@ -11,7 +11,7 @@ namespace Jeegoordah.Web.Models
         public BroTotalInCurrencyRest(Bro bro, decimal amount)
         {
             Bro = bro.Id;
-            Amount = amount;            
+            Amount = amount;
         }
 
         public int Bro { get; set; }

@@ -32,8 +32,7 @@ namespace Jeegoordah.Core.BL
 
         async private Task Update()
         {
-            IList<Currency> currencies = db.Query<Currency>().ToList();
-            // TODO do not update base currency?
+            IList<Currency> currencies = db.Query<Currency>().ToList();            
             foreach (Currency currency in currencies)
             {
                 await UpdateCurrencyRates(currency);
@@ -61,7 +60,7 @@ namespace Jeegoordah.Core.BL
             if (rate.HasValue)
             {
                 logger.I("Rate for {0} on {1} is {2}", currency.Name, date.ToShortDateString(), rate);
-                db.Session.Save(new ExchangeRate { Currency = currency, Date = date, Rate = rate.Value });    
+                db.Session.Save(new ExchangeRate {Currency = currency, Date = date, Rate = Math.Round(rate.Value, 2)});
             }
             else
             {

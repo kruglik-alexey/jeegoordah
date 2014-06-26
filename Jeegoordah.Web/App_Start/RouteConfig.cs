@@ -123,12 +123,12 @@ namespace Jeegoordah.Web
                 name: "GetTotal",
                 url: "total",
                 defaults: new { controller = "Total", action = "GetTotal" }
-            );
+            );            
 
             routes.MapRoute(
-                name: "GetTotalInBaseCurrency",
-                url: "total/base",
-                defaults: new { controller = "Total", action = "GetTotalInBaseCurrency" }
+                name: "GetTotalInCurrency",
+                url: "total/{currencyId}",
+                defaults: new { controller = "Total", action = "GetTotalInCurrency" }
             );
 
             #endregion

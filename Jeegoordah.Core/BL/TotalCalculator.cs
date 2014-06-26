@@ -54,5 +54,10 @@ namespace Jeegoordah.Core.BL
             }
             return result;
         }
+
+        public static Dictionary<Bro, decimal> CalculateInCurrency(ExchangeRate rate, IList<Transaction> transactions, IList<Bro> bros)
+        {            
+            return CalculateInBaseCurrency(transactions, bros).ToDictionary(p => p.Key, p => p.Value * rate.Rate);
+        }
     }
 }

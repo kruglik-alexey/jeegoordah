@@ -67,7 +67,7 @@ namespace Jeegoordah.Web.Controllers
             {
                 return Json(db.Query<ExchangeRate>().Where(r => r.Date == d)
                     .ToList()
-                    .Select(r => new { Rate = Math.Round(r.Rate, 2), Date = JsonDate.ToString(r.Date), Currency = r.Currency.Id })
+                    .Select(r => new {r.Rate, Date = JsonDate.ToString(r.Date), Currency = r.Currency.Id})
                     .ToList(), JsonRequestBehavior.AllowGet);
             }
         }
