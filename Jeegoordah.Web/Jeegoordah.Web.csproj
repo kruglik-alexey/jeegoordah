@@ -216,6 +216,7 @@
     <Content Include="Scripts\Fonts\glyphicons-halflings-regular.eot" />
     <Content Include="Scripts\Fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="Scripts\Fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="jgdh.apk" />
     <None Include="Scripts\jquery-2.0.3.intellisense.js" />
     <Content Include="Scripts\Bootstrap\bootstrap-theme.min.css" />
     <Content Include="Scripts\Bootstrap\bootstrap.min.css" />
