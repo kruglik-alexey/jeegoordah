@@ -61,14 +61,16 @@ namespace Jeegoordah.Web.Controllers
 
         [HttpGet]
         public ActionResult GetRates(string date)
-        {
+        {            
             var d = JsonDate.Parse(date);
             using (var db = DbFactory.Open())
             {
-                return Json(db.Query<ExchangeRate>().Where(r => r.Date == d)
-                    .ToList()
-                    .Select(r => new {r.Rate, Date = JsonDate.ToString(r.Date), Currency = r.Currency.Id})
-                    .ToList(), JsonRequestBehavior.AllowGet);
+                var ratesQuerable = db.Query<ExchangeRate>();
+                var rates = db.Query<Currency>().ToList()
+                    .Select(c => ExchangeRateProvider.Get(ratesQuerable, c.Id, d))
+                    .Select(r => new ExchangeRateRest(r))
+                    .ToList();
+                return Json(rates, JsonRequestBehavior.AllowGet);
             }
         }
     }

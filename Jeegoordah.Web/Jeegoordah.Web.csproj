@@ -162,6 +162,7 @@
     <Compile Include="Models\BroTotalInCurrencyRest.cs" />
     <Compile Include="Models\CurrencyRest.cs" />
     <Compile Include="Models\BroTotalRest.cs" />
+    <Compile Include="Models\ExchangeRateRest.cs" />
     <Compile Include="Models\TotalInCurrencyRest.cs" />
     <Compile Include="Models\Validation\ValidateModelStateAttribute.cs" />
     <Compile Include="Global.asax.cs">

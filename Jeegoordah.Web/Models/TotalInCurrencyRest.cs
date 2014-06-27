@@ -8,15 +8,13 @@ namespace Jeegoordah.Web.Models
 {
     public class TotalInCurrencyRest
     {        
-        public TotalInCurrencyRest(IList<BroTotalInCurrencyRest> totals, Currency currency, ExchangeRate rate)
+        public TotalInCurrencyRest(IList<BroTotalInCurrencyRest> totals, ExchangeRate rate)
         {
             Totals = totals;
-            Currency = currency.Id;
-            Rate = rate.Rate;
+            Rate = new ExchangeRateRest(rate);            
         }
 
         public IList<BroTotalInCurrencyRest> Totals { get; set; }
-        public int Currency { get; set; }
-        public decimal Rate { get; set; }
+        public ExchangeRateRest Rate { get; set; }
     }
 }

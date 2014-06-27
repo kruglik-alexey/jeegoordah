@@ -66,11 +66,16 @@
 
         _renderRate: function(total) {
             var $rate = self.$module.find('#rate');
-            if (total.Currency === self.baseCurrency.Id) {
+            if (total.Rate.Currency === self.baseCurrency.Id) {
                 $rate.text('');
                 $rate.hide();
-            } else {                
-                $rate.text('Rate to ' + self.baseCurrency.Name + ' is ' + total.Rate);
+            } else {
+                var text = 'Rate to ' + self.baseCurrency.Name + ' is ' + total.Rate.Rate;
+                var date = helper.parseDate(total.Rate.Date);                
+                if (!helper.isToday(date)) {
+                    text += ' (' + total.Rate.Date + ')';
+                }                
+                $rate.text(text);
                 $rate.show();
             }
         },

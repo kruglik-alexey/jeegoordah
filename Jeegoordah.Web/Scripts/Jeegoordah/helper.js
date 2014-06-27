@@ -66,6 +66,12 @@
         
         formatNumber: function(number) {
             return $.number(number, 0, '.', ' ');
+        },
+
+        isToday: function(date) {
+            var today = new Date();
+            today.setHours(0, 0, 0, 0);
+            return date.valueOf() === today.valueOf();
         }
     };
     return self;

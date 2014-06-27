@@ -8,6 +8,7 @@ using Jeegoordah.Core.BL;
 using Jeegoordah.Core.DL.Entity;
 using Jeegoordah.Web.DL;
 using Jeegoordah.Web.Models;
+using NHibernate.Linq;
 
 namespace Jeegoordah.Web.Controllers
 {
@@ -34,23 +35,11 @@ namespace Jeegoordah.Web.Controllers
             using (var db = DbFactory.Open())
             {
                 var now = DateTime.UtcNow.Date;
-                var currency = db.Load<Currency>(currencyId);
-                var rate = db.Query<ExchangeRate>().FirstOrDefault(r => r.Date == now && r.Currency == currency);
-                if (rate == null)
-                {
-                    if (currency.IsBase())
-                    {
-                        rate = new ExchangeRate {Currency = currency, Date = now, Rate = 1};
-                    }
-                    else
-                    {
-                        throw new InvalidOperationException("Has no rate for {0} on {1}".F(currency.Name, now));                        
-                    }
-                }
-
+                var rate = ExchangeRateProvider.Get(db.Query<ExchangeRate>(), currencyId, now);
+                
                 Dictionary<Bro, decimal> total = TotalCalculator.CalculateInCurrency(rate, db.Query<Transaction>().ToList(), db.Query<Bro>().ToList());
                 var broTotalsRest = total.Keys.Select(bro => new BroTotalInCurrencyRest(bro, total[bro])).ToList();
-                return Json(new TotalInCurrencyRest(broTotalsRest, currency, rate), JsonRequestBehavior.AllowGet);
+                return Json(new TotalInCurrencyRest(broTotalsRest, rate), JsonRequestBehavior.AllowGet);
             }
         }
     }

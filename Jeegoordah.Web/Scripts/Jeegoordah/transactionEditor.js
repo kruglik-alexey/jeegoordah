@@ -54,7 +54,7 @@ function (_, $, helper, notification, editor, broSelector, rest, exchangeRates, 
             
             self.$amount.number(true, 0, '.', ' ');
             self._subscribeOnInputChanges(self.$amount, self._updateAmountInBase);
-            self._subscribeOnInputChanges(self.$rate, self._updateAmountInBase);
+            self._subscribeOnInputChanges(self.$rate, self._rateChanged);
             self._subscribeOnInputChanges(self.$date, self._updateRate);            
 
             self.$rendered.find('#transactionCurrencies>label').click(self._updateRate);            
@@ -81,10 +81,29 @@ function (_, $, helper, notification, editor, broSelector, rest, exchangeRates, 
             _.defer(function() {                                
                 self.$rate.val('');
                 self._getRate().done(function (rate) {                    
-                    self.$rate.val(rate);
+                    self.$rate.val(rate.Rate);
                     self._updateAmountInBase();
+                    self._updateRateDate(true, rate.Date);
                 });
             });           
+        },
+
+        _rateChanged: function() {
+            self._updateAmountInBase();
+            self._updateRateDate(false);
+        },
+
+        _updateRateDate: function(display, date) {
+            var $el = self.$rendered.find('#rateDate');
+            $el.text('');
+            if (!display) {
+                return;
+            }
+            var dateObj = helper.parseDate(date);
+            display = !helper.isToday(dateObj);
+            if (display) {                
+                $el.text(date);
+            }
         },
 
         _updateAmountInBase: function () {
@@ -101,7 +120,7 @@ function (_, $, helper, notification, editor, broSelector, rest, exchangeRates, 
                 exchangeRates.get(date).done(function (rates) {
                     var rate = _.findWhere(rates, { Currency: currency });
                     if (rate) {
-                        deferred.resolve(rate.Rate);
+                        deferred.resolve(rate);
                     } else {
                         deferred.reject();
                     }

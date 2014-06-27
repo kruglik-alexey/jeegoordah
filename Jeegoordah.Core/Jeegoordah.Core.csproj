@@ -74,6 +74,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BL\ExchangeRateProvider.cs" />
     <Compile Include="BL\ExchangeRatesUpdater.cs" />
     <Compile Include="BL\TotalCalculator.cs" />
     <Compile Include="DL\DbBackup.cs" />
