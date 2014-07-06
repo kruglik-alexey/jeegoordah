@@ -17,6 +17,11 @@ namespace Jeegoordah.Tests.Integration.Common
             this.browser = browser;
         }
 
+        public void VisitEventsList()
+        {
+            browser.VisitTest("#events");
+        }
+
         /// <summary>
         /// We should be on events page
         /// </summary> 

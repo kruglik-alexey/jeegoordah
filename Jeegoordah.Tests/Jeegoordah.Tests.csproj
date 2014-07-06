@@ -59,6 +59,7 @@
   <ItemGroup>
     <Compile Include="CoypuExtensions.cs" />
     <Compile Include="Integration\Common\EventSupport.cs" />
+    <Compile Include="Integration\EventDetailsTest.cs" />
     <Compile Include="Integration\EventEditorTest.cs" />
     <Compile Include="Integration\EventListTests.cs" />
     <Compile Include="Integration\IntegrationTest.cs" />

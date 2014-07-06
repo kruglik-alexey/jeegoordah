@@ -17,7 +17,7 @@ namespace Jeegoordah.Tests.Integration
         [Test]
         public void ShouldNotCreateEventWithLessThan2Bros()
         {
-            Visit("#events");
+            eventSupport.VisitEventsList();
             eventSupport.CreateEvent(new TestEvent
             {
                 Name = "Event Name",
@@ -44,7 +44,7 @@ namespace Jeegoordah.Tests.Integration
         [Test]
         public void ShouldNotCreateEventWithDuplicatedName()
         {
-            Visit("#events");
+            eventSupport.VisitEventsList();
             eventSupport.CreateEvent(new TestEvent {Name = "Event Name", StartDate = "01-09-2013", Bros = defaultBros});
             eventSupport.CreateEvent(new TestEvent {Name = "Event Name", StartDate = "01-09-2113", Bros = defaultBros});
 

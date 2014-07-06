@@ -15,7 +15,7 @@ namespace Jeegoordah.Tests.Integration
         [Test]
         public void ShouldCreateEvent()
         {            
-            Visit("#events");
+            eventSupport.VisitEventsList();
             var e1 = eventSupport.CreateEvent(new TestEvent
             {
                 Name = "Event Name",
@@ -99,7 +99,7 @@ namespace Jeegoordah.Tests.Integration
         [Test]
         public void ShouldLoadEvents()
         {
-            Visit("#events");
+            eventSupport.VisitEventsList();
             var e1 = eventSupport.CreateEvent(new TestEvent
             {
                 Name = "Event Name",
