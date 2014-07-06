@@ -15,9 +15,19 @@ namespace Jeegoordah.Tests.Integration
         public void ShouldDisplayRightInfo()
         {
             eventSupport.VisitEventsList();
+            var e = eventSupport.CreateEvent(new TestEvent {Name = "Event Name", StartDate = "01-09-2013", Bros = defaultBros});
+            eventSupport.GetPastEvents()[0].ClickLink(e.Name);
+            Browser.WaitForAjax();
+
+            Assert.True(Browser.HasContent(e.Name));
+            Assert.True(Browser.HasContent(e.StartDate));
+            var bros = Browser.FindAllCss("#module-event-details ul.list-group li").ToList();
+            Assert.AreEqual(e.Bros.Count, bros.Count());
+            Assert.True(e.Bros.All(b => bros.Any(be => be.HasContent(b))));
         }
 
         private EventSupport eventSupport;
+        private readonly List<string> defaultBros = new List<string> {"Шылдон", "БлекД"};
 
         public override void SetUp()
         {
