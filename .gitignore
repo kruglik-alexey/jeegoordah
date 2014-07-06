@@ -6,3 +6,4 @@ bin/
 *.sqlite
 log.txt
 *.userprefs
+packages/
