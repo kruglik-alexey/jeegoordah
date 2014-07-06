@@ -53,5 +53,5 @@
         }, 10);
     };
 
-    return $.noConflict();
+    return $;
 });
