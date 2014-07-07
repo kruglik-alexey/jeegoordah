@@ -46,7 +46,7 @@ namespace Jeegoordah.Tests.Integration.Common
             browser.FillIn("Name").With(e.Name);
             browser.FillIn("StartDate").With(e.StartDate);
             browser.FillIn("Description").With(e.Description);
-            foreach (var checkbox in browser.FindAllCss("label.bro-checkbox.active"))
+            foreach (var checkbox in GetActiveBroCheckboxes())
             {
                 checkbox.Click();
             }
@@ -54,6 +54,14 @@ namespace Jeegoordah.Tests.Integration.Common
             {
                 browser.ClickButton(bro);
             }
+        }
+
+        /// <summary>
+        /// We should be on event editor
+        /// </summary> 
+        public IEnumerable<SnapshotElementScope> GetActiveBroCheckboxes()
+        {
+            return browser.FindAllCss("#eventBros label.btn.active");
         }
 
         private IList<SnapshotElementScope> GetEvents(string list)
@@ -69,6 +77,15 @@ namespace Jeegoordah.Tests.Integration.Common
             browser.ClickButton("createEventButton");
             FillEditor(@event);
             browser.ClickButton("modalOkButton");
+            browser.WaitForAjax();
+            return @event;
+        }
+
+        public TestEvent OpenEventDetails(TestEvent @event)
+        {
+            VisitEventsList();
+            CreateEvent(@event);
+            GetPastEvents()[0].ClickLink(@event.Name);
             browser.WaitForAjax();
             return @event;
         }
