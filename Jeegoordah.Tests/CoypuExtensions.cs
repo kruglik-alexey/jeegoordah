@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Coypu;
+using OpenQA.Selenium;
 
 namespace Jeegoordah.Tests
 {
@@ -30,6 +31,11 @@ namespace Jeegoordah.Tests
             var hash = match.Groups[3].Value;
             query = string.IsNullOrEmpty(query) ? "?test=1" : query + "&test=1";
             return path + query + hash;
+        }
+
+        public static void PressEsc(this BrowserSession browser)
+        {
+            ((OpenQA.Selenium.Chrome.ChromeDriver)browser.Native).Keyboard.PressKey(Keys.Escape);
         }
     }
 }

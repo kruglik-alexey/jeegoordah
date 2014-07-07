@@ -4,8 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Coypu;
+using Jeegoordah.Core.DL.Entity;
 using Jeegoordah.Tests.Integration.Common;
 using NUnit.Framework;
+using OpenQA.Selenium;
 
 namespace Jeegoordah.Tests.Integration
 {
@@ -91,8 +93,11 @@ namespace Jeegoordah.Tests.Integration
 
         [Test]
         public void ShouldCloseByEsc()
-        {
-            Assert.Fail();
+        {            
+            eventSupport.VisitEventsList();
+            Browser.ClickButton("New Event");
+            ((OpenQA.Selenium.Chrome.ChromeDriver)Browser.Native).Keyboard.PressKey(Keys.Escape);
+            Assert.DoesNotThrow(() => Browser.Query(() => Browser.FindCss("#entityEditor").Exists(), false));            
         }
 
         [Test]
@@ -123,7 +128,7 @@ namespace Jeegoordah.Tests.Integration
 
         private void AssertEntityEditor()
         {
-            Assert.NotNull(Browser.FindCss("#entityEditor"));
+            Assert.True(Browser.FindCss("#entityEditor").Exists());
         }
     }
 }
