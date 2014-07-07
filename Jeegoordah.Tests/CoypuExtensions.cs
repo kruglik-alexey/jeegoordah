@@ -37,5 +37,10 @@ namespace Jeegoordah.Tests
         {
             ((OpenQA.Selenium.Chrome.ChromeDriver)browser.Native).Keyboard.PressKey(Keys.Escape);
         }
+
+        public static void PressEnter(this BrowserSession browser)
+        {
+            ((OpenQA.Selenium.Chrome.ChromeDriver)browser.Native).Keyboard.PressKey(Keys.Enter);
+        }
     }
 }

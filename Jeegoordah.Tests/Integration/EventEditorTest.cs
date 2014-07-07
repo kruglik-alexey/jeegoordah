@@ -96,14 +96,20 @@ namespace Jeegoordah.Tests.Integration
         {            
             eventSupport.VisitEventsList();
             Browser.ClickButton("New Event");
-            ((OpenQA.Selenium.Chrome.ChromeDriver)Browser.Native).Keyboard.PressKey(Keys.Escape);
-            Assert.DoesNotThrow(() => Browser.Query(() => Browser.FindCss("#entityEditor").Exists(), false));            
+            Browser.PressEsc();
+            AssertNoEntityEditor();
         }
 
         [Test]
         public void ShouldCloseByEnter()
         {
-            Assert.Fail();
+            Browser.VisitTest("#events");
+            eventSupport.CreateEvent(new TestEvent { StartDate = "01-09-2013", Bros = defaultBros });
+            AssertEntityEditor();
+            Browser.FindField("Name").FillInWith("Name");
+            Browser.PressEnter();
+            Browser.WaitForAjax();
+            AssertNoEntityEditor();
         }
 
         [Test]
@@ -128,7 +134,12 @@ namespace Jeegoordah.Tests.Integration
 
         private void AssertEntityEditor()
         {
-            Assert.True(Browser.FindCss("#entityEditor").Exists());
+            Assert.DoesNotThrow(() => Browser.Query(() => Browser.FindCss("#entityEditor").Exists(), true));            
+        }
+
+        private void AssertNoEntityEditor()
+        {
+            Assert.DoesNotThrow(() => Browser.Query(() => Browser.FindCss("#entityEditor").Exists(), false));            
         }
     }
 }
