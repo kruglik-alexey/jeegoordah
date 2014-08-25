@@ -12,7 +12,7 @@ namespace Jeegoordah.Web
 #if DEBUG
             _cacheBuster = (new Random()).Next().ToString();
 #else
-            _cacheBuster = "2.1.1";
+            _cacheBuster = "3.0.1";
 #endif
         }
 

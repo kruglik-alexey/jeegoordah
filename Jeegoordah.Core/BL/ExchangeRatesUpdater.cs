@@ -33,7 +33,7 @@ namespace Jeegoordah.Core.BL
         async private Task Update()
         {
             IList<Currency> currencies = db.Query<Currency>().ToList();            
-            foreach (Currency currency in currencies)
+            foreach (Currency currency in currencies.Where(c => c.Name != "CUC"))
             {
                 await UpdateCurrencyRates(currency);
             }
