@@ -56,7 +56,7 @@ function (_, $, rest, helper, notification, entityControls, consts, transactionE
                 return _.find(self.bros, function (bro) { return bro.Id === target; });
             }).sortBy('Name').value();
             ui.AmountFormatted = helper.formatNumber(ui.Amount);
-            ui.AmountInBase = ui.Amount * ui.Rate;
+            ui.AmountInBaseFormatted = helper.formatNumber(ui.Amount / ui.Rate);
             ui.Currency = _.find(self.currencies, function (currency) { return currency.Id === ui.Currency; });
             ui.targetsEqualsEvent = self.event && helper.equalArrays(transaction.Targets, self.event.Bros);
             ui.Comment = helper.textToHtml(ui.Comment);

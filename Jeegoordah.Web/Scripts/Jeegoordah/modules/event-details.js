@@ -38,9 +38,10 @@ function ($, _, analytics, rest, helper, transactionsList, entityControls, event
             uiEvent.Description = helper.textToHtml(uiEvent.Description || '');
             uiEvent.Bros = _.chain(uiEvent.Bros).map(function (broId) {
                 var bro = _.find(context.bros, function (b) { return b.Id === broId; });
-                return _.extend({}, bro, { Total: self._getBroTotal(broId) });
+                return _.extend({}, bro, { Total: helper.formatNumber(self._getBroTotal(broId)) });
             }).sortBy('Name').value();
-            uiEvent.Total = _.reduce(self.transactions, function (acc, tr) { return acc + tr.Amount * tr.Rate; }, 0);
+            var total = _.reduce(self.transactions, function (acc, tr) { return acc + tr.Amount / tr.Rate; }, 0);
+            uiEvent.TotalFormatted = helper.formatNumber(total);
             uiEvent.BaseCurrencyName = self.baseCurrency.Name;
             return uiEvent;
         },
@@ -48,7 +49,7 @@ function ($, _, analytics, rest, helper, transactionsList, entityControls, event
         _getBroTotal: function(broId) {
             return _.chain(self.transactions)
                 .filter(function(t) { return _.contains(t.Targets, broId); })
-                .reduce(function(acc, t) { return acc + t.Amount * t.Rate / t.Targets.length; }, 0)
+                .reduce(function(acc, t) { return acc + t.Amount / t.Rate / t.Targets.length; }, 0)
                 .value();
         },
         
