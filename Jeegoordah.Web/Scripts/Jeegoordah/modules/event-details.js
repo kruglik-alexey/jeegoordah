@@ -2,6 +2,7 @@
 function ($, _, analytics, rest, helper, transactionsList, entityControls, eventEditor, notification, consts, context, moduleTemplate) {
     var self = {        
         activate: function(id) {
+            self.baseCurrency = _.findWhere(context.currencies, { IsBase: true });
             $.when(rest.get('events/' + id),
                    rest.get('events/' + id + '/transactions'))
             .done(function (event, transactions) {                
@@ -36,9 +37,19 @@ function ($, _, analytics, rest, helper, transactionsList, entityControls, event
             var uiEvent = _.clone(restEvent);
             uiEvent.Description = helper.textToHtml(uiEvent.Description || '');
             uiEvent.Bros = _.chain(uiEvent.Bros).map(function (broId) {
-                return _.find(context.bros, function (bro) { return bro.Id === broId; });
-            }).sortBy('Name').value();            
+                var bro = _.find(context.bros, function (b) { return b.Id === broId; });
+                return _.extend({}, bro, { Total: self._getBroTotal(broId) });
+            }).sortBy('Name').value();
+            uiEvent.Total = _.reduce(self.transactions, function (acc, tr) { return acc + tr.Amount * tr.Rate; }, 0);
+            uiEvent.BaseCurrencyName = self.baseCurrency.Name;
             return uiEvent;
+        },
+
+        _getBroTotal: function(broId) {
+            return _.chain(self.transactions)
+                .filter(function(t) { return _.contains(t.Targets, broId); })
+                .reduce(function(acc, t) { return acc + t.Amount * t.Rate / t.Targets.length; }, 0)
+                .value();
         },
         
         _render: function () {
