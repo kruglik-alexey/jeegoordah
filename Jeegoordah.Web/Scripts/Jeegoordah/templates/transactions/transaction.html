@@ -1,6 +1,6 @@
 ﻿<tr id="transaction<%- self.Id %>">
     <td class="auto-width"><%- self.Date %></td>    
-    <td class="auto-width text-right"><%- self.AmountFormatted %> <%- self.Currency.Name %></td>
+    <td class="auto-width text-right"><span title="<%- self.AmountInBase %> <%- self.BaseCurrencyName %>"><%- self.AmountFormatted %> <%- self.Currency.Name %></span></td>
     <td class="auto-width">
         <%- self.Source.Name %>      
     </td>
