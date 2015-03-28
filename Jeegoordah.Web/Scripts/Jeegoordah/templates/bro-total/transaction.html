@@ -1,7 +1,11 @@
 ﻿<tr id="transaction<%- self.Id %>">
     <td class="auto-width"><%- self.Date %></td>    
     <td class="auto-width text-right zero"><%- self.AmountFormatted %> <%- self.Currency.Name %></td>
-    <td class="auto-width text-right <%- self.helper.getSignClass(self.delta) %>"><%- self.deltaFormatted %> <%- self.Currency.Name %></td>
+    <td class="auto-width text-right <%- self.helper.getSignClass(self.delta) %>">
+        <span title="<%- self.deltaInBaseFormatted %> <%- self.BaseCurrencyName %>">
+            <%- self.deltaFormatted %> <%- self.Currency.Name %>
+        </span>
+    </td>
     <td class="auto-width">
         <% if (self.highlightBro.Id === self.Source.Id) { %>
             <strong><%- self.Source.Name %></strong>

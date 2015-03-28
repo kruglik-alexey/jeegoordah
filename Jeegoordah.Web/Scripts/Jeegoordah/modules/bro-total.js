@@ -4,6 +4,7 @@ function ($, _, analytics, rest, transactionsList, helper, context, moduleTempla
     var self = {
         activate: function (id) {
             id = parseInt(id);
+            self.baseCurrency = _.findWhere(context.currencies, { IsBase: true });
             $.when(rest.get('bros/' + id + '/transactions'), rest.get('events')).done(function (broTransactions, events) {
                 self.bro = _.find(context.bros, function (b) { return b.Id === id; });
                 analytics.page('Total for ' + self.bro.Name);
@@ -43,6 +44,8 @@ function ($, _, analytics, rest, transactionsList, helper, context, moduleTempla
                 transaction.delta = -1 * transaction.Amount / transaction.Targets.length;
             }
             transaction.deltaFormatted = helper.formatNumber(transaction.delta);
+            transaction.deltaInBaseFormatted = helper.formatNumber(transaction.delta / transaction.Rate);
+            transaction.BaseCurrencyName = self.baseCurrency.Name;
 
             transaction.allTargets = _.pluck(transaction.Targets, "Name").join(', ');
         }
