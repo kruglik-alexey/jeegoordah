@@ -14,14 +14,12 @@ namespace Jeegoordah.Droid.Repositories
 	public class HttpRepository : IHttpRepository
     {
 		private readonly string host;
-	    private readonly int? port;
+        private readonly int? port = null;
 
 		public HttpRepository()
         {
 #if DEBUG
 			host = "jeegoordah-test.azurewebsites.net";
-		    host = "192.168.1.2";
-		    port = 3107;
 #else
 			host ="jeegoordah.azurewebsites.net";
 #endif
@@ -42,9 +40,9 @@ namespace Jeegoordah.Droid.Repositories
 			return await Get<IList<Event>>("events");
 		}
 
-		public async Task<IList<BroTotal>> GetTotal()
+        public async Task<CurrencyTotal> GetTotal(int currencyId)
 		{
-			return await Get<IList<BroTotal>>("total");
+            return await Get<CurrencyTotal>("total/{0}".F(currencyId));
 		}
 
 	    public async Task<IList<ExchangeRate>> GetRates(DateTime date)
@@ -62,7 +60,7 @@ namespace Jeegoordah.Droid.Repositories
 			using (var client = new HttpClient())
 			{
 			    var url = GetUrl(resourceName);
-			    Log.Info(GetType().Name, "GET {0}".F(url));
+                Logger.Info(this, "GET {0}", url);
 				var content = await client.GetStringAsync(url);
 				return JsonConvert.DeserializeObject<T>(content);
 			}
@@ -75,7 +73,7 @@ namespace Jeegoordah.Droid.Repositories
 				var content = JsonConvert.SerializeObject(data);
 				var httpContent = new StringContent(content, Encoding.UTF8, "application/json");
                 var url = GetUrl(resourceName);
-                Log.Info(GetType().Name, "POST {0}".F(url));
+                Logger.Info(this, "POST {0}", url);
                 using (var response = await client.PostAsync(url, httpContent))
 				{
 				    if (!response.IsSuccessStatusCode)

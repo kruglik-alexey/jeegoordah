@@ -14,20 +14,20 @@ namespace Jeegoordah.Droid
 {
 	static class TotalCalculator
     {
-		public static IList<BroTotal> Calculate(IList<BroTotal> total, IList<Transaction> pendingTransactions)
+        public static IList<BroAmount> Calculate(CurrencyTotal total, IList<Transaction> pendingTransactions)
 		{
-			var result = total.Select(t => t.Clone()).ToList();
-			Func<int, int, CurrencyAmount> currencyAmount = (bro, currency) => result.First(t => t.Bro == bro).Amounts.First(c => c.Currency == currency);
+            var result = total.Totals.Select(t => t.Clone()).ToList();
+            Func<int, BroAmount> broAmount = bro => result.Single(t => t.Bro == bro);
 
 			foreach (var transaction in pendingTransactions)
 			{
-				decimal share = transaction.Amount / transaction.Targets.Count;
+                decimal share = transaction.AmountInBaseCurrency / transaction.Targets.Count;
 				foreach (int target in transaction.Targets)
 				{
-					currencyAmount(target, transaction.Currency).Amount -= share;
+                    broAmount(target).Amount -= share;
 				}
 
-				currencyAmount(transaction.Source, transaction.Currency).Amount += transaction.Amount;
+                broAmount(transaction.Source).Amount += transaction.AmountInBaseCurrency;
 			}
 
 			return result;

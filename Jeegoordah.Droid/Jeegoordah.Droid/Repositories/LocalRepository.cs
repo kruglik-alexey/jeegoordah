@@ -60,9 +60,9 @@ namespace Jeegoordah.Droid.Repositories
 			return Get<IList<Event>>(eventsKey);
 		}
 
-		public IList<BroTotal> GetTotal()
+        public CurrencyTotal GetTotal()
 		{
-			return Get<IList<BroTotal>>(totalKey);
+            return Get<CurrencyTotal>(totalKey);
 		}
 
 	    public IList<ExchangeRate> GetRates()
@@ -82,7 +82,7 @@ namespace Jeegoordah.Droid.Repositories
 	        try
 	        {
 	            id = await parentRepository.PostTransaction(transaction);                	
-	            await Put(totalKey, parentRepository.GetTotal());
+                await Put(totalKey, parentRepository.GetTotal(GetBaseCurrency().Id));
 	            return new PostTransactionResult(false, null);
 	        }
 	        catch (Exception ex)
@@ -92,6 +92,11 @@ namespace Jeegoordah.Droid.Repositories
 	            return new PostTransactionResult(true, ex.Message);
 	        }            
 		}
+
+        public Currency GetBaseCurrency()
+        {
+            return GetCurencies().Single(x => x.IsBase);
+        }
 
 		private void AddPendingTransaction(Transaction transaction)
 		{
@@ -110,15 +115,21 @@ namespace Jeegoordah.Droid.Repositories
 			}
 
 		    var now = DateTime.UtcNow;
-		    Log.Info(GetType().Name, "Refreshing");		    
-			await Task.WhenAll(new Task[]
-			{
-                SubmitPendingTransactions().ContinueWith(_ => Put(totalKey, parentRepository.GetTotal())),
-				Put(brosKey, parentRepository.GetBros()),
-				Put(eventsKey, parentRepository.GetEvents()),
-				Put(currenciesKey, parentRepository.GetCurencies()),
-				Put(ratesKey, parentRepository.GetRates(now)),			
-			});            
+            Logger.Info(this, "Refreshing");
+
+            var submitPendingTask = SubmitPendingTransactions();
+            var currenciesTask = Put(currenciesKey, parentRepository.GetCurencies());
+
+            await Task.WhenAll(new Task[]
+            {
+                Task.WhenAll(new Task[]{ submitPendingTask, currenciesTask }).ContinueWith(async _ =>
+                {
+                    await Put(totalKey, parentRepository.GetTotal(GetBaseCurrency().Id));
+                }),
+                Put(brosKey, parentRepository.GetBros()),
+                Put(eventsKey, parentRepository.GetEvents()),				
+                Put(ratesKey, parentRepository.GetRates(now)),			
+            });          
 
 			using (var e = miscStorage.Edit())
 			{
@@ -144,7 +155,9 @@ namespace Jeegoordah.Droid.Repositories
 
 		private async Task<T> Put<T>(string key, Task<T> dataSource)
 		{
+            Logger.Info(this, "Retrieving data for " + key);
 			T data = await dataSource;
+            Logger.Info(this, "Received data for " + key);
 			string serialized = JsonConvert.SerializeObject(data);
 			using (var editor = localCache.Edit())
 			{				
@@ -165,12 +178,15 @@ namespace Jeegoordah.Droid.Repositories
 			{
 				try
 				{
-					foreach (KeyValuePair<string, object> pair in pendingTransactions.All.ToList())
+                    var list = pendingTransactions.All.ToList();
+                    Logger.Info(this, "Submitting {0} pending transactions", list.Count);
+                    foreach (KeyValuePair<string, object> pair in list)
 					{
 						var transaction = JsonConvert.DeserializeObject<Transaction>(pair.Value.ToString());
 						await parentRepository.PostTransaction(transaction);
 						e.Remove(pair.Key);
-					}	
+					}
+                    Logger.Info(this, "Submitted pending transactions");
 				}
 				finally
 				{					

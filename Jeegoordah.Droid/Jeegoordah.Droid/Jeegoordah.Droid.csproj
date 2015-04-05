@@ -76,6 +76,9 @@
     <Compile Include="UI\ActivityRepositoryAdapter.cs" />
     <Compile Include="TotalCalculator.cs" />
     <Compile Include="UI\TotalAdapter.cs" />
+    <Compile Include="Logger.cs" />
+    <Compile Include="Entities\BroAmount.cs" />
+    <Compile Include="Entities\CurrencyTotal.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\AndroidManifest.xml" />

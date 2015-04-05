@@ -141,7 +141,7 @@ namespace Jeegoordah.Droid.UI
 				Date = DateTime.UtcNow.ToString("dd-MM-yyyy"),
 				Event = GetSelectedEvent().Id,
 				Amount = int.Parse(amountInput.Text),
-                Rate = decimal.Parse(rateInput.Text).ToString(CultureInfo.InvariantCulture),
+                Rate = decimal.Parse(rateInput.Text),
 				Currency = GetSelectedCurrency().Id,
 				Source = GetSelectedSource().Id,
 				Targets = targets.Where(t => t.Item2).Select(t => t.Item1.Id).ToList(),

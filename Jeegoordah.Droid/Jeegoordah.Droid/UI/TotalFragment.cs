@@ -21,11 +21,11 @@ namespace Jeegoordah.Droid.UI
 		public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
 		{
 			var list = (ListView)inflater.Inflate(Resource.Layout.Total, container, false);
-			list.Adapter = new TotalAdapter(Activity, Resource.Layout.TotalRow, GetTotal(), repository.GetBros(), repository.GetCurencies());
+            list.Adapter = new TotalAdapter(Activity, Resource.Layout.TotalRow, GetTotal(), repository.GetBros(), repository.GetBaseCurrency());
 			return list;
 		}
 
-		private IList<BroTotal> GetTotal()
+        private IList<BroAmount> GetTotal()
 		{
 			return TotalCalculator.Calculate(repository.GetTotal(), repository.GetPendingTransactions());
 		}
