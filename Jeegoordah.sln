@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jeegoordah.Core", "Jeegoordah.Core\Jeegoordah.Core.csproj", "{2844FC03-EB2B-482F-80CE-560FD4D46E2F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jeegoordah.Web", "Jeegoordah.Web\Jeegoordah.Web.csproj", "{B3085B40-DB1D-46F9-A8A6-AD30DB10AC80}"

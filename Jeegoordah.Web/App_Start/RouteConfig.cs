@@ -115,11 +115,17 @@ namespace Jeegoordah.Web
                 defaults: new { controller = "General", action = "Index" }
             );
 
-            #endregion
+			routes.MapRoute(
+				name: "Login",
+				url: "login",
+				defaults: new { controller = "General", action = "Login" }
+			);
 
-            #region Total
+			#endregion
 
-            routes.MapRoute(
+			#region Total
+
+			routes.MapRoute(
                 name: "GetTotal",
                 url: "total",
                 defaults: new { controller = "Total", action = "GetTotal" }
