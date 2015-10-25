@@ -64,8 +64,8 @@ namespace Jeegoordah.Droid.UI
 		private void SetupEvents()
 		{
 			var eventSelector = FindViewById<Spinner>(Resource.Id.EventSelector);
-			var eventsAdapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleSpinnerItem, 
-				events.OrderByDescending(e => e.GetRealStartDate()).Select(e => e.Name).ToArray());
+            var eventNames = new[]{ Consts.NoEvent }.Concat(events.OrderByDescending(e => e.GetRealStartDate()).Select(e => e.Name)).ToArray();
+			var eventsAdapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleSpinnerItem, eventNames);
 			eventSelector.Adapter = eventsAdapter;
 
 			var defaultEventId = settings.GetInt("defaultEvent", -1);
@@ -73,14 +73,20 @@ namespace Jeegoordah.Droid.UI
 			if (defaultEvent != null)
 			{
 				eventSelector.SetSelectedItem(defaultEvent.Name);
-			}
+            } 
+            else
+            {
+                eventSelector.SetSelectedItem(Consts.NoEvent);
+            }
 
 			eventSelector.ItemSelected += (_, __) =>
 			{
 				using (var edit = settings.Edit())
 				{
-					var selectedEvent = eventSelector.SelectedItem.ToString();
-					edit.PutInt("defaultEvent", events.First(e => e.Name == selectedEvent).Id);
+                    var selectedEventName = eventSelector.SelectedItem.ToString();
+                    var selectedEvent = events.FirstOrDefault(e => e.Name == selectedEventName);
+                    var selectedEventId = selectedEvent != null ? selectedEvent.Id : -1;
+                    edit.PutInt("defaultEvent", selectedEventId);
 					edit.Commit();
 				}
 			};
