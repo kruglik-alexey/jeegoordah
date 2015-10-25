@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Jeegoordah.Droid.Entities;
 using System.Text;
 using Exception = System.Exception;
+using System.Net;
 
 namespace Jeegoordah.Droid.Repositories
 {
@@ -15,6 +16,7 @@ namespace Jeegoordah.Droid.Repositories
     {
 		private readonly string host;
         private readonly int? port = null;
+        private readonly HttpClient _httpClient;
 
 		public HttpRepository()
         {
@@ -23,6 +25,11 @@ namespace Jeegoordah.Droid.Repositories
 #else
 			host ="jeegoordah.azurewebsites.net";
 #endif
+
+            var cookieContainer = new CookieContainer();
+            cookieContainer.Add(new Cookie("FB83D6D9-6D18-419E-B862-1A1DBE30F536", "1"){ Domain = host });
+            var handler = new HttpClientHandler { CookieContainer = cookieContainer };
+            _httpClient = new HttpClient(handler);
         }
 
 		public async Task<IList<Bro>> GetBros()
@@ -56,33 +63,27 @@ namespace Jeegoordah.Droid.Repositories
 		}
 
 		private async Task<T> Get<T>(string resourceName)
-		{
-			using (var client = new HttpClient())
-			{
-			    var url = GetUrl(resourceName);
-                Logger.Info(this, "GET {0}", url);
-				var content = await client.GetStringAsync(url);
-				return JsonConvert.DeserializeObject<T>(content);
-			}
-		}	
+		{			
+		    var url = GetUrl(resourceName);
+            Logger.Info(this, "GET {0}", url);
+            var content = await _httpClient.GetStringAsync(url);
+			return JsonConvert.DeserializeObject<T>(content);			
+        }         
 
-		private async Task<T> Post<T>(T data, string resourceName)
-		{
-			using (var client = new HttpClient())
+    	private async Task<T> Post<T>(T data, string resourceName)
+    	{			
+			var content = JsonConvert.SerializeObject(data);
+			var httpContent = new StringContent(content, Encoding.UTF8, "application/json");
+            var url = GetUrl(resourceName);
+            Logger.Info(this, "POST {0}", url);
+            using (var response = await _httpClient.PostAsync(url, httpContent))
 			{
-				var content = JsonConvert.SerializeObject(data);
-				var httpContent = new StringContent(content, Encoding.UTF8, "application/json");
-                var url = GetUrl(resourceName);
-                Logger.Info(this, "POST {0}", url);
-                using (var response = await client.PostAsync(url, httpContent))
-				{
-				    if (!response.IsSuccessStatusCode)
-				        throw new Exception("Server Error. Status code: {0}".F(response.StatusCode));
-				    var r = await response.Content.ReadAsStringAsync();
-				    return JsonConvert.DeserializeObject<T>(r);
-				}
-			}
-		}
+			    if (!response.IsSuccessStatusCode)
+			        throw new Exception("Server Error. Status code: {0}".F(response.StatusCode));
+			    var r = await response.Content.ReadAsStringAsync();
+			    return JsonConvert.DeserializeObject<T>(r);
+			}			
+    	}
 
 		private string GetUrl(string resourceName)
 		{
