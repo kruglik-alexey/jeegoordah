@@ -150,16 +150,24 @@ namespace Jeegoordah.Droid.UI
 				Comment = View.FindViewById<EditText>(Resource.Id.CommentInput).Text
 			};
 		    
-            PostTransactionResult result = await repository.PostTransaction(transaction);
-		    if (result.StoredLocally)
-		    {
-                Toast.MakeText(Activity, "Transaction stored locally: {0}".F(result.ReasonStoredLocally), ToastLength.Long).Show();
-		    }
-		    else
-		    {
-                Toast.MakeText(Activity, "Transaction stored remotely", ToastLength.Long).Show();
-		    }
-			
+            var progress = ProgressDialog.Show(Activity, "Please wait", "Sending transaction to Jeegoordah", true);
+            try 
+            {
+                PostTransactionResult result = await repository.PostTransaction(transaction);    
+                if (result.StoredLocally)
+                {
+                    Toast.MakeText(Activity, "Transaction stored locally: {0}".F(result.ReasonStoredLocally), ToastLength.Long).Show();
+                }
+                else
+                {
+                    Toast.MakeText(Activity, "Transaction stored remotely", ToastLength.Long).Show();
+                }
+            }
+            finally
+            {
+                progress.Dismiss();
+            }
+                
 			TransactionCreated();			
 			Clear();
 		}
