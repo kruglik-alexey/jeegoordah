@@ -55,9 +55,9 @@ namespace Jeegoordah.Droid.UI
             amountInput.TextChanged += (_, __) => UpdateAmountInBase();
             rateInput.TextChanged += (_, __) => UpdateAmountInBase();
 
+            var eventNames = new []{ "[No Event]" }.Concat(events.OrderByDescending(e => e.GetRealStartDate()).Select(e => e.Name)).ToArray();
 			eventSelector = view.FindViewById<Spinner>(Resource.Id.EventSelector);
-			eventSelector.Adapter = new ArrayAdapter(Activity, Android.Resource.Layout.SimpleSpinnerItem, 
-				events.OrderByDescending(e => e.GetRealStartDate()).Select(e => e.Name).ToArray());
+			eventSelector.Adapter = new ArrayAdapter(Activity, Android.Resource.Layout.SimpleSpinnerItem, eventNames);
 			eventSelector.ItemSelected += (s, e) => targets = null;
 			var defaultEvent = Helper.GetEntityFromSettings(events, settings, "defaultEvent");
 			if (defaultEvent != null)
@@ -122,7 +122,8 @@ namespace Jeegoordah.Droid.UI
 		private void CreateDefaultTargets()
 		{
 			var selectedEvent = GetSelectedEvent();
-			targets = bros.Select(b => Tuple.Create(b, selectedEvent.Bros.Contains(b.Id))).ToList();
+            IEnumerable<int> selectedBros = selectedEvent != null ? selectedEvent.Bros : Enumerable.Empty<int>();           
+            targets = bros.Select(b => Tuple.Create(b, selectedBros.Contains(b.Id))).ToList();           
 		}
 
 		private async void CreateTransaction()
@@ -136,10 +137,11 @@ namespace Jeegoordah.Droid.UI
 				return;
 			}
 
+            var selectedEvent = GetSelectedEvent();
 			var transaction = new Transaction
 			{
 				Date = DateTime.UtcNow.ToString("dd-MM-yyyy"),
-				Event = GetSelectedEvent().Id,
+                Event = selectedEvent != null ? selectedEvent.Id : (int?)null,
 				Amount = int.Parse(amountInput.Text),
                 Rate = decimal.Parse(rateInput.Text),
 				Currency = GetSelectedCurrency().Id,
@@ -188,7 +190,7 @@ namespace Jeegoordah.Droid.UI
 
 		private Event GetSelectedEvent()
 		{
-			return events.First(e => e.Name == eventSelector.SelectedItem.ToString());
+            return events.FirstOrDefault(e => e.Name == eventSelector.SelectedItem.ToString());
 		}
 
 		private Currency GetSelectedCurrency()
