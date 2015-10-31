@@ -21,7 +21,7 @@ namespace Jeegoordah.Core.BL
 		public static async Task Send(Db db)
 		{
 			var host = HttpContext.Current?.Request.ServerVariables["HTTP_HOST"];
-            if (host == null || !host.Equals("http://jeegoordah.azurewebsites.net/", StringComparison.InvariantCultureIgnoreCase))
+            if (host == null || !host.Equals("jeegoordah.azurewebsites.net", StringComparison.InvariantCultureIgnoreCase))
 			{
 				throw new Exception($"Sending notifications is disabled for {host}");
 			}
