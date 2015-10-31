@@ -111,11 +111,16 @@ namespace Jeegoordah.Web.Controllers
         {
             using (var db = DbFactory.Open())
             {
-                return Json(db.Query<Transaction>()
-                            .Where(t => t.Event == null)
-                            .OrderByDescending(t => t.Date)
-                            .ToList()
-                            .Select(t => new TransactionRest(t))
+	            List<Transaction> transactions;
+	            using (new PerfCounter("p2p"))
+	            {
+		            transactions = db.Query<Transaction>()
+			            .Where(t => t.Event == null)
+			            .OrderByDescending(t => t.Date)
+			            .ToList();
+	            }
+	            return Json(transactions
+							.Select(t => new TransactionRest(t))
                             // TODO why we need ToList() here?
                             .ToList(), JsonRequestBehavior.AllowGet);
             }

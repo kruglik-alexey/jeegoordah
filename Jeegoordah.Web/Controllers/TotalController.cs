@@ -12,7 +12,7 @@ using NHibernate.Linq;
 
 namespace Jeegoordah.Web.Controllers
 {
-    public class TotalController : DbController
+	public class TotalController : DbController
     {
         public TotalController(ContextDependentDbFactory dbFactory) : base(dbFactory)
         {
@@ -23,7 +23,14 @@ namespace Jeegoordah.Web.Controllers
         {
             using (var db = DbFactory.Open())
             {
-                Dictionary<Bro, Dictionary<Currency, decimal>> total = TotalCalculator.Calculate(db.Query<Transaction>().ToList(), db.Query<Bro>().ToList());
+	            List<Transaction> transactions;
+	            List<Bro> bros;
+				Dictionary<Bro, Dictionary<Currency, decimal>> total;
+
+				using (new PerfCounter("total-transactions")) transactions = db.Query<Transaction>().ToList();
+	            using (new PerfCounter("total-bros")) bros = db.Query<Bro>().ToList();
+				using (new PerfCounter("total-calcall")) total = TotalCalculator.Calculate(transactions, bros);
+
                 var result = total.Keys.Select(bro => new BroTotalRest(bro, total[bro])).ToList();
                 return Json(result, JsonRequestBehavior.AllowGet);
             }
@@ -34,10 +41,17 @@ namespace Jeegoordah.Web.Controllers
         {
             using (var db = DbFactory.Open())
             {
-                var now = DateTime.UtcNow.Date;
-                var rate = ExchangeRateProvider.Get(db.Query<ExchangeRate>(), currencyId, now);
-                
-                Dictionary<Bro, decimal> total = TotalCalculator.CalculateInCurrency(rate, db.Query<Transaction>().ToList(), db.Query<Bro>().ToList());
+				var now = DateTime.UtcNow.Date;
+
+				List<Transaction> transactions;
+				List<Bro> bros;
+				Dictionary<Bro, decimal> total;
+	            ExchangeRate rate;
+
+				using (new PerfCounter("total-transactions")) transactions = db.Query<Transaction>().ToList();
+				using (new PerfCounter("total-bros")) bros = db.Query<Bro>().ToList();
+				using (new PerfCounter("total-rate")) rate = ExchangeRateProvider.Get(db.Query<ExchangeRate>(), currencyId, now);
+				using (new PerfCounter("total-calc"))  total = TotalCalculator.CalculateInCurrency(rate, transactions, bros);
                 var broTotalsRest = total.Keys.Select(bro => new BroTotalInCurrencyRest(bro, total[bro])).ToList();
                 return Json(new TotalInCurrencyRest(broTotalsRest, rate), JsonRequestBehavior.AllowGet);
             }

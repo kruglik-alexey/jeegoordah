@@ -101,6 +101,7 @@
     <Compile Include="DL\Db.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="Logging\Logger.cs" />
+    <Compile Include="PerfCounter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Logging\SerializableException.cs" />
   </ItemGroup>
