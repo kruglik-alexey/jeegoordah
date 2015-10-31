@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using Jeegoordah.Core.DL;
 using Jeegoordah.Core.DL.Entity;
 using Jeegoordah.Core.Logging;
@@ -19,6 +20,12 @@ namespace Jeegoordah.Core.BL
 
 		public static async Task Send(Db db)
 		{
+			var host = HttpContext.Current?.Request.ServerVariables["HTTP_HOST"];
+            if (host == null || !host.Equals("http://jeegoordah.azurewebsites.net/", StringComparison.InvariantCultureIgnoreCase))
+			{
+				throw new Exception($"Sending notifications is disabled for {host}");
+			}
+
 			var sendTasks = db.Query<Bro>()
 				.Where(x => x.Email != null)
 				.Where(x => x.Notifications.Count > 0)
