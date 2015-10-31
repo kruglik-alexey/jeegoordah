@@ -98,5 +98,18 @@ namespace Jeegoordah.Web.Controllers
                 return Json(rates, JsonRequestBehavior.AllowGet);
             }
         }
-    }
+
+		[HttpPost]
+		async public Task<ActionResult> SendNotifications()
+		{
+			using (var db = DbFactory.Open())
+			{
+				Logger.I("Begin sending notifications");
+				await NotificationsSender.Send(db);
+				db.Commit();
+				Logger.I("Sending notifications complete");
+				return Json(new { });
+			}
+		}
+	}
 }

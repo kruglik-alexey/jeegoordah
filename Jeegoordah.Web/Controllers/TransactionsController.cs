@@ -5,6 +5,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using Jeegoordah.Core;
+using Jeegoordah.Core.BL;
 using Jeegoordah.Core.DL;
 using Jeegoordah.Core.DL.Entity;
 using Jeegoordah.Web.DL;
@@ -28,6 +29,7 @@ namespace Jeegoordah.Web.Controllers
             {
                 var dlTransaction = TransactionFromRest(transaction, db);
                 db.Session.Save(dlTransaction);
+	            db.Session.Save(NotificationCreator.ForCreatedTransaction(dlTransaction));
                 db.Commit();
 
 	            var response = new TransactionRest(dlTransaction);
@@ -47,13 +49,16 @@ namespace Jeegoordah.Web.Controllers
                 return Json(new { Field = "Id", Message = "Missing Id" });
             }
 
-            using (var db = DbFactory.Open())
+			using (var db = DbFactory.Open())
             {
-                var dlTransaction = TransactionFromRest(transaction, db);
-                db.Session.Update(dlTransaction);
+	            var oldTransaction = db.Load<Transaction>(transaction.Id.Value);
+                var newTransaction = TransactionFromRest(transaction, db);
+				db.Session.Save(NotificationCreator.ForUpdatedTransaction(oldTransaction, newTransaction));
+
+                db.Session.Update(TransactionFromRest(transaction, db, oldTransaction));
                 db.Commit();
 
-				var response = new TransactionRest(dlTransaction);
+				var response = new TransactionRest(newTransaction);
 				Logger.I("Updated transaction {0}", response.ToJson());
 				return Json(response);
             }
@@ -64,7 +69,9 @@ namespace Jeegoordah.Web.Controllers
         {
             using (var db = DbFactory.Open())
             {
-                db.Session.Delete(db.Load<Transaction>(id));
+	            var transaction = db.Load<Transaction>(id);
+                db.Session.Save(NotificationCreator.ForDeletedTransaction(transaction));
+				db.Session.Delete(transaction);
                 db.Commit();
 				Logger.I("Deleted transaction {0}", id);
             }
@@ -114,9 +121,9 @@ namespace Jeegoordah.Web.Controllers
             }
         }
 
-        private Transaction TransactionFromRest(TransactionRest source, Db db)
+        private Transaction TransactionFromRest(TransactionRest source, Db db, Transaction target = null)
         {
-            var target = new Transaction();
+            target = target ?? new Transaction();
             if (source.Id.HasValue)
             {
                 target.Id = source.Id.Value;
@@ -127,11 +134,15 @@ namespace Jeegoordah.Web.Controllers
             target.Comment = source.Comment ?? "";
 
             target.Source = source.Source.Load<Bro>(db);
-            target.Targets.AddRange(source.Targets.Load<Bro>(db));
-            if (source.Event.HasValue)
-            {
-                target.Event = source.Event.Value.Load<Event>(db);
-            }
+            target.Targets = source.Targets.Load<Bro>(db).ToArray();
+	        if (source.Event.HasValue)
+	        {
+		        target.Event = source.Event.Value.Load<Event>(db);
+	        }
+	        else
+	        {
+		        target.Event = null;
+	        }
             target.Currency = source.Currency.Load<Currency>(db);
 
             return target;

@@ -109,7 +109,13 @@ namespace Jeegoordah.Web
                 defaults: new { controller = "General", action = "GetRates" }
             );
 
-            routes.MapRoute(
+			routes.MapRoute(
+				name: "SendNotifications",
+				url: "send_notifications",
+				defaults: new { controller = "General", action = "SendNotifications" }
+			);
+
+			routes.MapRoute(
                 name: "Default",
                 url: "",
                 defaults: new { controller = "General", action = "Index" }

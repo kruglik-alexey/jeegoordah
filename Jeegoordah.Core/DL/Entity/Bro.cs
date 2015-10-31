@@ -12,7 +12,9 @@ namespace Jeegoordah.Core.DL.Entity
         }
 
         public virtual string Name { get; set; }
+        public virtual string Email { get; set; }
         public virtual IList<Event> Events { get; set; }        
+        public virtual IList<Notification> Notifications { get; set; }        
     }
 
     class BroMap : ClassMap<Bro>
@@ -21,7 +23,9 @@ namespace Jeegoordah.Core.DL.Entity
         {
             Id(x => x.Id);
             Map(x => x.Name).Not.Nullable().Unique();
+	        Map(x => x.Email).Nullable();
             HasManyToMany(x => x.Events).Table("BroEvents").Inverse();
-        }
+			HasManyToMany(x => x.Notifications).Table("BroNotifications").Inverse();
+		}
     }
 }

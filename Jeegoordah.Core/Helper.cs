@@ -31,5 +31,10 @@ namespace Jeegoordah.Core
 		{
 			return JsonConvert.SerializeObject(obj);
 		}
+
+	    public static IEnumerable<T> Yield<T>(this T obj)
+	    {
+		    yield return obj;
+	    }
     }
 }
