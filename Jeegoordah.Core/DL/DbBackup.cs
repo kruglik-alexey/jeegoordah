@@ -36,7 +36,7 @@ namespace Jeegoordah.Core.DL
                 sourceConnection.BackupDatabase(backupConnection, "main", "main", -1, null, 0);
             }
 
-            DeleteOldBackups(backupDirectory, 2);
+            DeleteOldBackups(backupDirectory, 5);
         }
 
         private static bool HasBackupForToday(DateTime now, string backupDirectory)
