@@ -72,6 +72,7 @@ namespace Jeegoordah.Web.Controllers
         }        
 
         [HttpPost]
+		[NoAuthorizationRequired]
         async public Task<ActionResult> UpdateExchangeRates()
         {
             using (var db = DbFactory.Open())
@@ -100,6 +101,7 @@ namespace Jeegoordah.Web.Controllers
         }
 
 		[HttpPost]
+		[NoAuthorizationRequired]
 		async public Task<ActionResult> SendNotifications()
 		{
 			using (var db = DbFactory.Open())
