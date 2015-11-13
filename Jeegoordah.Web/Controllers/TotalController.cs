@@ -43,15 +43,28 @@ namespace Jeegoordah.Web.Controllers
             {
 				var now = DateTime.UtcNow.Date;
 
-				List<Transaction> transactions;
-				List<Bro> bros;
+				Transaction[] transactions;
+				Bro[] bros;
 				Dictionary<Bro, decimal> total;
 	            ExchangeRate rate;
 
-				using (new PerfCounter("total-transactions")) transactions = db.Query<Transaction>().ToList();
-				using (new PerfCounter("total-bros")) bros = db.Query<Bro>().ToList();
+				using (new PerfCounter("total-transactions"))
+				{
+					// loading transactions and their targets with one query to avoid N+1 query for each transaction targets
+					transactions = db.Query<Transaction>()
+						.SelectMany(t => t.Targets, (transaction, bro) => new {transaction, bro})
+						.AsEnumerable()
+						.GroupBy(p => p.transaction, p => p.bro, (transaction, targets) =>
+						{
+							transaction.Targets = targets.ToArray();
+                            return transaction;
+						})
+						.ToArray();
+				}
+
+				using (new PerfCounter("total-bros")) bros = db.Query<Bro>().ToArray();
 				using (new PerfCounter("total-rate")) rate = ExchangeRateProvider.Get(db.Query<ExchangeRate>(), currencyId, now);
-				using (new PerfCounter("total-calc"))  total = TotalCalculator.CalculateInCurrency(rate, transactions, bros);
+				using (new PerfCounter("total-calc")) total = TotalCalculator.CalculateInCurrency(rate, transactions, bros);
                 var broTotalsRest = total.Keys.Select(bro => new BroTotalInCurrencyRest(bro, total[bro])).ToList();
                 return Json(new TotalInCurrencyRest(broTotalsRest, rate), JsonRequestBehavior.AllowGet);
             }
