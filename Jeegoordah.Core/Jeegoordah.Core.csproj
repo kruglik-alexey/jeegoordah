@@ -99,6 +99,7 @@
     <Compile Include="DL\Entity\Event.cs" />
     <Compile Include="DL\DbSeed.cs" />
     <Compile Include="DL\Db.cs" />
+    <Compile Include="DL\LoggingInterceptor.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="Logging\Logger.cs" />
     <Compile Include="PerfCounter.cs" />

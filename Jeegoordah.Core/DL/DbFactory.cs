@@ -12,20 +12,24 @@ using Jeegoordah.Core.DL.Entity;
 
 namespace Jeegoordah.Core.DL
 {
-    public class DbFactory : IDisposable
+	public class DbFactory : IDisposable
     {
         private readonly ISessionFactory sessionFactory;
 
         public DbFactory(string connectionStringName)
         {
-            var sqliteConfig = SQLiteConfiguration.Standard.ConnectionString(c => c.FromConnectionStringWithKey(connectionStringName)).ShowSql();			
+	        var sqliteConfig = SQLiteConfiguration.Standard.ConnectionString(c => c.FromConnectionStringWithKey(connectionStringName));		
             var db = Fluently.Configure().Database(sqliteConfig);
             db.Mappings(m => m.FluentMappings.AddFromAssembly(Assembly.GetExecutingAssembly()));
             db.ExposeConfiguration(c =>
 	            {
 		            new SchemaUpdate(c).Execute(false, true);
 					Logger.For(this).I("Use connection string '{0}'", c.GetProperty(NHibernate.Cfg.Environment.ConnectionString));
-	            });
+
+#if DEBUG
+					c.SetInterceptor(new LoggingInterceptor());
+#endif
+				});
             sessionFactory = db.BuildSessionFactory();
             Seed();
         }
