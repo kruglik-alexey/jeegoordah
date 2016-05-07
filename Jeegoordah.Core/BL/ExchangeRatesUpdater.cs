@@ -19,6 +19,7 @@ namespace Jeegoordah.Core.BL
         private readonly Db db;
         private readonly Dictionary<DateTime, JToken> rates = new Dictionary<DateTime, JToken>();
         private readonly Logger logger = Logger.For(typeof(ExchangeRatesUpdater));
+	    private readonly Currency byn;
 
         async public static Task Update(Db db)
         {
@@ -28,18 +29,19 @@ namespace Jeegoordah.Core.BL
         private ExchangeRatesUpdater(Db db)
         {
             this.db = db;
+	        byn = db.Query<Currency>().Where(c => c.Name == "BYN").First();
         }
 
         async private Task Update()
         {
             IList<Currency> currencies = db.Query<Currency>().ToList();            
-            foreach (Currency currency in currencies.Where(c => c.Name != "CUC"))
+            foreach (Currency currency in currencies.Where(c => c.Name != "CUC" && c.Name != "BYN"))
             {
                 await UpdateCurrencyRates(currency);
             }
         }
 
-        async private Task UpdateCurrencyRates(Currency currency)
+	    async private Task UpdateCurrencyRates(Currency currency)
         {
             var lastRate = db.Query<ExchangeRate>()
                 .Where(r => r.Currency.Id == currency.Id)
@@ -61,6 +63,11 @@ namespace Jeegoordah.Core.BL
             {
                 logger.I("Rate for {0} on {1} is {2}", currency.Name, date.ToShortDateString(), rate);
                 db.Session.Save(new ExchangeRate {Currency = currency, Date = date, Rate = Math.Round(rate.Value, 2)});
+	            if (currency.Name == "BYR")
+	            {
+					logger.I("Rate for {0} on {1} is {2}", byn.Name, date.ToShortDateString(), rate.Value/10000);
+					db.Session.Save(new ExchangeRate { Currency = byn, Date = date, Rate = Math.Round(rate.Value/10000, 2) });
+				}
             }
             else
             {
