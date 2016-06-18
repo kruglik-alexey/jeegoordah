@@ -1,5 +1,5 @@
-﻿define(['_', '$', 'helper', 'notification', 'entityEditor', 'broSelector', 'rest', 'exchangeRates','text!templates/transactions/transactionEditor.html'],
-function (_, $, helper, notification, editor, broSelector, rest, exchangeRates, editorTemplate) {
+﻿define(['_', '$', 'helper', 'app-context', 'notification', 'entityEditor', 'broSelector', 'rest', 'exchangeRates', 'text!templates/transactions/transactionEditor.html'],
+function (_, $, helper, context, notification, editor, broSelector, rest, exchangeRates, editorTemplate) {
     var self = {
         init: function(currencies, bros) {
             self.currencies = currencies;
@@ -41,6 +41,7 @@ function (_, $, helper, notification, editor, broSelector, rest, exchangeRates, 
         _showTransactionEditor: function(transaction, title, ok) {
             var deferred = $.Deferred();
             var currencies = self._getCurrenciesForTransaction(transaction);
+            var bros = self._getBrosForTransaction(transaction);
             var baseCurrencyName = _.findWhere(self.currencies, { IsBase: true }).Name;
 
             self.$rendered = helper.template(editorTemplate, { currencies: currencies, baseCurrencyName: baseCurrencyName });
@@ -49,8 +50,8 @@ function (_, $, helper, notification, editor, broSelector, rest, exchangeRates, 
             self.$amount = self.$rendered.find('input[name=Amount]');
             self.$amountInBase = self.$rendered.find('input[name=AmountInBase]');
 
-            self.$rendered.find('#transactionSource').append(broSelector.render(true, self.bros));
-            self.$rendered.find('#transactionTargets').append(broSelector.render(false, self.bros));            
+            self.$rendered.find('#transactionSource').append(broSelector.render(true, bros));
+            self.$rendered.find('#transactionTargets').append(broSelector.render(false, bros));
             
             self.$amount.number(true, 0, '.', ' ');
             self._subscribeOnInputChanges(self.$amount, self._updateAmountInBase);
@@ -136,6 +137,29 @@ function (_, $, helper, notification, editor, broSelector, rest, exchangeRates, 
                 return c.Id === transaction.Currency;
             });
             return hidden ? self.currencies : self.visibleCurrencies;
+        },
+
+        _getBrosForTransaction: function (transaction) {
+            if (context.showAllBros) {
+                return self.bros;
+            }
+            var hasHiddenBros = _.chain([transaction.Source].concat(transaction.Targets))
+                .filter(function(b) {
+                    return !_.isUndefined(b);
+                })
+                .map(function(b) {
+                    return _.findWhere(self.bros, {Id: b});
+                })
+                .filter(function(b) {
+                    return b.IsHidden;
+                })
+                .value().length > 0;
+            if (hasHiddenBros) {
+                return self.bros;
+            }
+            return _.filter(self.bros, function(b) {
+                return !b.IsHidden;
+            });
         },
 
         _getSelectedCurrency: function() {

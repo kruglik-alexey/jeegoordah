@@ -1,17 +1,5 @@
-﻿define(['$', 'notification'], function ($, notification) {
-    var getQueryVariable = function(variable) {
-        var query = window.location.search.substring(1);
-        var vars = query.split("&");
-        for (var i = 0; i < vars.length; i++) {
-            var pair = vars[i].split("=");
-            if (pair[0] == variable) {
-                return pair[1];
-            }
-        }
-        return false;
-    };
-
-    var test = !!getQueryVariable('test');
+﻿define(['$', 'notification', 'helper'], function ($, notification, helper) {    
+    var test = !!helper.getQueryVariable('test');
 
     var showError = function (error) {        
         if (error.getAllResponseHeaders() === '') {
@@ -34,7 +22,7 @@
         get: function (resource) {
             var ajax = $.ajax({
                 url: prepareUrl(resource),
-                type: "GET",
+                type: "GET"
             });
             ajax.fail(function (response) {                
                 showError(response);

@@ -40,7 +40,7 @@
         _renderTotalWithCurrencies: function (total) {
             var list = self.$module.find('#totalList');
             list.find('li').remove();
-            _.chain(context.bros).sortBy(function (bro) {
+            _.chain(context.notHiddenBros).sortBy(function (bro) {
                 return bro.Name;
             }).each(function (bro) {
                 var broAmounts = self._getBroAmounts(bro, total);

@@ -14,7 +14,7 @@ function ($, _, analytics, rest, helper, transactionsList, entityControls, event
         },
         
         _editEvent: function() {
-            eventEditor.edit(self.event, context.bros, 'Edit Event', function (updatedEvent) {
+            eventEditor.edit(self.event, context.notHiddenBros, 'Edit Event', function (updatedEvent) {
                 updatedEvent = _.extend(self.event, updatedEvent);
                 rest.post('events/update', updatedEvent).done(function () {
                     eventEditor.close();

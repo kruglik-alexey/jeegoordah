@@ -13,6 +13,7 @@ namespace Jeegoordah.Core.DL.Entity
 
         public virtual string Name { get; set; }
         public virtual string Email { get; set; }
+        public virtual bool IsHidden { get; set; }
         public virtual IList<Event> Events { get; set; }        
         public virtual IList<Notification> Notifications { get; set; }        
     }
@@ -24,6 +25,7 @@ namespace Jeegoordah.Core.DL.Entity
             Id(x => x.Id);
             Map(x => x.Name).Not.Nullable().Unique();
 	        Map(x => x.Email).Nullable();
+	        Map(x => x.IsHidden).Not.Nullable();
             HasManyToMany(x => x.Events).Table("BroEvents").Inverse();
 			HasManyToMany(x => x.Notifications).Table("BroNotifications").Inverse();
 		}

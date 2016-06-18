@@ -12,9 +12,11 @@ namespace Jeegoordah.Web.Models
         {
             Id = bro.Id;
             Name = bro.Name;
+	        IsHidden = bro.IsHidden;
         }
 
         public int Id { get; set; }
         public string Name { get; set; }
+		public bool IsHidden { get; set; }
     }
 }

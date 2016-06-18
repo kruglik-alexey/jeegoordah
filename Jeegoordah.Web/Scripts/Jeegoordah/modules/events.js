@@ -25,7 +25,7 @@
         },
         
         _createEvent: function () {
-            eventEditor.edit({}, context.bros, 'Create Event', function(event) {
+            eventEditor.edit({}, context.notHiddenBros, 'Create Event', function(event) {
                 rest.post('events/create', event).done(function (createdEvent) {
                     createdEvent.StartDateObj = helper.parseDate(createdEvent.StartDate);
                     self._createEventElement(createdEvent);
