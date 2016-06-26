@@ -8,3 +8,6 @@ log.txt
 *.userprefs
 packages/
 .vs/*
+node_modules
+.idea
+build
