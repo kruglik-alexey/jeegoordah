@@ -7,7 +7,10 @@ import {get} from './rest'
 const $ready = new Promise(resolve => domReady(resolve));
 const $bros = get('bros');
 const $currencies = get('currencies');
+const $total = $currencies.then(cs => {
+   return get(`total/${cs[0].id}`);
+});
 
-Promise.all([$bros, $currencies, $ready]).then(([bros, currencies]) => {
-    ReactDOM.render(React.createElement(IndexView, {bros, currencies}), document.getElementById('app-container'));
+Promise.all([$bros, $currencies, $total, $ready]).then(([bros, currencies, total]) => {
+    ReactDOM.render(React.createElement(IndexView, {bros, currencies, total}), document.getElementById('app-container'));
 });
