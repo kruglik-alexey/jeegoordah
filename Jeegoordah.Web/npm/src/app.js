@@ -3,18 +3,22 @@ import ReactDOM from 'react-dom'
 import React from 'react'
 import domReady from 'domready'
 import {get} from './rest'
-import {createStore} from 'redux'
+import {createStore, applyMiddleware} from 'redux'
+import thunk from 'redux-thunk'
 import {Provider} from 'react-redux'
 import rootReducer from './reducers/root'
-import actions from './actions'
+import actions, {selectTotalViewCurrency} from './actions'
 
-const $bros = get('bros');
-const $currencies = get('currencies');
-const store = createStore(rootReducer);
+const $domReady = new Promise(resolve => domReady(resolve));
 
-domReady(() => {
-    Promise.all([$bros, $currencies]).then(([bros, currencies]) => {
-        store.dispatch({type: actions.context.loaded, bros, currencies});
-        ReactDOM.render(<Provider store={store}><AppView /></Provider>, document.getElementById('app-container'));
+const store = createStore(rootReducer, applyMiddleware(thunk));
+store.dispatch(dispatch => {
+    const $bros = get('bros');
+    const $currencies = get('currencies');
+    Promise.all([$bros, $currencies, $domReady]).then(([bros, currencies]) => {
+        dispatch({type: actions.context.loaded, bros, currencies});
+        dispatch(selectTotalViewCurrency(currencies[0].id)).then(() => {
+            ReactDOM.render(<Provider store={store}><AppView /></Provider>, document.getElementById('app-container'));
+        });
     });
 });

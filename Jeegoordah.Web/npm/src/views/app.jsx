@@ -1,13 +1,13 @@
 import React from 'react'
-import TotalView from './total'
-import NavBarView from './navBar'
+import Total from './total/total'
+import NavBar from './navBar'
 
 export default function () {
     return (
         <div>
-            <NavBarView />
+            <NavBar />
             <div className="container main-container">
-                <TotalView />
+                <Total />
             </div>
         </div>
     );
