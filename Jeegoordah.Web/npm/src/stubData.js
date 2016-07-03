@@ -12,8 +12,8 @@ export default {
             currency: 0, date: '28-06-2016', rate: 1
         },
         totals: [
-            {bro: 0, amount: 42},
-            {bro: 1, amount: 9000}
+            {bro: 0, amount: 42.666666},
+            {bro: 1, amount: -9000.44}
         ]
     },
     'total/1': {
@@ -21,8 +21,8 @@ export default {
             currency: 1, date: '25-06-2016', rate: 20000
         },
         totals: [
-            {bro: 0, amount: 840000},
-            {bro: 1, amount: 180000000}
+            {bro: 0, amount: 840111},
+            {bro: 1, amount: 0}
         ]
     }
 }
