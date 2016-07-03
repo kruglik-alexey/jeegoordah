@@ -1,3 +1,5 @@
 import 'babel-polyfill'
 import 'bootstrap-loader'
+import 'font-awesome-webpack'
+import './app.css'
 import './app'
