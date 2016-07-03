@@ -1,8 +1,8 @@
 import _ from 'lodash'
 
 const names = [
-    'contextLoaded',
-    'total.selectCurrency'
+    'context.loaded',
+    'totalView.selectCurrency'
 ];
 
 const actions = names.reduce((acc, n) => {

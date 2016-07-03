@@ -10,11 +10,11 @@ import actions from './actions'
 
 const $bros = get('bros');
 const $currencies = get('currencies');
-const store = createStore(rootReducer, {});
+const store = createStore(rootReducer);
 
 domReady(() => {
     Promise.all([$bros, $currencies]).then(([bros, currencies]) => {
-        store.dispatch({type: actions.contextLoaded, bros, currencies});
+        store.dispatch({type: actions.context.loaded, bros, currencies});
         ReactDOM.render(<Provider store={store}><AppView /></Provider>, document.getElementById('app-container'));
     });
 });

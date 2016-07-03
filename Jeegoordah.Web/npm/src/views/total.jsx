@@ -5,7 +5,7 @@ import classNames from 'classnames'
 import actions from '../actions'
 
 const totalView = props => {
-    const selectCurrency = id => props.dispatch({type: actions.total.selectCurrency, currency: id});
+    const selectCurrency = id => props.dispatch({type: actions.totalView.selectCurrency, currency: id});
 
     const currencies = props.currencies.map(c => {
         const cs = classNames({active: c.id === props.selectedCurrency});
@@ -28,7 +28,7 @@ const totalView = props => {
 
 const stateToProps = state => {
     return {
-        currencies: state.currencies,
+        currencies: state.context.currencies,
         selectedCurrency: state.totalView.selectedCurrency
     };
 };
