@@ -1,5 +1,5 @@
 import * as _ from 'lodash'
-import {get} from 'rest'
+import {get} from './rest'
 
 const names = [
     'context.load',
