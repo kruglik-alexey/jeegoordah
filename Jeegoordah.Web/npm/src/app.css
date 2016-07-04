@@ -29,3 +29,7 @@
 .zero {
     color: silver;
 }
+
+ul.nav li a {
+    cursor: pointer;
+}

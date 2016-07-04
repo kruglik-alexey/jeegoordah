@@ -2,9 +2,7 @@ import * as _ from 'lodash'
 
 const lowerObj = obj => {
     const o =_.mapKeys(obj, (v, k) => _.camelCase(k));
-    return _.mapValues(o, v => {
-        _.isArray(v) ? lowerArr(v) : v;
-    });
+    return _.mapValues(o, v => _.isArray(v) ? lowerArr(v) : v);
 };
 const lowerArr = arr => arr.map(lowerObj);
 
