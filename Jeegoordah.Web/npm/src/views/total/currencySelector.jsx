@@ -6,7 +6,7 @@ export default function(props) {
         const cs = classNames({active: c.id === props.selectedCurrency});
         return (
             <li key={c.id} className={cs}>
-                <a href="#" onClick={() => props.onSelectCurrency(c.id)}>{c.name}</a>
+                <a onClick={() => props.onSelectCurrency(c.id)}>{c.name}</a>
             </li>
         );
     });

@@ -14,12 +14,12 @@ export default function () {
             </div>
             <div className="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul className="nav navbar-nav">
-                    <li className="active"><a href="#">Total</a></li>
-                    <li><a href="#">Events</a></li>
-                    <li><a href="#">P2P transactions</a></li>
-                    <li><a href="#">Return Money</a></li>
-                    <li><a href="#">Android</a></li>
-                    <li><a href="#">Calendar</a></li>
+                    <li className="active"><a>Total</a></li>
+                    <li><a>Events</a></li>
+                    <li><a>P2P transactions</a></li>
+                    <li><a>Return Money</a></li>
+                    <li><a>Android</a></li>
+                    <li><a>Calendar</a></li>
                 </ul>
             </div>
         </nav>
