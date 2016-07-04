@@ -11,12 +11,23 @@ const totalView = props => {
     const selectCurrency = id => props.dispatch(selectTotalViewCurrency(id));
 
     const selectedTotals = props.totals[props.selectedCurrency];
-    const content = selectedTotals ?
-        <BroList
-            currency={_.find(props.currencies, {id: props.selectedCurrency})}
-            bros={props.bros}
-            totals={selectedTotals.totals}/> :
-        <Spinner />;
+    let broList;
+    let rateLabel;
+    if (selectedTotals) {
+        const currency = _.find(props.currencies, {id: props.selectedCurrency});
+        broList = <BroList currency={currency} bros={props.bros} totals={selectedTotals.totals}/>;
+        if (!currency.isBase) {
+            const baseCurrency = _.find(props.currencies, {isBase: true});
+            rateLabel = (
+                <p className="text-muted" style={{marginLeft: '5px'}}>
+                    Rate to {baseCurrency.name} is {selectedTotals.rate.rate}
+                </p>
+            );
+        }
+    } else {
+        broList = <Spinner />;
+        rateLabel = null;
+    }
 
     return (
         <div style={{width: '300px'}}>
@@ -25,7 +36,9 @@ const totalView = props => {
                 currencies={props.currencies}
                 selectedCurrency={props.selectedCurrency}
                 onSelectCurrency={selectCurrency}/>
-            {content}
+            <p></p>
+            {rateLabel}
+            {broList}
         </div>
     );
 };
