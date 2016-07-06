@@ -4,7 +4,7 @@ const lowerObj = obj => {
     const o =_.mapKeys(obj, (v, k) => _.camelCase(k));
     return _.mapValues(o, v => _.isArray(v) ? lowerArr(v) : v);
 };
-const lowerArr = arr => arr.map(lowerObj);
+const lowerArr = arr => arr.map(x => _.isObject(x) ? lowerObj(x) : x);
 
 const bros = lowerArr([{"Id":18,"Name":"Алекс","IsHidden":false},{"Id":12,"Name":"Алина","IsHidden":true},{"Id":3,"Name":"Алёна","IsHidden":false},{"Id":7,"Name":"Андрей","IsHidden":false},{"Id":5,"Name":"Антоша","IsHidden":false},{"Id":15,"Name":"Ася","IsHidden":true},{"Id":4,"Name":"БлекД","IsHidden":false},{"Id":16,"Name":"Вероника","IsHidden":false},{"Id":10,"Name":"Винни","IsHidden":false},{"Id":8,"Name":"Даша","IsHidden":false},{"Id":14,"Name":"Дима С.","IsHidden":true},{"Id":6,"Name":"Копыч","IsHidden":false},{"Id":13,"Name":"Кот","IsHidden":false},{"Id":11,"Name":"Лена","IsHidden":true},{"Id":2,"Name":"Мартен","IsHidden":false},{"Id":9,"Name":"Сильвер","IsHidden":false},{"Id":17,"Name":"Штилер","IsHidden":false},{"Id":1,"Name":"Шылдон","IsHidden":false}]);
 const currencies = lowerArr([{"Id":7,"Name":"BYN","Accuracy":0,"IsBase":false},{"Id":1,"Name":"BYR","Accuracy":3,"IsBase":false},{"Id":6,"Name":"CUC","Accuracy":0,"IsBase":false},{"Id":3,"Name":"EUR","Accuracy":0,"IsBase":false},{"Id":4,"Name":"RUB","Accuracy":0,"IsBase":false},{"Id":5,"Name":"UAH","Accuracy":0,"IsBase":false},{"Id":2,"Name":"USD","Accuracy":0,"IsBase":true}]);
