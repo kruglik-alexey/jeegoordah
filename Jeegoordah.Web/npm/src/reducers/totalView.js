@@ -1,20 +1,11 @@
 import actions from '../actions'
 
-export default function(state = {selectedCurrency: null, totals: {}}, action) {
+export default function(state = {selectedCurrency: null}, action) {
     switch (action.type) {
-        case actions.totalView.selectCurrency: {
+        case actions.totalView.setSelectedCurrency: {
             return {
                 ...state,
                 selectedCurrency: action.currency
-            }
-        }
-        case actions.totalView.totalsLoaded: {
-            return {
-                ...state,
-                totals: {
-                    ...state.totals,
-                    [action.currency]: action.totals
-                }
             }
         }
         default: return state

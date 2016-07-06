@@ -28,9 +28,9 @@ const P2PList = props => {
 
 const stateToProps = state => {
     return {
-        currencies: state.context.currencies,
-        bros: state.context.bros,
-        transactions: state.p2pTransactions.list
+        currencies: state.data.currencies,
+        bros: state.data.bros,
+        transactions: state.data.p2pTransactions
     };
 };
 

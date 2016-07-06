@@ -1,29 +1,44 @@
 import * as _ from 'lodash'
 import {get} from './rest'
 
-const names = [
-    'context.load',
-    'context.loaded',
-    'totalView.selectCurrency',
-    'totalView.totalsLoaded',
-    'p2pTransactions.loaded'
-];
+let actions = {
+    data: {
+        contextLoaded: '',
+        currencyTotalsLoaded: '',
+        loadP2PTransactions() {
+            return d => {
+                return get('p2p').then(transactions => d({type: actions.data.p2pTransactionsLoaded, transactions}));
+            };
+        },
+        p2pTransactionsLoaded: ''
+    },
+    totalView: {
+        setSelectedCurrency: '',
+        selectCurrency(currency) {
+            return d => {
+                d({type: actions.totalView.setSelectedCurrency, currency});
+                // TODO do not load already loaded
+                return get(`total/${currency}`).then(totals => d({type: actions.data.currencyTotalsLoaded, currency, totals}));
+            };
+        }
+    }
+};
 
-const actions = names.reduce((acc, n) => {
-    return _.set(acc, n ,n);
-}, {});
+const setActionNames = (obj, prefix=null) => {
+    return _.mapValues(obj, (v, k) => {
+        const name = prefix ? `${prefix}.${k}` : k;
+        if (_.isFunction(v)) {
+            return v;
+        }
+        if (_.isString(v)) {
+            return name;
+        }
+        if (_.isObject(v)) {
+            return setActionNames(v, name);
+        }
+    });
+};
 
-export function selectTotalViewCurrency(currency) {
-    return dispatch => {
-        dispatch({type: actions.totalView.selectCurrency, currency});
-        return get(`total/${currency}`).then(totals => dispatch({type: actions.totalView.totalsLoaded, currency, totals}));
-    };
-}
-
-export function loadP2PTransactions() {
-    return dispatch => {
-        return get('p2p').then(transactions => dispatch({type: actions.p2pTransactions.loaded, transactions}));
-    };
-}
+actions = setActionNames(actions);
 
 export default actions;

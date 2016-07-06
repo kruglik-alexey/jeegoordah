@@ -1,14 +1,14 @@
 import React from 'react'
 import {connect} from 'react-redux'
 import Header from '../header'
-import actions, {selectTotalViewCurrency} from '../../actions'
+import actions from '../../actions'
 import CurrencySelector from './currencySelector'
 import Spinner from '../spinner'
 import BroList from './broList'
 import * as _ from 'lodash'
 
 const totalView = props => {
-    const selectCurrency = id => props.dispatch(selectTotalViewCurrency(id));
+    const selectCurrency = id => props.dispatch(actions.totalView.selectCurrency(id));
 
     const selectedTotals = props.totals[props.selectedCurrency];
     let broList;
@@ -45,10 +45,10 @@ const totalView = props => {
 
 const stateToProps = state => {
     return {
-        currencies: state.context.currencies,
-        bros: state.context.bros,
-        selectedCurrency: state.totalView.selectedCurrency,
-        totals: state.totalView.totals
+        currencies: state.data.currencies,
+        bros: state.data.bros,
+        totals: state.data.totals,
+        selectedCurrency: state.totalView.selectedCurrency
     };
 };
 

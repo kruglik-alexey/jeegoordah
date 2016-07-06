@@ -1,10 +1,8 @@
 import totalViewReducer from './totalView'
-import contextReducer from './context'
-import p2pTransactionsReducer from './p2pTransactions'
+import dataReducer from './data'
 import {combineReducers} from 'redux'
 
 export default combineReducers({
-    context: contextReducer,
-    totalView: totalViewReducer,
-    p2pTransactions: p2pTransactionsReducer
+    data: dataReducer,
+    totalView: totalViewReducer
 })
