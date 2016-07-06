@@ -30,8 +30,8 @@ const totalView = props => {
     }
 
     return (
-        <div style={{width: '300px'}}>
-            <Header title="Total"/>
+        <div>
+            <Header>Total</Header>
             <CurrencySelector
                 currencies={props.currencies}
                 selectedCurrency={props.selectedCurrency}

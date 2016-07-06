@@ -7,7 +7,8 @@ import {createStore, applyMiddleware, compose} from 'redux'
 import thunk from 'redux-thunk'
 import {Provider} from 'react-redux'
 import rootReducer from './reducers/root'
-import actions, {selectTotalViewCurrency} from './actions'
+import actions, {selectTotalViewCurrency, loadP2PTransactions} from './actions'
+import * as _ from 'lodash'
 
 const $domReady = new Promise(resolve => domReady(resolve));
 
@@ -18,7 +19,8 @@ store.dispatch(dispatch => {
     const $currencies = get('currencies');
     Promise.all([$bros, $currencies, $domReady]).then(([bros, currencies]) => {
         dispatch({type: actions.context.loaded, bros, currencies});
-        dispatch(selectTotalViewCurrency(currencies[0].id)).then(() => {
+        dispatch(loadP2PTransactions());
+        dispatch(selectTotalViewCurrency(_.find(currencies, {isBase: true}).id)).then(() => {
             ReactDOM.render(<Provider store={store}><AppView /></Provider>, document.getElementById('app-container'));
         });
     });

@@ -20,7 +20,7 @@ export default function(props) {
                         </td>
                         <td>
                             <div className={amountClasses}>
-                                {`${formatMoney(total.amount, props.currency)} ${props.currency.name}`}
+                                {formatMoney(total.amount, props.currency)}
                             </div>
                         </td>
                         </tr>

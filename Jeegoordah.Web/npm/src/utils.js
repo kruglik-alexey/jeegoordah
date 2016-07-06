@@ -16,5 +16,6 @@ export function formatMoney(amount, currency) {
         const factor = Math.pow(10, currency.accuracy);
         fixedAmount = Math.round(fixedAmount / factor) * factor;
     }
-    return accounting.formatNumber(fixedAmount, 0, ' ');
+    const num = accounting.formatNumber(fixedAmount, 0, ' ');
+    return `${num} ${currency.name}`;
 }
