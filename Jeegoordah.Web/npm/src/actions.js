@@ -15,9 +15,11 @@ let actions = {
     totalView: {
         setSelectedCurrency: '',
         selectCurrency(currency) {
-            return d => {
+            return (d, getState) => {
                 d({type: actions.totalView.setSelectedCurrency, currency});
-                // TODO do not load already loaded
+                if (getState().data.totals[currency]) {
+                    return Promise.resolve();
+                }
                 return get(`total/${currency}`).then(totals => d({type: actions.data.currencyTotalsLoaded, currency, totals}));
             };
         }
