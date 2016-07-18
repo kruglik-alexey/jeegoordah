@@ -1,5 +1,7 @@
 import 'babel-polyfill'
 import 'bootstrap-loader'
 import 'font-awesome-webpack'
+import 'bootstrap-datepicker'
+import '../node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css'
 import './app.css'
 import './app'
