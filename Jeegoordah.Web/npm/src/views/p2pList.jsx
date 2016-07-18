@@ -11,8 +11,9 @@ const P2PList = props => {
             <div>
                 <Header>
                     <span>
-                        Last P2P Transactions&nbsp;
-                        <button type="button" className="btn btn-primary">New Transaction</button>
+                        Last P2P Transactions
+                        <span> </span>
+                        <button type="button" className="btn btn-primary" onClick={() => props.router.push('/createTransaction')}>New Transaction</button>
                     </span>
                 </Header>
                 <TransactionList
@@ -26,8 +27,9 @@ const P2PList = props => {
     }
 };
 
-const stateToProps = state => {
+const stateToProps = (state, ownProps) => {
     return {
+        router: ownProps.router,
         currencies: state.data.currencies,
         bros: state.data.bros,
         transactions: state.data.p2pTransactions

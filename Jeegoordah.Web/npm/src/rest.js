@@ -1,7 +1,11 @@
 import stubData from './stubData'
 
+const delays = {
+};
+
 export function get(path) {
     return new Promise(resolve => {
-        setTimeout(() => resolve(stubData[path]), 100);
+        const delay = delays[path] || 100;
+        setTimeout(() => resolve(stubData[path]), delay);
     });
 }
