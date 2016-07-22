@@ -42,3 +42,8 @@ td.auto-width {
     padding-right: 15px !important;
     padding-left: 15px !important;
 }
+
+/* Without this override picker popup is empty */
+.datepicker > div {
+    display: block;
+}
