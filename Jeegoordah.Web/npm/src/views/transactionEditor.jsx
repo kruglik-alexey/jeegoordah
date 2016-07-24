@@ -150,10 +150,9 @@ class CreateTransactionView extends React.Component {
             ...this.state.transaction,
             [field]: val
         };
-        console.log(transaction);
         this.setState({transaction});
         if (['currency', 'date'].includes(field)) {
-            
+
         }
     }
 }

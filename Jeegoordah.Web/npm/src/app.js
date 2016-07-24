@@ -19,7 +19,7 @@ store.dispatch(d => {
         d({type: actions.data.contextLoaded, bros, currencies});
         const $p2p = d(actions.data.loadP2PTransactions());
         const baseCurrency = _.find(currencies, {isBase: true}).id;
-        const $total = d(actions.totalView.selectCurrency(baseCurrency));
+        const $total = d(actions.data.loadCurrencyTotals(baseCurrency));
         const $domReady = new Promise(resolve => domReady(resolve));
 
         Promise.all([$p2p, $total, $domReady]).then(() => {

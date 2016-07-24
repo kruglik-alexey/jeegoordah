@@ -5,24 +5,20 @@ let actions = {
     data: {
         contextLoaded: '',
         currencyTotalsLoaded: '',
+        loadCurrencyTotals(currency) {
+            return (d, getState) => {
+                if (getState().data.totals[currency]) {
+                    return Promise.resolve();
+                }
+                return get(`total/${currency}`).then(totals => d({type: actions.data.currencyTotalsLoaded, currency, totals}));
+            };
+        },
         loadP2PTransactions() {
             return d => {
                 return get('p2p').then(transactions => d({type: actions.data.p2pTransactionsLoaded, transactions}));
             };
         },
         p2pTransactionsLoaded: ''
-    },
-    totalView: {
-        setSelectedCurrency: '',
-        selectCurrency(currency) {
-            return (d, getState) => {
-                d({type: actions.totalView.setSelectedCurrency, currency});
-                if (getState().data.totals[currency]) {
-                    return Promise.resolve();
-                }
-                return get(`total/${currency}`).then(totals => d({type: actions.data.currencyTotalsLoaded, currency, totals}));
-            };
-        }
     }
 };
 
