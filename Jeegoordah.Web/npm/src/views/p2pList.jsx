@@ -13,7 +13,9 @@ const P2PList = props => {
                     <span>
                         Last P2P Transactions
                         <span> </span>
-                        <button type="button" className="btn btn-primary" onClick={() => props.router.push('/createTransaction')}>New Transaction</button>
+                        <button type="button" className="btn btn-primary" onClick={() => props.router.push('/createTransaction')}>
+                            New Transaction
+                        </button>
                     </span>
                 </Header>
                 <TransactionList

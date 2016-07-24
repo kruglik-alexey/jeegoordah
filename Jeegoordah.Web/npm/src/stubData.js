@@ -23,9 +23,12 @@ totals['7'] = {"Totals":[{"Bro":1,"Amount":596.32258946893808926474885128},{"Bro
 totals = _.mapValues(totals, lowerObj);
 totals = _.mapKeys(totals, (k, v) => 'total/' + v);
 
+const rates = [{"Currency":1,"Date":"24-07-2016","Rate":20026.25},{"Currency":2,"Date":"24-07-2016","Rate":1},{"Currency":3,"Date":"24-07-2016","Rate":0.91},{"Currency":4,"Date":"24-07-2016","Rate":64.62},{"Currency":5,"Date":"24-07-2016","Rate":24.79},{"Currency":6,"Date":"01-06-2014","Rate":1},{"Currency":7,"Date":"24-07-2016","Rate":2}];
+
 export default {
     bros,
     currencies,
     p2p,
+    rates,
     ...totals
 }

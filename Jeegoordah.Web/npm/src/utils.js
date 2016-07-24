@@ -1,4 +1,4 @@
-import * as accounting from 'accounting'
+import accounting from 'accounting'
 
 export function signClass(num) {
     if (num > 0) {
@@ -18,4 +18,12 @@ export function formatMoney(amount, currency) {
     }
     const num = accounting.formatNumber(fixedAmount, 0, ' ');
     return `${num} ${currency.name}`;
+}
+
+export function formatDate(date) {
+    let month = date.getMonth() + 1;
+    if (month < 10) {
+        month = '0' + month;
+    }
+    return `${date.getDate()}-${month}-${date.getFullYear()}`;
 }
