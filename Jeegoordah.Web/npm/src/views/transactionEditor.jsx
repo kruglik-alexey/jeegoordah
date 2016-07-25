@@ -7,7 +7,7 @@ import _ from 'lodash'
 import BroSelector from './broSelector'
 import {formatDate} from '../utils'
 import accounting from 'accounting'
-import {get} from '../rest'
+import actions from '../actions'
 
 class CreateTransactionView extends React.Component {
     constructor(props) {
@@ -15,6 +15,13 @@ class CreateTransactionView extends React.Component {
         this.state = {
             transaction: props.transaction || {}
         };
+    }
+
+    componentWillReceiveProps(nextProps) {
+        const t = this.state.transaction;
+        if (!t.rate && t.date && t.currency && nextProps.rates[t.date]) {
+            this.updateTransaction('rate', this.getRate(t, nextProps.rates));
+        }
     }
 
     componentDidMount() {
@@ -88,7 +95,9 @@ class CreateTransactionView extends React.Component {
 
     renderRate() {
         const baseCurrency = _.find(this.props.currencies, {isBase: true}).name;
-        const amountInBase = this.state.transaction.amount / this.state.transaction.rate;
+        const amountInBase = this.state.transaction.amount && this.state.transaction.rate
+            ? this.state.transaction.amount / this.state.transaction.rate
+            : '';
         return (
             <div className="form-group">
                 <div className="row">
@@ -150,10 +159,23 @@ class CreateTransactionView extends React.Component {
             ...this.state.transaction,
             [field]: val
         };
-        this.setState({transaction});
-        if (['currency', 'date'].includes(field)) {
 
+        if (['currency', 'date'].includes(field)) {
+            transaction.rate = this.getRate(transaction, this.props.rates);
+            if (!transaction.rate && transaction.date) {
+                this.props.dispatch(actions.data.loadDateRates(transaction.date));
+            }
         }
+
+        this.setState({transaction});
+    }
+
+    getRate(transaction, rates) {
+        const rs = rates[transaction.date];
+        if (rs && transaction.currency) {
+            return _.find(rs, {currency: transaction.currency}).rate;
+        }
+        return '';
     }
 }
 
@@ -161,6 +183,7 @@ const stateToProps = (state, ownProps) => {
     return {
         currencies: state.data.currencies,
         bros: state.data.bros,
+        rates: state.data.rates,
         ...ownProps
     }
 };
