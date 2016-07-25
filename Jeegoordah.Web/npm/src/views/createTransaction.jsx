@@ -7,7 +7,7 @@ export default props => {
     return (
         <div className="container">
             <Header>Create Transaction</Header>
-            <TransactionEditor transaction={stubData.p2p[1]}/>
+            <TransactionEditor />
             <hr/>
             <div className="text-right">
                 <button className="btn btn-primary">Save</button>

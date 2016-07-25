@@ -9,17 +9,19 @@ import {formatDate} from '../utils'
 import accounting from 'accounting'
 import actions from '../actions'
 
+const hasValue = v => v && v !== '';
+
 class CreateTransactionView extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            transaction: props.transaction || {}
+            transaction: props.transaction || this.createEmptyTransaction()
         };
     }
 
     componentWillReceiveProps(nextProps) {
         const t = this.state.transaction;
-        if (!t.rate && t.date && t.currency && nextProps.rates[t.date]) {
+        if (!hasValue(t.rate) && hasValue(t.date) && t.currency && nextProps.rates[t.date]) {
             this.updateTransaction('rate', this.getRate(t, nextProps.rates));
         }
     }
@@ -95,7 +97,7 @@ class CreateTransactionView extends React.Component {
 
     renderRate() {
         const baseCurrency = _.find(this.props.currencies, {isBase: true}).name;
-        const amountInBase = this.state.transaction.amount && this.state.transaction.rate
+        const amountInBase = hasValue(this.state.transaction.amount) && hasValue(this.state.transaction.rate)
             ? this.state.transaction.amount / this.state.transaction.rate
             : '';
         return (
@@ -155,27 +157,37 @@ class CreateTransactionView extends React.Component {
     }
 
     updateTransaction(field, val) {
-        const transaction = {
+        const t = {
             ...this.state.transaction,
             [field]: val
         };
 
         if (['currency', 'date'].includes(field)) {
-            transaction.rate = this.getRate(transaction, this.props.rates);
-            if (!transaction.rate && transaction.date) {
-                this.props.dispatch(actions.data.loadDateRates(transaction.date));
+            t.rate = this.getRate(t, this.props.rates);
+            if (!hasValue(t.rate) && hasValue(t.date)) {
+                this.props.dispatch(actions.data.loadDateRates(t.date));
             }
         }
 
-        this.setState({transaction});
+        this.setState({transaction: t});
     }
 
     getRate(transaction, rates) {
-        const rs = rates[transaction.date];
-        if (rs && transaction.currency) {
-            return _.find(rs, {currency: transaction.currency}).rate;
+        if (hasValue(transaction.date)) {
+            const rs = rates[transaction.date];
+            if (rs && transaction.currency) {
+                return _.find(rs, {currency: transaction.currency}).rate;
+            }
         }
         return '';
+    }
+
+    createEmptyTransaction() {
+        return {
+            date: '',
+            amount: '',
+            rate: ''
+        }
     }
 }
 
