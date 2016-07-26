@@ -1,4 +1,5 @@
 import actions from '../actions'
+import _ from 'lodash'
 
 export default function(state = {bros: [], currencies: [], totals: {}, p2pTransactions: [], rates: {}}, action) {
     switch (action.type) {
@@ -34,6 +35,13 @@ export default function(state = {bros: [], currencies: [], totals: {}, p2pTransa
                 ...state,
                 rates
             }
+        }
+        case actions.data.transactionCreated: {
+            const p2p = _.concat(action.transaction, state.p2pTransactions);
+            return {
+                ...state,
+                p2pTransactions: p2p
+            };
         }
         default: return state
     }

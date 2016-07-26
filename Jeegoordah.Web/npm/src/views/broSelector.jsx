@@ -5,8 +5,7 @@ import classNames from 'classnames'
 export default class extends React.Component {
     render() {
         const lineSize = 70;
-        let selected = this.props.multiSelect ? this.props.selected : [this.props.selected];
-        selected = selected || [];
+        const selected = this.props.multiSelect ? this.props.selected : _.compact([this.props.selected]);
         const bros = this.props.bros.filter(b => !b.isHidden || selected.includes(b.id));
         const lineCount = bros.length / lineSize;
         const lines = [];

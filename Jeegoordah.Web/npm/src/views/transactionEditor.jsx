@@ -14,14 +14,12 @@ const hasValue = v => v && v !== '';
 class CreateTransactionView extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            transaction: props.transaction || this.createEmptyTransaction()
-        };
+        this.state = {rateChangedByUser: false};
     }
 
     componentWillReceiveProps(nextProps) {
-        const t = this.state.transaction;
-        if (!hasValue(t.rate) && hasValue(t.date) && t.currency && nextProps.rates[t.date]) {
+        const t = nextProps.transaction;
+        if (!this.state.rateChangedByUser && !hasValue(t.rate) && hasValue(t.date) && t.currency && nextProps.rates[t.date]) {
             this.updateTransaction('rate', this.getRate(t, nextProps.rates));
         }
     }
@@ -58,7 +56,7 @@ class CreateTransactionView extends React.Component {
             <div className="form-group">
                 <label>Date</label>
                 <input className="form-control" type="text" name="date" ref="dateInput"
-                       value={this.state.transaction.date} onChange={this.createChangeHandler('date')}/>
+                       value={this.props.transaction.date} onChange={this.createChangeHandler('date')}/>
             </div>
         );
     }
@@ -68,7 +66,7 @@ class CreateTransactionView extends React.Component {
             const cx = {
                 btn: true,
                 'btn-default': true,
-                active: this.state.transaction.currency === c.id
+                active: this.props.transaction.currency === c.id
             };
             return (
                 <label key={c.id} className={classNames(cx)} onClick={() => this.updateTransaction('currency', c.id)}>
@@ -84,7 +82,7 @@ class CreateTransactionView extends React.Component {
                     <div className="col-sm-12">
                         <div className="input-group">
                             <input className="form-control" type="text" name="amount"
-                                   value={this.state.transaction.amount} onChange={this.createChangeHandler('amount')}/>
+                                   value={this.props.transaction.amount} onChange={this.createChangeHandler('amount')}/>
                             <span className="input-group-btn">
                                 {currencies}
                             </span>
@@ -97,8 +95,8 @@ class CreateTransactionView extends React.Component {
 
     renderRate() {
         const baseCurrency = _.find(this.props.currencies, {isBase: true}).name;
-        const amountInBase = hasValue(this.state.transaction.amount) && hasValue(this.state.transaction.rate)
-            ? this.state.transaction.amount / this.state.transaction.rate
+        const amountInBase = hasValue(this.props.transaction.amount) && hasValue(this.props.transaction.rate)
+            ? this.props.transaction.amount / this.props.transaction.rate
             : '';
         return (
             <div className="form-group">
@@ -106,8 +104,8 @@ class CreateTransactionView extends React.Component {
                     <div className="col-sm-6" style={{paddingRight: '2px'}}>
                         <label>Rate to {baseCurrency}</label>
                         <input type="text" name="rate" className="form-control"
-                               value={this.state.transaction.rate}
-                               onChange={this.createChangeHandler('rate')}/>
+                               value={this.props.transaction.rate}
+                               onChange={e => this.updateRate(e)}/>
                     </div>
                     <div className="col-sm-6" style={{paddingLeft: '2px'}}>
                         <label>Amount in {baseCurrency}</label>
@@ -124,7 +122,7 @@ class CreateTransactionView extends React.Component {
             <div className="form-group">
                 <label>Source</label>
                 <BroSelector bros={this.props.bros} multiSelect={false}
-                             selected={this.state.transaction.source}
+                             selected={this.props.transaction.source}
                              onSelect={s => this.updateTransaction('source', s)}/>
             </div>
         )
@@ -135,7 +133,7 @@ class CreateTransactionView extends React.Component {
             <div className="form-group">
                 <label>Target</label>
                 <BroSelector bros={this.props.bros} multiSelect={true}
-                             selected={this.state.transaction.targets}
+                             selected={this.props.transaction.targets}
                              onSelect={ts => this.updateTransaction('targets', ts)}/>
             </div>
         )
@@ -146,7 +144,7 @@ class CreateTransactionView extends React.Component {
             <div className="form-group">
                 <label>Comment</label>
                 <textarea className="form-control" rows="3"
-                          value={this.state.transaction.comment}
+                          value={this.props.transaction.comment}
                           onChange={this.createChangeHandler('comment')} />
             </div>
         )
@@ -158,18 +156,24 @@ class CreateTransactionView extends React.Component {
 
     updateTransaction(field, val) {
         const t = {
-            ...this.state.transaction,
+            ...this.props.transaction,
             [field]: val
         };
 
         if (['currency', 'date'].includes(field)) {
             t.rate = this.getRate(t, this.props.rates);
             if (!hasValue(t.rate) && hasValue(t.date)) {
+                this.setState({rateChangedByUser: false});
                 this.props.dispatch(actions.data.loadDateRates(t.date));
             }
         }
 
-        this.setState({transaction: t});
+        this.props.onChange(t);
+    }
+
+    updateRate(e) {
+        this.setState({rateChangedByUser: true});
+        this.createChangeHandler('rate')(e);
     }
 
     getRate(transaction, rates) {
@@ -180,14 +184,6 @@ class CreateTransactionView extends React.Component {
             }
         }
         return '';
-    }
-
-    createEmptyTransaction() {
-        return {
-            date: '',
-            amount: '',
-            rate: ''
-        }
     }
 }
 
@@ -201,3 +197,24 @@ const stateToProps = (state, ownProps) => {
 };
 
 export default connect(stateToProps)(CreateTransactionView)
+
+export function validate(transaction) {
+    const simpleFields = ['date', 'amount', 'currency', 'rate', 'source'];
+    const badSimpleField = _.compact(simpleFields.map(f => !hasValue(transaction[f]) ? _.capitalize(f) : null))[0];
+    if (badSimpleField) {
+        return badSimpleField;
+    }
+
+    if (transaction.targets.length === 0) {
+        return 'Targets';
+    }
+}
+
+export function createEmptyTransaction() {
+    return {
+        date: formatDate(new Date()),
+        amount: '',
+        rate: '',
+        targets: []
+    }
+}

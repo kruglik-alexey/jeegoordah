@@ -1,5 +1,5 @@
 import * as _ from 'lodash'
-import {get} from './rest'
+import {get, post} from './rest'
 
 let actions = {
     data: {
@@ -30,6 +30,13 @@ let actions = {
                 }
                 return get(`rates/${date}`).then(rates => d({type: actions.data.dateRatesLoaded, date, rates}));
             }
+        },
+
+        transactionCreated: '',
+        createTransaction(transaction) {
+            return d => {
+                return post('createTransaction', transaction).then(() => d({type: actions.data.transactionCreated, transaction}));
+            };
         }
     }
 };

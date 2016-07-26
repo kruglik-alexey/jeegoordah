@@ -4,6 +4,7 @@ import Spinner from './spinner'
 import TransactionList from './transactionList'
 import * as _ from 'lodash'
 import Header from './header'
+import {withRouter} from 'react-router'
 
 const P2PList = props => {
     if (props.transactions) {
@@ -38,4 +39,4 @@ const stateToProps = (state, ownProps) => {
     };
 };
 
-export default connect(stateToProps)(P2PList)
+export default connect(stateToProps)(withRouter(P2PList))
