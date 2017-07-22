@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Android.App;
 using Android.OS;
@@ -27,7 +28,9 @@ namespace Jeegoordah.Droid.UI
 
         private IList<BroAmount> GetTotal()
 		{
-			return TotalCalculator.Calculate(repository.GetTotal(), repository.GetPendingTransactions());
+			var amounts = TotalCalculator.Calculate(repository.GetTotal(), repository.GetPendingTransactions());
+		    var bros = repository.GetBros();
+		    return amounts.OrderBy(x => bros.First(b => b.Id == x.Bro).Name).ToArray();
 		}
     }
 }
